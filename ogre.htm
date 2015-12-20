@@ -1,0 +1,469 @@
+<html><head><title>ogre.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+OGRE
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/ogre_c</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base		</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>base</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk8 walk9 walk10 walk11 walk12 walk13 walk14 walk15 walk16</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6 run7 run8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>swing1 swing2 swing3 swing4 swing5 swing6 swing7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>swing8 swing9 swing10 swing11 swing12 swing13 swing14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>smash1 smash2 smash3 smash4 smash5 smash6 smash7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>smash8 smash9 smash10 smash11 smash12 smash13 smash14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shoot1 shoot2 shoot3 shoot4 shoot5 shoot6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc1 painc2 painc3 painc4 painc5 painc6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind1 paind2 paind3 paind4 paind5 paind6 paind7 paind8 paind9 paind10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind11 paind12 paind13 paind14 paind15 paind16</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine1 paine2 paine3 paine4 paine5 paine6 paine7 paine8 paine9 paine10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine11 paine12 paine13 paine14 paine15</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death7 death8 death9 death10 death11 death12</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death13 death14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>bdeath1 bdeath2 bdeath3 bdeath4 bdeath5 bdeath6</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>bdeath7 bdeath8 bdeath9 bdeath10</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pull1 pull2 pull3 pull4 pull5 pull6 pull7 pull8 pull9 pull10 pull11</b>
+
+<i>//=============================================================================</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>OgreGrenadeExplode</b><a name="OgreGrenadeExplode">=</a>
+{
+	<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 40, <a href="qc-glob.htm#world">world</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"weapons/r_exp3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_EXPLOSION">TE_EXPLOSION</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/s_explod.spr"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="weapons.htm#s_explode1">s_explode1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>OgreGrenadeTouch</b><a name="OgreGrenadeTouch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> == <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>)
+	{
+		<a href="ogre.htm#OgreGrenadeExplode">OgreGrenadeExplode</a>();
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"weapons/bounce.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	<i>// bounce sound</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> == '0 0 0')
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '0 0 0';
+};
+
+<i>/*
+================
+OgreFireGrenade
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>OgreFireGrenade</b><a name="OgreFireGrenade">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> missile, mpuff;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/grenade.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+		
+<i>// set missile speed	</i>
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#normalize">normalize</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = missile.<a href="qc-enty.htm#dot_velocity">velocity</a> * 600;
+	missile.velocity_z = 200;
+
+	missile.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '300 300 300';
+
+	missile.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-built.htm#vectoangles">vectoangles</a>(missile.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+	
+	missile.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="ogre.htm#OgreGrenadeTouch">OgreGrenadeTouch</a>;
+	
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 2.5;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="ogre.htm#OgreGrenadeExplode">OgreGrenadeExplode</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/grenade.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+};
+
+
+<i>//=============================================================================</i>
+
+<i>/*
+================
+chainsaw
+
+FIXME
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> side) <b>chainsaw</b><a name="chainsaw">=</a>
+{
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+<b>local</b> <a href="qc-types.htm#float">float</a> 	ldmg;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;
+	<b>if</b> (!<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		<b>return</b>;
+
+	<a href="fight.htm#ai_charge">ai_charge</a>(10);
+
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 100)
+		<b>return</b>;
+		
+	ldmg = (<a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>()) * 4;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);
+	
+	<b>if</b> (side)
+	{
+		<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+		<b>if</b> (side == 1)
+			<a href="weapons.htm#SpawnMeatSpray">SpawnMeatSpray</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*16, <a href="weapons.htm#crandom">crandom</a>() * 100 * <a href="qc-built.htm#v_right">v_right</a>);
+		<b>else</b>
+			<a href="weapons.htm#SpawnMeatSpray">SpawnMeatSpray</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*16, side * <a href="qc-built.htm#v_right">v_right</a>);
+	}
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand1</b><a name="ogre_stand1">=</a>[	$stand1,	ogre_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand2</b><a name="ogre_stand2">=</a>[	$stand2,	ogre_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand3</b><a name="ogre_stand3">=</a>[	$stand3,	ogre_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand4</b><a name="ogre_stand4">=</a>[	$stand4,	ogre_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand5</b><a name="ogre_stand5">=</a>[	$stand5,	ogre_stand6	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogidle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_stand">ai_stand</a>();
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand6</b><a name="ogre_stand6">=</a>[	$stand6,	ogre_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand7</b><a name="ogre_stand7">=</a>[	$stand7,	ogre_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand8</b><a name="ogre_stand8">=</a>[	$stand8,	ogre_stand9	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_stand9</b><a name="ogre_stand9">=</a>[	$stand9,	<a href="ogre.htm#ogre_stand1">ogre_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk1</b><a name="ogre_walk1">=</a>[	$walk1,		ogre_walk2	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk2</b><a name="ogre_walk2">=</a>[	$walk2,		ogre_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk3</b><a name="ogre_walk3">=</a>[	$walk3,		ogre_walk4	] {
+<a href="ai.htm#ai_walk">ai_walk</a>(2);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogidle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk4</b><a name="ogre_walk4">=</a>[	$walk4,		ogre_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk5</b><a name="ogre_walk5">=</a>[	$walk5,		ogre_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk6</b><a name="ogre_walk6">=</a>[	$walk6,		ogre_walk7	] {
+<a href="ai.htm#ai_walk">ai_walk</a>(5);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.1)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogdrag.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk7</b><a name="ogre_walk7">=</a>[	$walk7,		ogre_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk8</b><a name="ogre_walk8">=</a>[	$walk8,		ogre_walk9	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk9</b><a name="ogre_walk9">=</a>[	$walk9,		ogre_walk10	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk10</b><a name="ogre_walk10">=</a>[	$walk10,	ogre_walk11	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk11</b><a name="ogre_walk11">=</a>[	$walk11,	ogre_walk12	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk12</b><a name="ogre_walk12">=</a>[	$walk12,	ogre_walk13	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk13</b><a name="ogre_walk13">=</a>[	$walk13,	ogre_walk14	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk14</b><a name="ogre_walk14">=</a>[	$walk14,	ogre_walk15	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk15</b><a name="ogre_walk15">=</a>[	$walk15,	ogre_walk16	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_walk16</b><a name="ogre_walk16">=</a>[	$walk16,	<a href="ogre.htm#ogre_walk1">ogre_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_run1</b><a name="ogre_run1">=</a>[	$run1,		ogre_run2	] {<a href="ai.htm#ai_run">ai_run</a>(9);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogidle2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run2</b><a name="ogre_run2">=</a>[	$run2,		ogre_run3	] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run3</b><a name="ogre_run3">=</a>[	$run3,		ogre_run4	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run4</b><a name="ogre_run4">=</a>[	$run4,		ogre_run5	] {<a href="ai.htm#ai_run">ai_run</a>(22);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run5</b><a name="ogre_run5">=</a>[	$run5,		ogre_run6	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run6</b><a name="ogre_run6">=</a>[	$run6,		ogre_run7	] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run7</b><a name="ogre_run7">=</a>[	$run7,		ogre_run8	] {<a href="ai.htm#ai_run">ai_run</a>(13);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_run8</b><a name="ogre_run8">=</a>[	$run8,		<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(24);};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing1</b><a name="ogre_swing1">=</a>[	$swing1,		ogre_swing2	] {<a href="fight.htm#ai_charge">ai_charge</a>(11);
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"ogre/ogsawatk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing2</b><a name="ogre_swing2">=</a>[	$swing2,		ogre_swing3	] {<a href="fight.htm#ai_charge">ai_charge</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing3</b><a name="ogre_swing3">=</a>[	$swing3,		ogre_swing4	] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing4</b><a name="ogre_swing4">=</a>[	$swing4,		ogre_swing5	] {<a href="fight.htm#ai_charge">ai_charge</a>(13);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing5</b><a name="ogre_swing5">=</a>[	$swing5,		ogre_swing6	] {<a href="fight.htm#ai_charge">ai_charge</a>(9); <a href="ogre.htm#chainsaw">chainsaw</a>(0);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()*25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing6</b><a name="ogre_swing6">=</a>[	$swing6,		ogre_swing7	] {<a href="ogre.htm#chainsaw">chainsaw</a>(200);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing7</b><a name="ogre_swing7">=</a>[	$swing7,		ogre_swing8	] {<a href="ogre.htm#chainsaw">chainsaw</a>(0);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing8</b><a name="ogre_swing8">=</a>[	$swing8,		ogre_swing9	] {<a href="ogre.htm#chainsaw">chainsaw</a>(0);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing9</b><a name="ogre_swing9">=</a>[	$swing9,		ogre_swing10 ] {<a href="ogre.htm#chainsaw">chainsaw</a>(0);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing10</b><a name="ogre_swing10">=</a>[	$swing10,		ogre_swing11 ] {<a href="ogre.htm#chainsaw">chainsaw</a>(-200);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing11</b><a name="ogre_swing11">=</a>[	$swing11,		ogre_swing12 ] {<a href="ogre.htm#chainsaw">chainsaw</a>(0);<a href="qc-glob.htm#self">self</a>.angles_y = <a href="qc-glob.htm#self">self</a>.angles_y + <a href="qc-built.htm#random">random</a>()* 25;};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing12</b><a name="ogre_swing12">=</a>[	$swing12,		ogre_swing13 ] {<a href="fight.htm#ai_charge">ai_charge</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing13</b><a name="ogre_swing13">=</a>[	$swing13,		ogre_swing14 ] {<a href="fight.htm#ai_charge">ai_charge</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_swing14</b><a name="ogre_swing14">=</a>[	$swing14,		<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {<a href="fight.htm#ai_charge">ai_charge</a>(9);};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash1</b><a name="ogre_smash1">=</a>[	$smash1,		ogre_smash2	] {<a href="fight.htm#ai_charge">ai_charge</a>(6);
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"ogre/ogsawatk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash2</b><a name="ogre_smash2">=</a>[	$smash2,		ogre_smash3	] {<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash3</b><a name="ogre_smash3">=</a>[	$smash3,		ogre_smash4	] {<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash4</b><a name="ogre_smash4">=</a>[	$smash4,		ogre_smash5	] {<a href="fight.htm#ai_charge">ai_charge</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash5</b><a name="ogre_smash5">=</a>[	$smash5,		ogre_smash6	] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash6</b><a name="ogre_smash6">=</a>[	$smash6,		ogre_smash7	] {<a href="fight.htm#ai_charge">ai_charge</a>(4); <a href="ogre.htm#chainsaw">chainsaw</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash7</b><a name="ogre_smash7">=</a>[	$smash7,		ogre_smash8	] {<a href="fight.htm#ai_charge">ai_charge</a>(4); <a href="ogre.htm#chainsaw">chainsaw</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash8</b><a name="ogre_smash8">=</a>[	$smash8,		ogre_smash9	] {<a href="fight.htm#ai_charge">ai_charge</a>(10); <a href="ogre.htm#chainsaw">chainsaw</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash9</b><a name="ogre_smash9">=</a>[	$smash9,		ogre_smash10 ] {<a href="fight.htm#ai_charge">ai_charge</a>(13); <a href="ogre.htm#chainsaw">chainsaw</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash10</b><a name="ogre_smash10">=</a>[	$smash10,		ogre_smash11 ] {<a href="ogre.htm#chainsaw">chainsaw</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash11</b><a name="ogre_smash11">=</a>[	$smash11,		ogre_smash12 ] {<a href="fight.htm#ai_charge">ai_charge</a>(2); <a href="ogre.htm#chainsaw">chainsaw</a>(0);
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.2;};	<i>// slight variation</i>
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash12</b><a name="ogre_smash12">=</a>[	$smash12,		ogre_smash13 ] {<a href="fight.htm#ai_charge">ai_charge</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash13</b><a name="ogre_smash13">=</a>[	$smash13,		ogre_smash14 ] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_smash14</b><a name="ogre_smash14">=</a>[	$smash14,		<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {<a href="fight.htm#ai_charge">ai_charge</a>(12);};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail1</b><a name="ogre_nail1">=</a>[	$shoot1,		ogre_nail2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail2</b><a name="ogre_nail2">=</a>[	$shoot2,		ogre_nail3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail3</b><a name="ogre_nail3">=</a>[	$shoot2,		ogre_nail4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail4</b><a name="ogre_nail4">=</a>[	$shoot3,		ogre_nail5	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="ogre.htm#OgreFireGrenade">OgreFireGrenade</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail5</b><a name="ogre_nail5">=</a>[	$shoot4,		ogre_nail6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail6</b><a name="ogre_nail6">=</a>[	$shoot5,		ogre_nail7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_nail7</b><a name="ogre_nail7">=</a>[	$shoot6,		<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_pain1</b><a name="ogre_pain1">=</a>[	$pain1,		ogre_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_pain2</b><a name="ogre_pain2">=</a>[	$pain2,		ogre_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_pain3</b><a name="ogre_pain3">=</a>[	$pain3,		ogre_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_pain4</b><a name="ogre_pain4">=</a>[	$pain4,		ogre_pain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_pain5</b><a name="ogre_pain5">=</a>[	$pain5,		<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_painb1</b><a name="ogre_painb1">=</a>[	$painb1,	ogre_painb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painb2</b><a name="ogre_painb2">=</a>[	$painb2,	ogre_painb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painb3</b><a name="ogre_painb3">=</a>[	$painb3,	<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc1</b><a name="ogre_painc1">=</a>[	$painc1,	ogre_painc2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc2</b><a name="ogre_painc2">=</a>[	$painc2,	ogre_painc3	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc3</b><a name="ogre_painc3">=</a>[	$painc3,	ogre_painc4	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc4</b><a name="ogre_painc4">=</a>[	$painc4,	ogre_painc5	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc5</b><a name="ogre_painc5">=</a>[	$painc5,	ogre_painc6	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_painc6</b><a name="ogre_painc6">=</a>[	$painc6,	<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind1</b><a name="ogre_paind1">=</a>[	$paind1,	ogre_paind2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind2</b><a name="ogre_paind2">=</a>[	$paind2,	ogre_paind3	] {<a href="ai.htm#ai_pain">ai_pain</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind3</b><a name="ogre_paind3">=</a>[	$paind3,	ogre_paind4	] {<a href="ai.htm#ai_pain">ai_pain</a>(9);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind4</b><a name="ogre_paind4">=</a>[	$paind4,	ogre_paind5	] {<a href="ai.htm#ai_pain">ai_pain</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind5</b><a name="ogre_paind5">=</a>[	$paind5,	ogre_paind6	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind6</b><a name="ogre_paind6">=</a>[	$paind6,	ogre_paind7	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind7</b><a name="ogre_paind7">=</a>[	$paind7,	ogre_paind8	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind8</b><a name="ogre_paind8">=</a>[	$paind8,	ogre_paind9	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind9</b><a name="ogre_paind9">=</a>[	$paind9,	ogre_paind10	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind10</b><a name="ogre_paind10">=</a>[	$paind10,	ogre_paind11	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind11</b><a name="ogre_paind11">=</a>[	$paind11,	ogre_paind12	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind12</b><a name="ogre_paind12">=</a>[	$paind12,	ogre_paind13	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind13</b><a name="ogre_paind13">=</a>[	$paind13,	ogre_paind14	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind14</b><a name="ogre_paind14">=</a>[	$paind14,	ogre_paind15	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind15</b><a name="ogre_paind15">=</a>[	$paind15,	ogre_paind16	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paind16</b><a name="ogre_paind16">=</a>[	$paind16,	<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine1</b><a name="ogre_paine1">=</a>[	$paine1,	ogre_paine2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine2</b><a name="ogre_paine2">=</a>[	$paine2,	ogre_paine3	] {<a href="ai.htm#ai_pain">ai_pain</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine3</b><a name="ogre_paine3">=</a>[	$paine3,	ogre_paine4	] {<a href="ai.htm#ai_pain">ai_pain</a>(9);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine4</b><a name="ogre_paine4">=</a>[	$paine4,	ogre_paine5	] {<a href="ai.htm#ai_pain">ai_pain</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine5</b><a name="ogre_paine5">=</a>[	$paine5,	ogre_paine6	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine6</b><a name="ogre_paine6">=</a>[	$paine6,	ogre_paine7	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine7</b><a name="ogre_paine7">=</a>[	$paine7,	ogre_paine8	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine8</b><a name="ogre_paine8">=</a>[	$paine8,	ogre_paine9	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine9</b><a name="ogre_paine9">=</a>[	$paine9,	ogre_paine10	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine10</b><a name="ogre_paine10">=</a>[	$paine10,	ogre_paine11	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine11</b><a name="ogre_paine11">=</a>[	$paine11,	ogre_paine12	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine12</b><a name="ogre_paine12">=</a>[	$paine12,	ogre_paine13	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine13</b><a name="ogre_paine13">=</a>[	$paine13,	ogre_paine14	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine14</b><a name="ogre_paine14">=</a>[	$paine14,	ogre_paine15	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_paine15</b><a name="ogre_paine15">=</a>[	$paine15,	<a href="ogre.htm#ogre_run1">ogre_run1</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>ogre_pain</b><a name="ogre_pain">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	r;
+
+<i>// don't make multiple pain sounds right after each other</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogpain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);		
+
+	r = <a href="qc-built.htm#random">random</a>();
+	
+	<b>if</b> (r &lt; 0.25)
+	{
+		<a href="ogre.htm#ogre_pain1">ogre_pain1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.5)
+	{
+		<a href="ogre.htm#ogre_painb1">ogre_painb1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.75)
+	{
+		<a href="ogre.htm#ogre_painc1">ogre_painc1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.88)
+	{
+		<a href="ogre.htm#ogre_paind1">ogre_paind1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	}
+	<b>else</b>
+	{
+		<a href="ogre.htm#ogre_paine1">ogre_paine1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	}
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_die1</b><a name="ogre_die1">=</a>[	$death1,	ogre_die2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die2</b><a name="ogre_die2">=</a>[	$death2,	ogre_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die3</b><a name="ogre_die3">=</a>[	$death3,	ogre_die4	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = 2;<a href="items.htm#DropBackpack">DropBackpack</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die4</b><a name="ogre_die4">=</a>[	$death4,	ogre_die5	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die5</b><a name="ogre_die5">=</a>[	$death5,	ogre_die6	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die6</b><a name="ogre_die6">=</a>[	$death6,	ogre_die7	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die7</b><a name="ogre_die7">=</a>[	$death7,	ogre_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die8</b><a name="ogre_die8">=</a>[	$death8,	ogre_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die9</b><a name="ogre_die9">=</a>[	$death9,	ogre_die10	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die10</b><a name="ogre_die10">=</a>[	$death10,	ogre_die11	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die11</b><a name="ogre_die11">=</a>[	$death11,	ogre_die12	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die12</b><a name="ogre_die12">=</a>[	$death12,	ogre_die13	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die13</b><a name="ogre_die13">=</a>[	$death13,	ogre_die14	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_die14</b><a name="ogre_die14">=</a>[	$death14,	<a href="ogre.htm#ogre_die14">ogre_die14</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie1</b><a name="ogre_bdie1">=</a>[	$bdeath1,	ogre_bdie2	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie2</b><a name="ogre_bdie2">=</a>[	$bdeath2,	ogre_bdie3	] {<a href="ai.htm#ai_forward">ai_forward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie3</b><a name="ogre_bdie3">=</a>[	$bdeath3,	ogre_bdie4	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = 2;<a href="items.htm#DropBackpack">DropBackpack</a>();};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie4</b><a name="ogre_bdie4">=</a>[	$bdeath4,	ogre_bdie5	] {<a href="ai.htm#ai_forward">ai_forward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie5</b><a name="ogre_bdie5">=</a>[	$bdeath5,	ogre_bdie6	] {<a href="ai.htm#ai_forward">ai_forward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie6</b><a name="ogre_bdie6">=</a>[	$bdeath6,	ogre_bdie7	] {<a href="ai.htm#ai_forward">ai_forward</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie7</b><a name="ogre_bdie7">=</a>[	$bdeath7,	ogre_bdie8	] {<a href="ai.htm#ai_forward">ai_forward</a>(25);};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie8</b><a name="ogre_bdie8">=</a>[	$bdeath8,	ogre_bdie9	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie9</b><a name="ogre_bdie9">=</a>[	$bdeath9,	ogre_bdie10	] {};
+<a href="qc-types.htm#void">void</a>() <b>ogre_bdie10</b><a name="ogre_bdie10">=</a>[	$bdeath10,	<a href="ogre.htm#ogre_bdie10">ogre_bdie10</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_die</b><a name="ogre_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -80)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_ogre.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogdth.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+		<a href="ogre.htm#ogre_die1">ogre_die1</a> ();
+	<b>else</b>
+		<a href="ogre.htm#ogre_bdie1">ogre_bdie1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ogre_melee</b><a name="ogre_melee">=</a>
+{
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+		<a href="ogre.htm#ogre_smash1">ogre_smash1</a> ();
+	<b>else</b>
+		<a href="ogre.htm#ogre_swing1">ogre_swing1</a> ();
+};
+
+
+<i>/*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush
+
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_ogre</b><a name="monster_ogre">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/ogre.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_ogre.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/grenade.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogdrag.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogdth.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogidle.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogidle2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogpain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogsawatk.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ogre/ogwake.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/ogre.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="defs.htm#VEC_HULL2_MIN">VEC_HULL2_MIN</a>, <a href="defs.htm#VEC_HULL2_MAX">VEC_HULL2_MAX</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 200;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="ogre.htm#ogre_stand1">ogre_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="ogre.htm#ogre_walk1">ogre_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="ogre.htm#ogre_run1">ogre_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="ogre.htm#ogre_die">ogre_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> = <a href="ogre.htm#ogre_melee">ogre_melee</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="ogre.htm#ogre_nail1">ogre_nail1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="ogre.htm#ogre_pain">ogre_pain</a>;
+	
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a>();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>monster_ogre_marksman</b><a name="monster_ogre_marksman">=</a>
+{
+	<a href="ogre.htm#monster_ogre">monster_ogre</a> ();
+};
+
+
+
+</pre></body></html>

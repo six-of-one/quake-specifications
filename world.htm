@@ -1,0 +1,400 @@
+<html><head><title>world.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<a href="qc-types.htm#void">void</a>() <a href="world.htm#InitBodyQue">InitBodyQue</a>;
+
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_main">main</a></b><a name="main">=</a>
+{
+	<a href="qc-built.htm#dprint">dprint</a> (<b>"main function\n"</b>);
+	
+<i>// these are just commands the the prog compiler to copy these files</i>
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"progs.dat"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx.wad"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"quake.rc"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"default.cfg"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"end1.bin"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"end2.bin"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"demo1.dem"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"demo2.dem"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"demo3.dem"</b>);
+
+<i>//</i>
+<i>// these are all of the lumps from the cached.ls files</i>
+<i>//</i>
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/palette.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/colormap.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"gfx/pop.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/complete.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/inter.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/ranking.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/vidmodes.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/finale.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/conback.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/qplaque.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot1.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot2.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot3.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot4.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot5.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menudot6.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/menuplyr.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/bigbox.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/dim_modm.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/dim_drct.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/dim_ipx.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/dim_tcp.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/dim_mult.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/mainmenu.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_tl.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_tm.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_tr.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_ml.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_mm.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_mm2.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_mr.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_bl.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_bm.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/box_br.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/sp_menu.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/ttl_sgl.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/ttl_main.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/ttl_cstm.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/mp_menu.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/netmen1.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/netmen2.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/netmen3.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/netmen4.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/netmen5.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/sell.lmp"</b>);
+	
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help0.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help1.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help2.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help3.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help4.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/help5.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/pause.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/loading.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/p_option.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/p_load.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/p_save.lmp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"gfx/p_multi.lmp"</b>);
+
+<i>// sounds loaded by C code</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/menu1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/menu2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/menu3.wav"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/water1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/wind2.wav"</b>);
+
+<i>// shareware</i>
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/start.bsp"</b>);
+
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m1.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m2.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m3.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m4.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m5.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m6.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m7.bsp"</b>);
+	<a href="qc-built.htm#precache_file">precache_file</a> (<b>"maps/e1m8.bsp"</b>);
+
+<i>// registered</i>
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"gfx/pop.lmp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m1.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m2.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m3.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m4.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m5.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m6.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e2m7.bsp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m1.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m2.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m3.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m4.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m5.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m6.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e3m7.bsp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m1.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m2.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m3.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m4.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m5.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m6.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m7.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/e4m8.bsp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/end.bsp"</b>);
+
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm1.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm2.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm3.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm4.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm5.bsp"</b>);
+	<a href="qc-built.htm#precache_file2">precache_file2</a> (<b>"maps/dm6.bsp"</b>);
+};
+
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="lastspawn">lastspawn</a></b>;
+
+<i>//=======================</i>
+<i>/*QUAKED worldspawn (0 0 0) ?
+Only used for the world entity.
+Set message to the level name.
+Set sounds to the cd track to play.
+
+World Types:
+0: medieval
+1: metal
+2: base
+*/</i>
+
+<i>//=======================</i>
+<a href="qc-types.htm#void">void</a>() <b>worldspawn</b><a name="worldspawn">=</a>
+{
+	<a href="world.htm#lastspawn">lastspawn</a> = <a href="qc-glob.htm#world">world</a>;
+	<a href="world.htm#InitBodyQue">InitBodyQue</a> ();
+
+<i>// custom map attributes</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/e1m8.bsp"</b>)
+		<a href="qc-built.htm#cvar_set">cvar_set</a> (<b>"sv_gravity", "100"</b>);
+	<b>else</b>
+		<a href="qc-built.htm#cvar_set">cvar_set</a> (<b>"sv_gravity", "800"</b>);
+
+<i>// the area based ambient sounds MUST be the first precache_sounds</i>
+
+<i>// player precaches	</i>
+	<a href="weapons.htm#W_Precache">W_Precache</a> ();			<i>// get weapon precaches</i>
+
+<i>// sounds used from C physics code</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/dland2.wav"</b>);		<i>// landing thud</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/h2ohit1.wav"</b>);		<i>// landing splash</i>
+
+<i>// setup precaches allways needed</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/itembk2.wav"</b>);		<i>// item respawn sound</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/plyrjmp8.wav"</b>);		<i>// player jump</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/land.wav"</b>);			<i>// player landing</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/land2.wav"</b>);		<i>// player hurt landing</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/drown1.wav"</b>);		<i>// drowning pain</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/drown2.wav"</b>);		<i>// drowning pain</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/gasp1.wav"</b>);		<i>// gasping for air</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/gasp2.wav"</b>);		<i>// taking breath</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/h2odeath.wav"</b>);		<i>// drowning death</i>
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/talk.wav"</b>);			<i>// talk</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/teledth1.wav"</b>);		<i>// telefrag</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/r_tele1.wav"</b>);		<i>// teleport sounds</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/r_tele2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/r_tele3.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/r_tele4.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/r_tele5.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/lock4.wav"</b>);		<i>// ammo pick up</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/pkup.wav"</b>);		<i>// weapon up</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/armor1.wav"</b>);		<i>// armor up</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/lhit.wav"</b>);		<i>//lightning</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/lstart.wav"</b>);		<i>//lightning start</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/damage3.wav"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/power.wav"</b>);			<i>//lightning for boss</i>
+
+<i>// player gib sounds</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/gib.wav"</b>);			<i>// player gib sound</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/udeath.wav"</b>);		<i>// player gib sound</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/tornoff2.wav"</b>);		<i>// gib sound</i>
+
+<i>// player pain sounds</i>
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain3.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain4.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain5.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/pain6.wav"</b>);
+
+<i>// player death sounds</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/death1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/death2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/death3.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/death4.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/death5.wav"</b>);
+
+<i>// ax sounds	</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/ax1.wav"</b>);			<i>// ax swoosh</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/axhit1.wav"</b>);		<i>// ax hit meat</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/axhit2.wav"</b>);		<i>// ax hit world</i>
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/h2ojump.wav"</b>);		<i>// player jumping into water</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/slimbrn2.wav"</b>);		<i>// player enter slime</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/inh2o.wav"</b>);		<i>// player enter water</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/inlava.wav"</b>);		<i>// player enter lava</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/outwater.wav"</b>);		<i>// leaving water sound</i>
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/lburn1.wav"</b>);		<i>// lava burn</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/lburn2.wav"</b>);		<i>// lava burn</i>
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/water1.wav"</b>);			<i>// swimming</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/water2.wav"</b>);			<i>// swimming</i>
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/player.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/eyes.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_player.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib1.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib2.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib3.mdl"</b>);
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/s_bubble.spr"</b>);	<i>// drowning bubbles</i>
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/s_explod.spr"</b>);	<i>// sprite explosion</i>
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_axe.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_shot.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_nail.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_rock.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_shot2.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_nail2.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_rock2.mdl"</b>);
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/bolt.mdl"</b>);		<i>// for lightning gun</i>
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/bolt2.mdl"</b>);		<i>// for lightning gun</i>
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/bolt3.mdl"</b>);		<i>// for boss shock</i>
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/lavaball.mdl"</b>);	<i>// for testing</i>
+	
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/missile.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/grenade.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/spike.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/s_spike.mdl"</b>);
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/backpack.mdl"</b>);
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/zom_gib.mdl"</b>);
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/v_light.mdl"</b>);
+	
+
+<i>//</i>
+<i>// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.</i>
+<i>//</i>
+
+	<i>// 0 normal</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"m"</b>);
+	
+	<i>// 1 FLICKER (first variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(1, <b>"mmnmmommommnonmmonqnmmo"</b>);
+	
+	<i>// 2 SLOW STRONG PULSE</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(2, <b>"abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba"</b>);
+	
+	<i>// 3 CANDLE (first variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(3, <b>"mmmmmaaaaammmmmaaaaaabcdefgabcdefg"</b>);
+	
+	<i>// 4 FAST STROBE</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(4, <b>"mamamamamama"</b>);
+	
+	<i>// 5 GENTLE PULSE 1</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(5,<b>"jklmnopqrstuvwxyzyxwvutsrqponmlkj"</b>);
+	
+	<i>// 6 FLICKER (second variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(6, <b>"nmonqnmomnmomomno"</b>);
+	
+	<i>// 7 CANDLE (second variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(7, <b>"mmmaaaabcdefgmmmmaaaammmaamm"</b>);
+	
+	<i>// 8 CANDLE (third variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(8, <b>"mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa"</b>);
+	
+	<i>// 9 SLOW STROBE (fourth variety)</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(9, <b>"aaaaaaaazzzzzzzz"</b>);
+	
+	<i>// 10 FLUORESCENT FLICKER</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(10, <b>"mmamammmmammamamaaamammma"</b>);
+
+	<i>// 11 SLOW PULSE NOT FADE TO BLACK</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(11, <b>"abcdefghijklmnopqrrqponmlkjihgfedcba"</b>);
+	
+	<i>// styles 32-62 are assigned by the light program for switchable lights</i>
+
+	<i>// 63 testing</i>
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(63, <b>"a"</b>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_StartFrame">StartFrame</a></b><a name="StartFrame">=</a>
+{
+	<a href="qc-glob.htm#teamplay">teamplay</a> = <a href="qc-built.htm#cvar">cvar</a>(<b>"teamplay"</b>);
+	<a href="defs.htm#skill">skill</a> = <a href="qc-built.htm#cvar">cvar</a>(<b>"skill"</b>);
+	<a href="defs.htm#framecount">framecount</a> = <a href="defs.htm#framecount">framecount</a> + 1;
+};
+
+<i>/*
+==============================================================================
+
+BODY QUE
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="bodyque_head">bodyque_head</a></b>;
+
+<a href="qc-types.htm#void">void</a>() <b>bodyque</b><a name="bodyque">=</a>
+{	<i>// just here so spawn functions don't complain after the world</i>
+	<i>// creates bodyques</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>InitBodyQue</b><a name="InitBodyQue">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	e;
+	
+	<a href="world.htm#bodyque_head">bodyque_head</a> = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bodyque"</b>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bodyque"</b>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bodyque"</b>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bodyque"</b>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="world.htm#bodyque_head">bodyque_head</a>;
+};
+
+
+<i>// make a body que entry for the given ent so the ent can be</i>
+<i>// respawned elsewhere</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> ent) <b>CopyToBodyQue</b><a name="CopyToBodyQue">=</a>
+{
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_angles">angles</a> = ent.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_model">model</a> = ent.<a href="qc-enty.htm#dot_model">model</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = ent.<a href="qc-enty.htm#dot_modelindex">modelindex</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_frame">frame</a> = ent.<a href="qc-enty.htm#dot_frame">frame</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_colormap">colormap</a> = ent.<a href="qc-enty.htm#dot_colormap">colormap</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = ent.<a href="qc-enty.htm#dot_movetype">movetype</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = ent.<a href="qc-enty.htm#dot_velocity">velocity</a>;
+	<a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_flags">flags</a> = 0;
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="world.htm#bodyque_head">bodyque_head</a>, ent.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="world.htm#bodyque_head">bodyque_head</a>, ent.<a href="qc-enty.htm#dot_mins">mins</a>, ent.<a href="qc-enty.htm#dot_maxs">maxs</a>);
+	<a href="world.htm#bodyque_head">bodyque_head</a> = <a href="world.htm#bodyque_head">bodyque_head</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+};
+
+
+
+</pre></body></html>

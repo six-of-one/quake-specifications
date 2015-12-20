@@ -1,0 +1,292 @@
+<html><head><title>soldier.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+SOLDIER / PLAYER
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/soldier3</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 -6 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base		</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death9 death10</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathc1 deathc2 deathc3 deathc4 deathc5 deathc6 deathc7 deathc8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathc9 deathc10 deathc11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>load1 load2 load3 load4 load5 load6 load7 load8 load9 load10 load11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 pain6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3 painb4 painb5 painb6 painb7 painb8 painb9 painb10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb11 painb12 painb13 painb14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8 painc9 painc10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc11 painc12 painc13</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6 run7 run8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shoot1 shoot2 shoot3 shoot4 shoot5 shoot6 shoot7 shoot8 shoot9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>prowl_1 prowl_2 prowl_3 prowl_4 prowl_5 prowl_6 prowl_7 prowl_8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>prowl_9 prowl_10 prowl_11 prowl_12 prowl_13 prowl_14 prowl_15 prowl_16</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>prowl_17 prowl_18 prowl_19 prowl_20 prowl_21 prowl_22 prowl_23 prowl_24</b>
+
+<i>/*
+==============================================================================
+SOLDIER CODE
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="soldier.htm#army_fire">army_fire</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>army_stand1</b><a name="army_stand1">=</a>[	$stand1,	army_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand2</b><a name="army_stand2">=</a>[	$stand2,	army_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand3</b><a name="army_stand3">=</a>[	$stand3,	army_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand4</b><a name="army_stand4">=</a>[	$stand4,	army_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand5</b><a name="army_stand5">=</a>[	$stand5,	army_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand6</b><a name="army_stand6">=</a>[	$stand6,	army_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand7</b><a name="army_stand7">=</a>[	$stand7,	army_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_stand8</b><a name="army_stand8">=</a>[	$stand8,	<a href="soldier.htm#army_stand1">army_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>army_walk1</b><a name="army_walk1">=</a>[	$prowl_1,	army_walk2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk2</b><a name="army_walk2">=</a>[	$prowl_2,	army_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk3</b><a name="army_walk3">=</a>[	$prowl_3,	army_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk4</b><a name="army_walk4">=</a>[	$prowl_4,	army_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk5</b><a name="army_walk5">=</a>[	$prowl_5,	army_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk6</b><a name="army_walk6">=</a>[	$prowl_6,	army_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk7</b><a name="army_walk7">=</a>[	$prowl_7,	army_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk8</b><a name="army_walk8">=</a>[	$prowl_8,	army_walk9	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk9</b><a name="army_walk9">=</a>[	$prowl_9,	army_walk10	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk10</b><a name="army_walk10">=</a>[	$prowl_10,	army_walk11	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk11</b><a name="army_walk11">=</a>[	$prowl_11,	army_walk12	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk12</b><a name="army_walk12">=</a>[	$prowl_12,	army_walk13	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk13</b><a name="army_walk13">=</a>[	$prowl_13,	army_walk14	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk14</b><a name="army_walk14">=</a>[	$prowl_14,	army_walk15	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk15</b><a name="army_walk15">=</a>[	$prowl_15,	army_walk16	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk16</b><a name="army_walk16">=</a>[	$prowl_16,	army_walk17	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk17</b><a name="army_walk17">=</a>[	$prowl_17,	army_walk18	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk18</b><a name="army_walk18">=</a>[	$prowl_18,	army_walk19	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk19</b><a name="army_walk19">=</a>[	$prowl_19,	army_walk20	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk20</b><a name="army_walk20">=</a>[	$prowl_20,	army_walk21	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk21</b><a name="army_walk21">=</a>[	$prowl_21,	army_walk22	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk22</b><a name="army_walk22">=</a>[	$prowl_22,	army_walk23	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk23</b><a name="army_walk23">=</a>[	$prowl_23,	army_walk24	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_walk24</b><a name="army_walk24">=</a>[	$prowl_24,	<a href="soldier.htm#army_walk1">army_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+
+<a href="qc-types.htm#void">void</a>() <b>army_run1</b><a name="army_run1">=</a>[	$run1,		army_run2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(11);};
+<a href="qc-types.htm#void">void</a>() <b>army_run2</b><a name="army_run2">=</a>[	$run2,		army_run3	] {<a href="ai.htm#ai_run">ai_run</a>(15);};
+<a href="qc-types.htm#void">void</a>() <b>army_run3</b><a name="army_run3">=</a>[	$run3,		army_run4	] {<a href="ai.htm#ai_run">ai_run</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>army_run4</b><a name="army_run4">=</a>[	$run4,		army_run5	] {<a href="ai.htm#ai_run">ai_run</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>army_run5</b><a name="army_run5">=</a>[	$run5,		army_run6	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>army_run6</b><a name="army_run6">=</a>[	$run6,		army_run7	] {<a href="ai.htm#ai_run">ai_run</a>(15);};
+<a href="qc-types.htm#void">void</a>() <b>army_run7</b><a name="army_run7">=</a>[	$run7,		army_run8	] {<a href="ai.htm#ai_run">ai_run</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>army_run8</b><a name="army_run8">=</a>[	$run8,		<a href="soldier.htm#army_run1">army_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+
+<a href="qc-types.htm#void">void</a>() <b>army_atk1</b><a name="army_atk1">=</a>[	$shoot1,	army_atk2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk2</b><a name="army_atk2">=</a>[	$shoot2,	army_atk3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk3</b><a name="army_atk3">=</a>[	$shoot3,	army_atk4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk4</b><a name="army_atk4">=</a>[	$shoot4,	army_atk5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk5</b><a name="army_atk5">=</a>[	$shoot5,	army_atk6	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="soldier.htm#army_fire">army_fire</a>();
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;};
+<a href="qc-types.htm#void">void</a>() <b>army_atk6</b><a name="army_atk6">=</a>[	$shoot6,	army_atk7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk7</b><a name="army_atk7">=</a>[	$shoot7,	army_atk8	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="subs.htm#SUB_CheckRefire">SUB_CheckRefire</a> (<a href="soldier.htm#army_atk1">army_atk1</a>);};
+<a href="qc-types.htm#void">void</a>() <b>army_atk8</b><a name="army_atk8">=</a>[	$shoot8,	army_atk9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_atk9</b><a name="army_atk9">=</a>[	$shoot9,	<a href="soldier.htm#army_run1">army_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();};
+
+
+<a href="qc-types.htm#void">void</a>() <b>army_pain1</b><a name="army_pain1">=</a>[	$pain1,		army_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_pain2</b><a name="army_pain2">=</a>[	$pain2,		army_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_pain3</b><a name="army_pain3">=</a>[	$pain3,		army_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_pain4</b><a name="army_pain4">=</a>[	$pain4,		army_pain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_pain5</b><a name="army_pain5">=</a>[	$pain5,		army_pain6	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_pain6</b><a name="army_pain6">=</a>[	$pain6,		<a href="soldier.htm#army_run1">army_run1</a>	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+
+<a href="qc-types.htm#void">void</a>() <b>army_painb1</b><a name="army_painb1">=</a>[	$painb1,	army_painb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb2</b><a name="army_painb2">=</a>[	$painb2,	army_painb3	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(13);};
+<a href="qc-types.htm#void">void</a>() <b>army_painb3</b><a name="army_painb3">=</a>[	$painb3,	army_painb4	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(9);};
+<a href="qc-types.htm#void">void</a>() <b>army_painb4</b><a name="army_painb4">=</a>[	$painb4,	army_painb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb5</b><a name="army_painb5">=</a>[	$painb5,	army_painb6	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb6</b><a name="army_painb6">=</a>[	$painb6,	army_painb7	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb7</b><a name="army_painb7">=</a>[	$painb7,	army_painb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb8</b><a name="army_painb8">=</a>[	$painb8,	army_painb9	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb9</b><a name="army_painb9">=</a>[	$painb9,	army_painb10] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb10</b><a name="army_painb10">=</a>[	$painb10,	army_painb11] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb11</b><a name="army_painb11">=</a>[	$painb11,	army_painb12] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb12</b><a name="army_painb12">=</a>[	$painb12,	army_painb13] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>army_painb13</b><a name="army_painb13">=</a>[	$painb13,	army_painb14] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painb14</b><a name="army_painb14">=</a>[	$painb14,	<a href="soldier.htm#army_run1">army_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>army_painc1</b><a name="army_painc1">=</a>[	$painc1,	army_painc2	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painc2</b><a name="army_painc2">=</a>[	$painc2,	army_painc3	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc3</b><a name="army_painc3">=</a>[	$painc3,	army_painc4	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painc4</b><a name="army_painc4">=</a>[	$painc4,	army_painc5	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painc5</b><a name="army_painc5">=</a>[	$painc5,	army_painc6	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc6</b><a name="army_painc6">=</a>[	$painc6,	army_painc7	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc7</b><a name="army_painc7">=</a>[	$painc7,	army_painc8	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_painc8</b><a name="army_painc8">=</a>[	$painc8,	army_painc9	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc9</b><a name="army_painc9">=</a>[	$painc9,	army_painc10] {<a href="ai.htm#ai_painforward">ai_painforward</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc10</b><a name="army_painc10">=</a>[	$painc10,	army_painc11] {<a href="ai.htm#ai_painforward">ai_painforward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc11</b><a name="army_painc11">=</a>[	$painc11,	army_painc12] {<a href="ai.htm#ai_painforward">ai_painforward</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc12</b><a name="army_painc12">=</a>[	$painc12,	army_painc13] {<a href="ai.htm#ai_painforward">ai_painforward</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>army_painc13</b><a name="army_painc13">=</a>[	$painc13,	<a href="soldier.htm#army_run1">army_run1</a>] {};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>army_pain</b><a name="army_pain">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> r;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	r = <a href="qc-built.htm#random">random</a>();
+
+	<b>if</b> (r &lt; 0.2)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.6;
+		<a href="soldier.htm#army_pain1">army_pain1</a> ();
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/pain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.6)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1.1;
+		<a href="soldier.htm#army_painb1">army_painb1</a> ();
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/pain2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1.1;
+		<a href="soldier.htm#army_painc1">army_painc1</a> ();
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/pain2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>army_fire</b><a name="army_fire">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dir;
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	en;
+	
+	<a href="fight.htm#ai_face">ai_face</a>();
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"soldier/sattck1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	
+
+<i>// fire somewhat behind the player, so a dodging player is harder to hit</i>
+	en = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+	dir = en.<a href="qc-enty.htm#dot_origin">origin</a> - en.<a href="qc-enty.htm#dot_velocity">velocity</a>*0.2;
+	dir = <a href="qc-built.htm#normalize">normalize</a> (dir - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	
+	<a href="weapons.htm#FireBullets">FireBullets</a> (4, dir, '0.1 0.1 0');
+};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>army_die1</b><a name="army_die1">=</a>[	$death1,	army_die2	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die2</b><a name="army_die2">=</a>[	$death2,	army_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die3</b><a name="army_die3">=</a>[	$death3,	army_die4	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = 5;<a href="items.htm#DropBackpack">DropBackpack</a>();};
+<a href="qc-types.htm#void">void</a>() <b>army_die4</b><a name="army_die4">=</a>[	$death4,	army_die5	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die5</b><a name="army_die5">=</a>[	$death5,	army_die6	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die6</b><a name="army_die6">=</a>[	$death6,	army_die7	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die7</b><a name="army_die7">=</a>[	$death7,	army_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die8</b><a name="army_die8">=</a>[	$death8,	army_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die9</b><a name="army_die9">=</a>[	$death9,	army_die10	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_die10</b><a name="army_die10">=</a>[	$death10,	<a href="soldier.htm#army_die10">army_die10</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>army_cdie1</b><a name="army_cdie1">=</a>[	$deathc1,	army_cdie2	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie2</b><a name="army_cdie2">=</a>[	$deathc2,	army_cdie3	] {<a href="ai.htm#ai_back">ai_back</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie3</b><a name="army_cdie3">=</a>[	$deathc3,	army_cdie4	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = 5;<a href="items.htm#DropBackpack">DropBackpack</a>();<a href="ai.htm#ai_back">ai_back</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie4</b><a name="army_cdie4">=</a>[	$deathc4,	army_cdie5	] {<a href="ai.htm#ai_back">ai_back</a>(13);};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie5</b><a name="army_cdie5">=</a>[	$deathc5,	army_cdie6	] {<a href="ai.htm#ai_back">ai_back</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie6</b><a name="army_cdie6">=</a>[	$deathc6,	army_cdie7	] {<a href="ai.htm#ai_back">ai_back</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie7</b><a name="army_cdie7">=</a>[	$deathc7,	army_cdie8	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie8</b><a name="army_cdie8">=</a>[	$deathc8,	army_cdie9	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie9</b><a name="army_cdie9">=</a>[	$deathc9,	army_cdie10	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie10</b><a name="army_cdie10">=</a>[	$deathc10,	army_cdie11	] {};
+<a href="qc-types.htm#void">void</a>() <b>army_cdie11</b><a name="army_cdie11">=</a>[	$deathc11,	<a href="soldier.htm#army_cdie11">army_cdie11</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>army_die</b><a name="army_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -35)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_guard.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+<i>// regular death</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/death1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+		<a href="soldier.htm#army_die1">army_die1</a> ();
+	<b>else</b>
+		<a href="soldier.htm#army_cdie1">army_cdie1</a> ();
+};
+
+
+<i>/*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_army</b><a name="monster_army">=</a>
+{	
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/soldier.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_guard.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib1.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib2.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/gib3.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/death1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/idle.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/pain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/pain2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/sattck1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"soldier/sight1.wav"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"player/udeath.wav"</b>);		<i>// gib death</i>
+
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/soldier.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 30;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="soldier.htm#army_stand1">army_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="soldier.htm#army_walk1">army_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="soldier.htm#army_run1">army_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="soldier.htm#army_atk1">army_atk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="soldier.htm#army_pain">army_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="soldier.htm#army_die">army_die</a>;
+
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a> ();
+};
+
+</pre></body></html>

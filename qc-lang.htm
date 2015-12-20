@@ -1,0 +1,249 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-LANG">1. The Quake-C Language</A></FONT></H1>
+
+<p>This is a <b>very crude manual</b> of Quake-C. It is rather
+<b>incomplete</b>.
+
+<h2><A NAME="QC-LBC">1.1 Comments, names and types</A></h2>
+
+<h4>Comments</h4>
+
+<ul>
+<li> <b>//</b> followed by comments, until the next line.
+<li> <b>/*</b> enclose a block comments </b>*/</b>
+</ul>
+Those comments are the same as in C++ (and many C languages).
+
+<h4>Names</h4>
+
+<p>Names of variable, fields, or functions have a <b>maximum of 64</b> 
+characters, must begin with A-Z,a-z, or _, and can continue with those 
+characters or 0-9.</p>
+
+<h4>Definition of new types</h4>
+ 
+<p>Let's start with the bad news: it is impossible, in Quake-C, to define new
+types. That means for instance that you cannot create a type named
+<b>ammo</b>, derived from <a href="qc-types.htm#float" target="content">float</a>, that will only
+be used to store ammo count. So much for the clean programming habits.</p>
+
+<h4>Definition of structures and objects</h4>
+
+<p>It is often convenient, in C (or C++), to create new structures (or Objects,
+ or record) to store a few related informations at the same place.
+For instance, you may wish to use a single structure to store all the ammo
+count of the player, and also the current selected weapon, since those
+informations are obviously related to each other.</p>
+
+<p>Though both <a href="qc-types.htm#entity" target="content">entity</a> and <a href="qc-types.htm#vector" target="content">vector</a>
+are obviously structured types, it is impossible to create new structured
+types of that kind, in Quake-C. However, the entity type <a href="qc-types.htm#QC-TFLD" target="content">
+can be modified</a>to suit some of your needs.</p>
+ 
+
+ 
+<h2><A NAME="QC-LVAR">1.2 Constants and variables</A></h2>
+
+
+<h4>Definition of variables</h4>
+
+<p>The general form of variable definitions is:
+<pre>
+    <b><a href="qc-types.htm#QC-TSMP" target="content">type</a> <i>variable1</i>, <i>variable2</i>;</b>
+</pre>
+where <b>type</b> is one of the pre-defined
+<a href="qc-types.htm#QC-TSMP" target="content">simple types</a>.</p>
+
+
+<p><b>Scoping of variables:</b> There are two levels of scoping.
+By default all variables are global: they can be accessed by any functions,
+and they are shared by all the functions (and all the clients of a given
+network server, of course).
+</p>
+<p>But inside the functions, using the keyword <b>local</b> just before the
+declaration of a variable, you can make this variable visible only the
+the function itself (i.e. it will be allocated on the stack).
+</p>
+<p>Note that parameters of a functions are treated like local variables,
+they are only visible to the function, but they can be modified.
+</p>
+
+<h4>Definitions of constants</h4>
+
+<p>Any global variable that is initialised by setting a value to it is
+actually assumed to be a constant.</p>
+
+<p>The general form of definition of constants is then:
+<pre>
+    <a href="qc-types.htm#QC-TSMP" target="content">type</a> <i>variable1</i> = <i>value</i>;
+</pre>
+</p>
+<p>Note that though it looks like a definition of variable, with a default
+initial value, is is <b>totally different</b>. There is no memory reserved
+for constants, and they are not saved to game files (only regular variables
+are).
+</p>
+<p>To make matters worse, if you use a constant like a variable, and try
+to affect a new value to it... well, it's very likely that you will
+cause troubles to the program (malfunctions, or crashes).
+So <b>never</b> modify the value of a constant.
+</p>
+
+<H2><A NAME="QC-LOPS">1.3 Operations</A></H2>
+
+<h4>Logical operations</h4>
+<pre>
+     !   // logical not
+     &&  // logical and
+     ||  // logical or
+</pre>
+<p>Take care that in <b>if()</b> conditional expressions containing two
+or more logical clauses, all the clauses will be evaluated before the
+condition test (like in Basic, and unlike C).
+</p>
+<p>That means that if one part of your condition is not always valid or defined,
+you had better decompose your <b>if()</b> into two successive <b>if()</b>.
+It should also make it faster.
+</p>
+
+<h4>Comparisons</h4>
+<pre>
+     <=    <      >=     >  
+     ==  // equal, beware at the double <b>=</b> like in C.
+     !=  // not equal, like in C.
+</pre>
+
+<h4>Operations on floats or integer</h4>
+
+<p><pre>
+     *  /  -  +
+</pre>
+Use parenthesis to remove ambiguities.</p>
+
+<p>Those operators perform bitwise operations on integers:
+<pre>
+    &   // bitwise and
+    |   // bitwise or
+</pre>
+These operators treat floats like integers, so they are usually
+meant to be used with values made of bit masks.</p>
+
+
+
+<h2><A NAME="QC-LFUN">1.4 Definition of Functions</A></h2>
+
+<h4>Ordinary functions</h4>
+
+<p>
+The general structure of a function definition is:
+<pre>
+    <a href="qc-types.htm#QC-TSMP" target="content">type</a> <b>(</b><a href="qc-types.htm#QC-TSMP" target="content">type</a> <i>param1</i>, <a href="qc-types.htm#QC-TSMP" target="content">type</a><i>param2</i>, ... <b>)</b> <i>function</i> =
+    {
+       <i>... code ...</i>
+       <b>return</b> <i>expression</i>;
+    }<b>;</b>
+</pre>
+Notes: 
+<ul>
+<li> Do not forget the <b>;</b> after the ending brackets.
+<li> The <b>return</b> statement can be used more than once, anywhere
+     in the function.
+<li> The expresion in a return statement must of course be of the same type
+     as the return value of the fuction.
+<li> If the return type is <a href="qc-types.htm#void" target="content">void</a>, then you can omit
+     the return statement.
+</ul>
+</p>
+
+<p>Here are some examples:
+<pre>
+    void ()	<i>think</i> = {...}<b>;</b>
+    entity ()	<i>FindTarget</i> = {...}<b>;</b>
+    void(vector <i>destination</i>, float <i>speed</i>, void() <i>callback</i>)  <i>SUB_CalcMove</i> = {...}<b>;</b>
+</pre>
+</p>
+
+<h4>Function calls</h4>
+
+<p>Here is how a function is called in Quake-C:
+<pre>
+    <i>function_name</i> ( <i>parameter1</i>, <i>parameter2</i>,... )
+</pre>
+The cannot be more than 8 parameters.
+</p>
+
+
+<h4>Function declaration</h4>
+
+<p>
+If you want to use a function before defining it,
+you must declare it, otherwise the Quake-C compiler
+will not be able to use it.</p>
+<p>
+The general structure of a function declaration is:
+<pre>
+    <a href="qc-types.htm#QC-TSMP" target="content">type</a> <b>(</b><a href="qc-types.htm#QC-TSMP" target="content">type</a> <i>param1</i>, <a href="qc-types.htm#QC-TSMP" target="content">type</a><i>param2</i>, ... <b>)</b> <i>function</i><b>;</b>
+</pre>
+</p>
+
+
+<h4>Definition of a frame function</h4>
+
+<p>Frame functions (also called <i>States</i>) are special functions 
+that are meant to facilitate the <a href="qc-mdl.htm#QC-MDL" target="content">definition of models</a>
+animation frames.</p>
+
+<p>Here is an example:
+<pre>
+    void() <i>framename</i> = [<i>$framenum</i>, <i>nextthink</i>] { <i>...code...</i>};
+</pre>
+It is strictly equivalent to:
+<pre>
+    void() <i>framename</i> =
+    {
+       self.frame= <i>$framenum</i>;  // the model frame to displayed
+       self.nextthink = time + 0.1;   // next frame happens in 1/10 of second
+       self.think = <i>nextthink</i>; // the function to call at the next frame
+       <i>...code...</i>
+    };
+</pre>
+</p>
+
+
+<hr>
+
+<h2><A NAME="QC-LOOP">1.5 Loops and conditions</A></h2>
+
+<h4>Conditional construct</h4>
+<pre>
+    <b>if</b>( <i>expression</i> )
+    {
+      <i>statements</i>
+    }
+    <b>else</b>
+    {
+      <i>statements</i>
+    }
+</pre>
+
+<h4>Loop construct</h4>
+<pre>
+    <b>while</b>( <i>expression</i> )
+    {
+      <i>statements</i>
+    }
+</pre>
+or
+<pre>
+    <b>do</b>
+    { 
+      <i>statements</i>
+    }<b>while</b>( <i>expression</i> )
+</pre>
+
+</BODY></HTML>

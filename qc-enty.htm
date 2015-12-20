@@ -1,0 +1,462 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-ENTY">6. Quake-C Entity Definition</A></FONT></H1>
+
+
+<p><i>Part of this information is derived from the DEM file specs 1.0.2 
+by <b>Uwe Girlich</b>.</i>
+</p>
+<p>In Quake, monsters, players, items, and the level itself are all entities.
+There are three kind of entities, and you will all encounter them
+in Quake-C code.
+</p>
+
+<h2><A NAME="QC-ETYP">6.1 Types of entities</A></h2>
+
+<h3><A NAME="qkc_static">Static entities</A></h3>
+
+<p>A static entity doesn't interact with the rest of the game. These are
+flames (progs/flame.mdl), lights, illusionary objects, and the like. 
+It is never be necessary to reference such an entity, so they don't get an 
+entity reference number.
+</p>
+
+<p>A static entity will be created by the function:
+<pre>
+<a href="qc-built.htm#makestatic" target="content">makestatic</a>()
+</pre>
+(it causes a spawnstatic message to be sent to every client).<br>
+A static entity cannot be removed, once created.
+</p>
+<p> The <b>maximum</b> number of static entities is <b>127</b>.
+</p>
+
+<h3><A NAME="qkc_temporary">Temporary entities</A></h3>
+
+<p>A temporary entity  is a short life time entity. For instance, Quake
+ uses these entities for hits on the wall (point-like entities)
+ or for the Thunderbolt flash (line-like entities), gun shots,
+ and anything that is not supposed to last more than one frame.
+</p>
+  
+<p>A temporary entity will be created by sending a valid 
+<a href="qc-net.htm#msg_temporary" target="content">temporary</a> entity message.<br>
+A temporary entity need not be removed, it disapears by itself.
+</p>
+
+
+<h3><A NAME="qkc_dynamic">Dynamic entities</A></h3>
+
+<p>A dynamic entity is anything which changes its behaviour or its
+appearance.  These are ammunition boxes, spinning armors, player
+models and the like.
+</p>
+<p>A dynamic entity will be created by the sequence:
+<pre>
+<b>entity</b> = <a href="qc-built.htm#spawn" target="content">spawn</a>();
+<a href="qc-built.htm#setmodel" target="content">setmodel</a>( <b>entity</b>, "progs/entity.mdl" );
+<a href="qc-built.htm#setsize" target="content">setsize</a>( <b>entity</b>, <i>vector_min</i>, <i>vector_max</i>);      
+<a href="qc-built.htm#setorigin" target="content">setorigin</a>( <b>entity</b>, <i>position</i> );      
+</pre>
+It will  have to be removed by the function:
+<pre>
+<a href="qc-built.htm#remove" target="content">remove</a>( <b>entity</b> );
+</pre>
+</p>
+<p> The maximum number of dynamic entities is <b>449</b>.
+</p>
+
+
+
+
+<h2><A NAME="QC-EFLD">6.2 Definition of entity fields</A></h2>
+
+<p>These are the fields that are available in the entity objects
+(like self, other). Beware that this is not true object oriented
+programming: there is no protection when accessing those fields,
+and no guaranty on the validity of values. So if you put garbage
+there you will probably crash the game.
+</p>
+<p>You can add custom fields (for instance, to store
+the ammo count of a new weapon you created) but those fields
+must <b>not</b> be situated among thoses that are common between 
+Quake-C and Quake.exe. Otherwise, Quake.exe would have to be
+re-compiled. So those fields must be situated after the fake
+variable called <b>end_sys_fields</b>, in the field definitions.
+</p>
+
+
+<h3>Fields shared between Quake.exe and Quake-C</h3>
+
+<p>These fields describe the most common entity fields. They are shared 
+between the C code of Quake.exe, and the Quake-C code of <b>PROGS.DAT</b>.
+</p>
+<p>Some of the fields are managed by the C code: you can read their value, but
+<b>YOU SHOULD NEVER MODIFY THEIR VALUE DIRECTLY</b> (there are special
+built-in functions for that).
+</p>
+<p>Please <b>only</b> modify those fields that are indicated in <b>boldface</b>.
+</p>
+
+<h5>Technical data</h5>
+
+<p><pre>
+entity  <b><a name="dot_chain">chain</a></b>;                 // next entity, in a chain list of entities
+float   <b><a name="dot_ltime">ltime</a></b>;                 // local time for entity
+float   <b><a name="dot_teleport_time">teleport_time</a></b>;         // to avoid backing up
+float   <a name="dot_spawnflags">spawnflags</a>;            // see <a href="qc-defs.htm#d_spawnflags" target="content">possible values</a>. 
+</pre>
+</p>
+
+<h5>Appearance of entity</h5>
+
+<p><pre>
+float   <a name="dot_modelindex">modelindex</a>;            // index of model, in the precached list
+string  <b><a name="dot_classname">classname</a></b>;             // spawn function
+</pre>
+</p>
+<p><pre>
+string  <b><a name="dot_model">model</a></b>;
+</pre>
+The name of the file that contains the entity model.
+</p>
+ 
+<p><pre>
+float   <b><a name="dot_frame">frame</a></b>; 
+</pre>
+This is the index of the currently displayed model frame.
+Frames must be defined by a <a href="qc-mdl.htm#s_frame" target="content">$frame</a> construct in the model file,
+and manipulated in the code as <b>$xxx</b> (where xxx is the name of the frame).
+</p>
+
+<p><pre>
+float   <b><a name="dot_skin">skin</a></b>;
+</pre>
+This is the index of the model skin currently displayed.
+If your model has more than one skin defined, then this value indicates the 
+skin in use. You can change it freely, as long as it remains in a valid range.
+For instance, it's used by the armor model to show the yellow, red or green skin.
+</p>
+
+<p><pre>
+float   <b><a name="dot_effects">effects</a></b>;
+</pre>
+This is a flag that defines the special light <a href="qc-defs.htm#d_effects" target="content">effects</a> that 
+the entity is subject to. This can supposedly be used to make an entity 
+glow, or to create a glowing field of dots around it.</p>
+
+
+<h5>Position in 3D</h5>
+<p><pre> 
+vector  <a name="dot_origin">origin</a>;                 // position of model
+    //  <a name="dot_origin_x">origin_x</a>, <a name="dot_origin_y">origin_y</a>, <a name="dot_origin_z">origin_z</a>
+vector  <a name="dot_mins">mins</a>;                   // bounding box extents reletive to origin
+    //  mins_x, mins_y, mins_z
+vector  <a name="dot_maxs">maxs</a>;                   // bounding box extents reletive to origin
+    //  maxs_x, maxs_y, maxs_z
+vector  <a name="dot_size">size</a>;                   // maxs - mins
+    //  <a name="dot_size_x">size_x</a>,<a name="dot_size_y">size_y</a>,<a name="dot_size_z">size_z</a>
+vector  <a name="dot_absmin">absmin</a>;                 // origin + mins and maxs
+    //  absmin_x absmin_y absmin_z
+vector  <a name="dot_absmax">absmax</a>;                 // origin + mins and maxs
+    //  absmax_x absmax_y absmax_z
+vector  <a name="dot_oldorigin">oldorigin</a>;              // old position
+vector  <b><a name="dot_angles">angles</a></b>;                 // = 'pitch_angle yaw_angle flip_angle'
+</pre>
+</p>
+<p>Quirks: setting the angles on a player entity doesn't work.</p>
+
+<h5>Situation of the entity</h5>
+
+<p><pre>
+float   <b><a name="dot_waterlevel">waterlevel</a></b>;             // 0 = not in water, 1 = feet, 2 = waist, 3 = eyes
+float   <b><a name="dot_watertype">watertype</a></b>;              // a <a href="qc-defs.htm#d_contents" target="content">content</a> value
+entity  <b><a name="dot_groundentity">groundentity</a></b>;           // indicates that the entity moves on the ground
+</pre>
+</p>
+<p>Since groundentity is used nowhere in progs, it's meaning is just a wild guess
+from a similar field in messages.</p>
+
+
+<h5>Movement in 3D</h5>
+<p><pre>
+vector  <b><a name="dot_velocity">velocity</a></b>;               // = 'speed_x      speed_y    speed_z'
+vector  <b><a name="dot_avelocity">avelocity</a></b>;              // = 'pitch_speed yaw_speed 0', angle velocity
+vector  <b><a name="dot_punchangle">punchangle</a></b>;             // temp angle adjust from damage or recoil
+float   <b><a name="dot_movetype">movetype</a></b>;               // <a href="qc-defs.htm#d_movetype" target="content">type</a> of movement
+float   <b><a name="dot_yawspeed">yaw_speed</a></b>;              // rotation speed
+float   <b><a name="dot_solid">solid</a></b>;                  // tell if entity <a href="qc-defs.htm#d_solid" target="content">can block</a> the movements.
+</pre>
+</p>
+
+<h5>Monster's Behavior</h5>
+<pre>
+entity  <b><a name="dot_goalentity">goalentity</a></b>;             // Monster's movetarget or enemy
+float   <b><a name="dot_ideal_yaw">ideal_yaw</a></b>;              // Monster's ideal direction, on paths
+float   <b><a name="dot_yaw_speed">yaw_speed</a></b>;              // Monster's yaw speed.
+string  <b><a name="dot_target">target</a></b>;                 // Target of a monster 
+string  <b><a name="dot_targetname">targetname</a></b>;             // name of the target
+</pre>
+
+<h5>Automatic Behavior</h5>
+<p><pre>
+float   <b><a name="dot_nextthink">nextthink</a></b>;              // next time when entity must act
+void()  <b><a name="dot_think">think</a></b>;                  // function invoked when entity must act
+void()  <b><a name="dot_touch">touch</a></b>;                  // function invoked if entity is touched
+void()  <b><a name="dot_use">use</a></b>;                    // function invoked if entity is used
+void()  <b><a name="dot_blocked">blocked</a></b>;                // function for doors or plats, called when can't push other
+vector  <b><a name="dot_movedir">movedir</a></b>;                // mostly for doors, but also used for waterjump
+string  <b><a name="dot_message">message</a></b>;                // trigger messages
+float   <b><a name="dot_sounds">sounds</a></b>;                 // either a cd track number or sound number
+string  <b><a name="dot_noise">noise</a></b>;                  // soudn played on entity noise channel 1
+string  <b><a name="dot_noise1">noise1</a></b>;
+string  <b><a name="dot_noise2">noise2</a></b>;
+string  <b><a name="dot_noise3">noise3</a></b>;                 
+</pre>
+</p>
+<p><i>Information by <a href="http://www.znet.com/~abducted/quake.html">Abducted</a>:</i><br>
+When you want an entity to do something specific, after a certain delay
+(exploding, disapearing, or the like...), you set <b>nextthink</b> to that delay
+(in seconds), and set <b>think</b> to the function to execute.
+</p>
+<p><i>Information by Greg Lewis:</i><br>
+It seems that the touch function is called before the <a href="qc-enty.htm#dot_movetype" target="content">field</a> is checked,
+so you can set this type in the touch function, and it will immediatly
+be taken into account.
+</p>
+
+
+<h5>Player/Monster stats and damage status</h5>
+<p><pre>
+float   <b><a name="dot_deadflag">deadflag</a></b>;               // tells if an <a href="qc-defs.htm#d_deadflag" target="content">entity is dead</a>.
+float   <b><a name="dot_health">health</a></b>;                 // health level
+float   <b><a name="dot_max_health">max_health</a></b>;             // players maximum health is stored here
+float   <b><a name="dot_takedamage">takedamage</a></b>;             // <a href="qc-defs.htm#d_damage" target="content">indicates</a> if entity can be damaged
+float   <b><a name="dot_dmg_take">dmg_take</a></b>;               // damage is accumulated through a frame. and sent as one single
+float   <b><a name="dot_dmg_save">dmg_save</a></b>;               // message, so the super shotgun doesn't generate huge messages
+entity  <b><a name="dot_dmg_inflictor">dmg_inflictor</a></b>;          // entity that inflicted the damage (player, monster, missile, door)
+</pre> 
+
+
+<h5>Player inventory</h5>
+<p><pre>
+float   <b><a name="dot_items">items</a></b>;                  // bit flags
+float   <b><a name="dot_armortype">armortype</a></b>;              // fraction of damage absorbed by armor
+float   <b><a name="dot_armorvalue">armorvalue</a></b>;             // armor level
+float   <b><a name="dot_weapon">weapon</a></b>;                 // one of the IT_SHOTGUN, etc flags
+string  <b><a name="dot_weaponmodel">weaponmodel</a></b>;            // entity model for weapon
+float   <b><a name="dot_weaponframe">weaponframe</a></b>;            // frame for weapon model
+float   <b><a name="dot_currentammo">currentammo</a></b>;            // ammo for current weapon
+float   <b><a name="dot_ammo_shells">ammo_shells</a></b>;            // remaining shells
+float   <b><a name="dot_ammo_nails">ammo_nails</a></b>;             // remaining nails
+float   <b><a name="dot_ammo_rockets">ammo_rockets</a></b>;           // remaining rockets and grenades
+float   <b><a name="dot_ammo_cells">ammo_cells</a></b>;             // remaining lightning bolts
+</pre>
+</p>
+<p><pre>
+float   <b><a name="dot_impulse">impulse</a></b>;                // weapon changes
+</pre>
+When set to <b>0</b>, the player's weapon doesn't change.
+When different from zero, this field is interpreted by the Quake-C impulse command
+as a request to change weapon (see <a href="weapons.htm#ImpulseCommand">ImpulseCommand</a>).
+</p>
+
+
+
+<h5> Player Fight</h5>
+<pre>
+entity  <b><a name="dot_owner">owner</a></b>;                  // Entity that owns this one (missiles, bubbles are owned by the player)
+entity  <b><a name="dot_enemy">enemy</a></b>;                  // personal enemy (only for monster entities)
+float   <b><a name="dot_button0">button0</a></b>;                // fire
+float   <b><a name="dot_button1">button1</a></b>;                // use
+float   <b><a name="dot_button2">button2</a></b>;                // jump
+vector  <b><a name="dot_view_ofs">view_ofs</a></b>;               // position of player eye, relative to origin
+float   <b><a name="dot_fixangle">fixangle</a></b>;               // set to 1 if you want <a href="qc-enty.htm#dot_angles" target="content">angles</a> to change now
+vector  <b><a name="dot_v_angle">v_angle</a></b>;                // view or targeting angle for players
+float   <b><a name="dot_idealpitch">idealpitch</a></b>;             // calculated pitch angle for lookup up slopes
+entity  <b><a name="dot_aiment">aiment</a></b>;                 // aimed antity?
+</pre>
+
+<h5>Deathmatch</h5>
+<pre>
+float   <b><a name="dot_frags">frags</a></b>;                  // number of frags
+string  <b><a name="dot_netname">netname</a></b>;                // name, in network play
+float   <b><a name="dot_colormap">colormap</a></b>;               // colors of shirt and pants
+float   <b><a name="dot_team">team</a></b>;                   // team number
+float   <b><a name="dot_flags">flags</a></b>;                  // ?
+</pre>
+
+
+
+<h3>Fields used only by Quake-C (User defined)</h3>
+
+<p>These entity fields are used only by Quake-C programs, and are never 
+referenced by the C code of Quake.exe. So you can do whatever you want
+with the values, so long as it's compatible with what other Quake-C
+modules do.</p>
+
+<p>If the fields defined here are not suitable for you, you can define
+new <a href="qc-types.htm#QC-TFLD" target="content">fields</a>, by adding them at the
+end of the defintion of fields.
+As a matter of fact, the number of fields in an entity (hence the size of 
+all the instances of entity objects) is determined by Quake-C:
+in the <b>PROGS.DAT</b> header, a value named <b>entityfields</b> indicates
+to Quake.exe the size of the entity object.
+</p>
+<p>Beware however that the more field you add, the more <b>each entity</b>
+will suck memory. Add just one float (4 bytes) and it will take, in memory,
+4 bytes time the number of entity.
+</p>
+<p>The best is to share fields between distinct classes of entities, by
+reusing the same position for another kind of field. If the Quake C Compiler
+was a real object-oriented compiler, that would be done very safely by
+single-inheritance (multiple-inheritance would be a deadly mistake).
+You will also notice that id software has made quite a lousy usage
+of most of the fields, defining much more than were actually needed,
+since they are only used by a few entities.</p>
+
+
+<h5>World fields</h5>
+
+<pre>
+string <b><a name="dot_wad">wad</a></b>;                      // name of WAD file with misc graphics  
+string <b><a name="dot_map">map</a></b>;                      // name of the map being played
+float  <b><a name="dot_worldtype">worldtype</a></b>;                // see below
+</pre>
+<p><b>worldtype</b> is <b>0</b> for a medieval setting,  <b>1</b> for metal,
+and <b>2</b> for a base setting.<br>
+These fields might soon become global variables, so don't rely too much on them.
+</p>
+
+<h5>Quake Ed fields</h5>
+
+<pre>
+string <b><a name="dot_killtarget">killtarget</a></b>;
+float <b><a name="dot_light_lev">light_lev</a></b>;                 // not used by game, but parsed by light util
+float <b><a name="dot_style">style</a></b>;
+</pre>
+
+<h5>Monster Behaviour</h5>
+
+<p>
+Those functions are called when these specific events happen:
+<pre>
+void() <b><a name="dot_th_stand">th_stand</a></b>;            // when stands iddle
+void() <b><a name="dot_th_walk">th_walk</a></b>;             // when is walking
+void() <b><a name="dot_th_run">th_run</a></b>;              // when is running
+void() <b><a name="dot_th_missile">th_missile</a></b>;          // when a missile comes
+void() <b><a name="dot_th_melee">th_melee</a></b>;            // when fighting in melee
+void() <b><a name="dot_th_die">th_die</a></b>;              // when dies
+</pre>
+</p>
+<p><pre>
+void(entity <i>attacker</i>, float <i>damage</i>) <b><a name="dot_th_pain">th_pain</a></b>;
+</pre>
+That function is executed when the monster takes a certain amount of <i>damage</i>
+from an <i>attacker</i> (a player, or another monster). Will usually cause the
+monster to turn against the <i>attacker</i>.
+</p>
+ 
+<h5>Monster state variables</h5>
+ 
+<pre>
+entity <b><a name="dot_oldenemy">oldenemy</a></b>;            // mad at this player before taking damage
+float  <b><a name="dot_speed">speed</a></b>;               //
+float  <b><a name="dot_lefty">lefty</a></b>;               //
+float  <b><a name="dot_search_time">search_time</a></b>;         //
+float  <b><a name="dot_attack_state">attack_state</a></b>;        //
+</pre>
+<pre>
+float   <b><a name="dot_pausetime">pausetime</a></b>;
+entity  <b><a name="dot_movetarget">movetarget</a></b>;
+</pre>
+
+
+<h5>Player Only</h5>
+<pre>
+float   <b><a name="dot_walkframe">walkframe</a></b>;
+float   <b><a name="dot_attack_finished">attack_finished</a></b>;
+float   <b><a name="dot_pain_finished">pain_finished</a></b>;         // time when pain sound is finished
+float   <b><a name="dot_invincible_finished">invincible_finished</a></b>;
+float   <b><a name="dot_invisible_finished">invisible_finished</a></b>;
+float   <b><a name="dot_super_damage_finished">super_damage_finished</a></b>;
+float   <b><a name="dot_radsuit_finished">radsuit_finished</a></b>;
+float   <b><a name="dot_invincible_time">invincible_time</a></b>;       // time when player cease to be invincible
+float   <b><a name="dot_invincible_sound">invincible_sound</a></b>;
+float   <b><a name="dot_invisible_time">invisible_time</a></b>;        // time when player cease to be invisible
+float   <b><a name="dot_invisible_sound">invisible_sound</a></b>;
+float   <b><a name="dot_super_time">super_time</a></b>;            // time when quad shot expires?
+float   <b><a name="dot_super_sound">super_sound</a></b>;
+float   <b><a name="dot_rad_time">rad_time</a></b>;
+float   <b><a name="dot_fly_sound">fly_sound</a></b>;
+float   <b><a name="dot_axhitme">axhitme</a></b>;               // TRUE if hit by axe
+float   <b><a name="dot_show_hostile<">show_hostile</a></b>;          // set to time+0.2 whenever a client fires a
+                               // weapon or takes damage.  Used to alert
+                               // monsters that otherwise would let the player go
+float   <b><a name="dot_jump_flag">jump_flag</a></b>;             // player jump flag
+float   <b><a name="dot_swim_flag">swim_flag</a></b>;             // player swimming sound flag
+float   <b><a name="dot_air_finished">air_finished</a></b>;          // when time &gt; air_finished, start drowning
+float   <b><a name="dot_bubble_count">bubble_count</a></b>;          // keeps track of the number of bubbles
+string  <b><a name="dot_deathtype">deathtype</a></b>;             // keeps track of how the player died
+</pre>
+
+<h5>Object stuff</h5> 
+<pre>
+string  <b><a name="dot_mdl">mdl</a></b>;                    // model name?
+vector  <b><a name="dot_mangle">mangle</a></b>;                 // angle at start. 'pitch roll yaw'
+vector  <b><a name="dot_oldorigin">oldorigin</a></b>;              // only used by secret door
+float   <b><a name="dot_t_length">t_length</a></b>;
+float   <b><a name="dot_t_width">t_width</a></b>;
+</pre>
+
+<h5>Doors</h5>
+<pre>
+vector  <b><a name="dot_dest">dest</a></b>;
+vector  <b><a name="dot_dest1">dest1</a></b>;
+vector  <b><a name="dot_dest2">dest2</a></b>;
+float   <b><a name="dot_wait">wait</a></b>;                   // time from firing to restarting
+float   <b><a name="dot_delay">delay</a></b>;                  // time from activation to firing
+entity  <b><a name="dot_trigger_field">trigger_field</a></b>;          // door's trigger entity
+string  <b><a name="dot_noise4">noise4</a></b>;
+float   <b><a name="dot_aflag">aflag</a></b>;
+float   <b><a name="dot_dmg">dmg</a></b>;                    // damage done by door when hit
+</pre>
+
+
+
+<h5>Miscellaneous</h5>
+<pre>
+float   <b><a name="dot_cnt">cnt</a></b>;                    // counter
+void()  <b><a name="dot_think1">think1</a></b>;
+vector  <b><a name="dot_finaldest">finaldest</a></b>;
+vector  <b><a name="dot_finalangle">finalangle</a></b>;
+//
+// triggers
+//
+float   <b><a name="dot_count">count</a></b>;                  // for counting triggers
+//
+// plats / doors / buttons
+//
+float   <b><a name="dot_lip">lip</a></b>;
+float   <b><a name="dot_state">state</a></b>;
+vector  <b><a name="dot_pos1">pos1</a></b>;
+vector  <b><a name="dot_pos2">pos2</a></b>;                   // top and bottom positions
+float   <b><a name="dot_height">height</a></b>;
+//
+// sounds 
+//
+float   <b><a name="dot_waitmin">waitmin</a></b>;
+float   <b><a name="dot_waitmax">waitmax</a></b>;
+float   <b><a name="dot_distance">distance</a></b>;
+float   <b><a name="dot_volume">volume</a></b>;
+</pre>
+
+
+
+<hr>
+
+</BODY></HTML>

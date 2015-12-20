@@ -1,0 +1,247 @@
+<html><head><title>shalrath.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+SHAL-RATH
+
+==============================================================================
+*/</i>
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/shalrath</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+<b>$</b><a href="qc-mdl.htm#s_scale">scale</a> <b>0.7</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack9 attack10 attack11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk11 walk12</b>
+
+<a href="qc-types.htm#void">void</a>() <a href="shalrath.htm#shalrath_pain">shalrath_pain</a>;
+<a href="qc-types.htm#void">void</a>() <a href="shalrath.htm#ShalMissile">ShalMissile</a>;
+<a href="qc-types.htm#void">void</a>() <b>shal_stand</b><a name="shal_stand">=</a>[      $walk1,       <a href="shalrath.htm#shal_stand">shal_stand</a>    ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>shal_walk1</b><a name="shal_walk1">=</a>[      $walk2,       shal_walk2    ] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk2</b><a name="shal_walk2">=</a>[      $walk3,       shal_walk3    ] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk3</b><a name="shal_walk3">=</a>[      $walk4,       shal_walk4    ] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk4</b><a name="shal_walk4">=</a>[      $walk5,       shal_walk5    ] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk5</b><a name="shal_walk5">=</a>[      $walk6,       shal_walk6    ] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk6</b><a name="shal_walk6">=</a>[      $walk7,       shal_walk7    ] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk7</b><a name="shal_walk7">=</a>[      $walk8,       shal_walk8    ] {<a href="ai.htm#ai_walk">ai_walk</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk8</b><a name="shal_walk8">=</a>[      $walk9,       shal_walk9    ] {<a href="ai.htm#ai_walk">ai_walk</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk9</b><a name="shal_walk9">=</a>[      $walk10,       shal_walk10    ] {<a href="ai.htm#ai_walk">ai_walk</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk10</b><a name="shal_walk10">=</a>[      $walk11,       shal_walk11    ] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk11</b><a name="shal_walk11">=</a>[      $walk12,       shal_walk12    ] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>shal_walk12</b><a name="shal_walk12">=</a>[      $walk1,       <a href="shalrath.htm#shal_walk1">shal_walk1</a>    ] {<a href="ai.htm#ai_walk">ai_walk</a>(5);};
+
+<a href="qc-types.htm#void">void</a>() <b>shal_run1</b><a name="shal_run1">=</a>[      $walk2,       shal_run2    ] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run2</b><a name="shal_run2">=</a>[      $walk3,       shal_run3    ] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run3</b><a name="shal_run3">=</a>[      $walk4,       shal_run4    ] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run4</b><a name="shal_run4">=</a>[      $walk5,       shal_run5    ] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run5</b><a name="shal_run5">=</a>[      $walk6,       shal_run6    ] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run6</b><a name="shal_run6">=</a>[      $walk7,       shal_run7    ] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run7</b><a name="shal_run7">=</a>[      $walk8,       shal_run8    ] {<a href="ai.htm#ai_run">ai_run</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run8</b><a name="shal_run8">=</a>[      $walk9,       shal_run9    ] {<a href="ai.htm#ai_run">ai_run</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run9</b><a name="shal_run9">=</a>[      $walk10,       shal_run10    ] {<a href="ai.htm#ai_run">ai_run</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run10</b><a name="shal_run10">=</a>[      $walk11,       shal_run11    ] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run11</b><a name="shal_run11">=</a>[      $walk12,       shal_run12    ] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>shal_run12</b><a name="shal_run12">=</a>[      $walk1,       <a href="shalrath.htm#shal_run1">shal_run1</a>    ] {<a href="ai.htm#ai_run">ai_run</a>(5);};
+
+<a href="qc-types.htm#void">void</a>() <b>shal_attack1</b><a name="shal_attack1">=</a>[      $attack1,       shal_attack2    ] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/attack.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="fight.htm#ai_face">ai_face</a>();
+};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack2</b><a name="shal_attack2">=</a>[      $attack2,       shal_attack3    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack3</b><a name="shal_attack3">=</a>[      $attack3,       shal_attack4    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack4</b><a name="shal_attack4">=</a>[      $attack4,       shal_attack5    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack5</b><a name="shal_attack5">=</a>[      $attack5,       shal_attack6    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack6</b><a name="shal_attack6">=</a>[      $attack6,       shal_attack7    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack7</b><a name="shal_attack7">=</a>[      $attack7,       shal_attack8    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack8</b><a name="shal_attack8">=</a>[      $attack8,       shal_attack9    ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack9</b><a name="shal_attack9">=</a>[      $attack9,       shal_attack10   ] {<a href="shalrath.htm#ShalMissile">ShalMissile</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack10</b><a name="shal_attack10">=</a>[      $attack10,      shal_attack11   ] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>shal_attack11</b><a name="shal_attack11">=</a>[      $attack11,      <a href="shalrath.htm#shal_run1">shal_run1</a>   ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>shal_pain1</b><a name="shal_pain1">=</a>[      $pain1, shal_pain2      ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_pain2</b><a name="shal_pain2">=</a>[      $pain2, shal_pain3      ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_pain3</b><a name="shal_pain3">=</a>[      $pain3, shal_pain4      ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_pain4</b><a name="shal_pain4">=</a>[      $pain4, shal_pain5      ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_pain5</b><a name="shal_pain5">=</a>[      $pain5, <a href="shalrath.htm#shal_run1">shal_run1</a>      ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>shal_death1</b><a name="shal_death1">=</a>[      $death1,        shal_death2     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death2</b><a name="shal_death2">=</a>[      $death2,        shal_death3     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death3</b><a name="shal_death3">=</a>[      $death3,        shal_death4     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death4</b><a name="shal_death4">=</a>[      $death4,        shal_death5     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death5</b><a name="shal_death5">=</a>[      $death5,        shal_death6     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death6</b><a name="shal_death6">=</a>[      $death6,        shal_death7     ] {};
+<a href="qc-types.htm#void">void</a>() <b>shal_death7</b><a name="shal_death7">=</a>[      $death7,        <a href="shalrath.htm#shal_death7">shal_death7</a>    ] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>shalrath_pain</b><a name="shalrath_pain">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/pain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="shalrath.htm#shal_pain1">shal_pain1</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 3;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>shalrath_die</b><a name="shalrath_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -90)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_shal.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/death.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="shalrath.htm#shal_death1">shal_death1</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<i>// insert death sounds here</i>
+};
+
+<i>/*
+================
+ShalMissile
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="shalrath.htm#ShalMissileTouch">ShalMissileTouch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="shalrath.htm#ShalHome">ShalHome</a>;
+<a href="qc-types.htm#void">void</a>() <b>ShalMissile</b><a name="ShalMissile">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> 	missile;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dir;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	dist, flytime;
+
+	dir = <a href="qc-built.htm#normalize">normalize</a>((<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 10') - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	dist = <a href="qc-built.htm#vlen">vlen</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	flytime = dist * 0.002;
+	<b>if</b> (flytime &lt; 0.1)
+		flytime = 0.1;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"shalrath/attack2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_FLYMISSILE">MOVETYPE_FLYMISSILE</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/v_spike.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+
+	missile.<a href="qc-enty.htm#dot_origin">origin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 10';
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = dir * 400;
+	missile.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '300 300 300';
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = flytime + <a href="qc-glob.htm#time">time</a>;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="shalrath.htm#ShalHome">ShalHome</a>;
+	missile.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	missile.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="shalrath.htm#ShalMissileTouch">ShalMissileTouch</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ShalHome</b><a name="ShalHome">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	dir, vtemp;
+	vtemp = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 10';
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; 1)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	dir = <a href="qc-built.htm#normalize">normalize</a>(vtemp - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<b>if</b> (<a href="defs.htm#skill">skill</a> == 3)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = dir * 350;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = dir * 250;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="shalrath.htm#ShalHome">ShalHome</a>;	
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ShalMissileTouch</b><a name="ShalMissileTouch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_zombie"</b>)
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 110);	
+	<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 40, <a href="qc-glob.htm#world">world</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/r_exp3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_EXPLOSION">TE_EXPLOSION</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/s_explod.spr"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="weapons.htm#s_explode1">s_explode1</a> ();
+};
+
+<i>//=================================================================</i>
+
+<i>/*QUAKED monster_shalrath (1 0 0) (-32 -32 -24) (32 32 48) Ambush
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_shalrath</b><a name="monster_shalrath">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/shalrath.mdl"</b>);
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/h_shal.mdl"</b>);
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/v_spike.mdl"</b>);
+	
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/attack.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/attack2.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/death.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/idle.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/pain.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"shalrath/sight.wav"</b>);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+	
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/shalrath.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="defs.htm#VEC_HULL2_MIN">VEC_HULL2_MIN</a>, <a href="defs.htm#VEC_HULL2_MAX">VEC_HULL2_MAX</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 400;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="shalrath.htm#shal_stand">shal_stand</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="shalrath.htm#shal_walk1">shal_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="shalrath.htm#shal_run1">shal_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="shalrath.htm#shalrath_die">shalrath_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="shalrath.htm#shalrath_pain">shalrath_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="shalrath.htm#shal_attack1">shal_attack1</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="monsters.htm#walkmonster_start">walkmonster_start</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a> ()*0.1;	
+
+};
+
+</pre></body></html>

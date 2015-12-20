@@ -1,0 +1,214 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-DEFS">5. Built-in Constants</A></FONT></H1>
+
+<p>This file tries to give some additional details about the definitions 
+in defs.qc.</p>
+
+
+<h4>5.1 <A NAME="d_etemporary">temporary</A> entities</h4>
+
+<p><i>Information copied from the DEM specifications</i></p>
+<p><pre>
+// point entity is a small point like entity.
+ 0    TE_SPIKE           unknown
+ 1    TE_SUPERSPIKE      superspike hits (spike traps)
+ 2    TE_GUNSHOT         hit on the wall (Axe, Shotgun)
+ 3    TE_EXPLOSION       grenade/missile explosion
+ 4    TE_TAREXPLOSION    explosion of a tarbaby
+ 7    TE_WIZSPIKE        wizard's hit
+ 8    TE_KNIGHTSPIKE     hell knight's shot hit
+10    TE_LAVASPLASH      Chthon awakes and falls dead
+11    TE_TELEPORT        teleport end
+// large entity is a 2 dimensional entity.
+ 5    TE_LIGHTNING1      flash of the Shambler
+ 6    TE_LIGHTNING2      flash of the Thunderbolt
+ 9    TE_LIGHTNING3      flash in e1m7 to kill Chthon
+</pre>
+
+
+
+<h4>5.2 <A NAME="d_channel">Sound Channels</A></h4>
+
+<p><pre>
+<b><a name="CHAN_AUTO">CHAN_AUTO</a></b> = 0;   // Create a new sound
+<b><a name="CHAN_WEAPON">CHAN_WEAPON</a></b> = 1; // Replace entitie's weapon noise
+<b><a name="CHAN_VOICE">CHAN_VOICE</a></b> = 2;  // Replace entitie's voice
+<b><a name="CHAN_ITEM">CHAN_ITEM</a></b> = 3;   // Replace entitie's item noise
+<b><a name="CHAN_BODY">CHAN_BODY</a></b> = 4;   // Replace entitie's body noise 
+</pre>
+Those values are meant to be used with the function
+<a href="qc-built.htm#sound" target="content">sound</a>.
+</p>
+
+<h4>5.3 <A NAME="d_attenuate">Sound Attenuation</A></h4>
+
+<p><pre>
+<b><a name="ATTN_NONE">ATTN_NONE</a></b> = 0;    // full volume everywhere in the leve
+<b><a name="ATTN_NORM">ATTN_NORM</a></b> = 1;    // normal
+<b><a name="ATTN_IDLE">ATTN_IDLE</a></b> = 2;    // ?
+<b><a name="ATTN_STATIC">ATTN_STATIC</a></b> = 3;  // ?
+</pre>
+Those values are meant to be used with the functions
+<a href="qc-built.htm#sound" target="content">sound</a> and 
+<a href="qc-built.htm#ambientsound" target="content">ambientsound</a>.
+</p>
+
+<h4>5.4 <A NAME="d_contents">Contents of areas</A></h4>
+<p><pre>
+<b><a name="CONTENT_EMPTY">CONTENT_EMPTY</a></b> = -1;   // Empty area
+<b><a name="CONTENT_SOLID">CONTENT_SOLID</a></b> = -2;   // Totally solid area (rock)   
+<b><a name="CONTENT_WATER">CONTENT_WATER</a></b> = -3;   // Pool of water
+<b><a name="CONTENT_SLIME">CONTENT_SLIME</a></b> = -4;   // Pool of slime
+<b><a name="CONTENT_LAVA">CONTENT_LAVA</a></b> = -5;    // Lava
+<b><a name="CONTENT_SKY">CONTENT_SKY</a></b> = -6;     // Sky
+</pre>
+Note: it seems that the CONTENT_SKY is not used anymore.
+</p>
+
+<h4>5.5 <A NAME="d_effects">light effects</A></h4>
+<p><pre>
+<b><a name="EF_BRIGHTFIELD">EF_BRIGHTFIELD</a></b> = 1;  // Glowing field of dots
+<b><a name="EF_MUZZLEFLASH">EF_MUZZLEFLASH</a></b> = 2;
+<b><a name="EF_BRIGHTLIGHT">EF_BRIGHTLIGHT</a></b> = 4;
+<b><a name="EF_DIMLIGHT">EF_DIMLIGHT</a></b> = 8;
+</pre>
+</p>
+
+<h4>5.6 <A NAME="d_items">Items</A></h4>
+
+<p>
+<pre>
+<b><a name="IT_AXE">IT_AXE</a></b> = 4096;
+<b><a name="IT_SHOTGUN">IT_SHOTGUN</a></b> = 1;
+<b><a name="IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a></b> = 2;
+<b><a name="IT_NAILGUN">IT_NAILGUN</a></b> = 4;
+<b><a name="IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a></b> = 8;
+<b><a name="IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a></b> = 16;
+<b><a name="IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a></b> = 32;
+<b><a name="IT_LIGHTNING">IT_LIGHTNING</a></b> = 64;
+<b><a name="IT_EXTRA_WEAPON">IT_EXTRA_WEAPON</a></b> = 128;
+<b><a name="IT_SHELLS">IT_SHELLS</a></b> = 256;
+<b><a name="IT_NAILS">IT_NAILS</a></b> = 512;
+<b><a name="IT_ROCKETS">IT_ROCKETS</a></b> = 1024;
+<b><a name="IT_CELLS">IT_CELLS</a></b> = 2048;
+<b><a name="IT_ARMOR1">IT_ARMOR1</a></b> = 8192;
+<b><a name="IT_ARMOR2">IT_ARMOR2</a></b> = 16384;
+<b><a name="IT_ARMOR3">IT_ARMOR3</a></b> = 32768;
+<b><a name="IT_SUPERHEALTH">IT_SUPERHEALTH</a></b> = 65536;
+<b><a name="IT_KEY1">IT_KEY1</a></b> = 131072;
+<b><a name="IT_KEY2">IT_KEY2</a></b> = 262144;
+<b><a name="IT_INVISIBILITY">IT_INVISIBILITY</a></b> = 524288;
+<b><a name="IT_INVULNERABILITY">IT_INVULNERABILITY</a></b> = 1048576;
+<b><a name="IT_SUIT">IT_SUIT</a></b> = 2097152;
+<b><a name="IT_QUAD">IT_QUAD</a></b> = 4194304;
+</pre>
+The item codes are flags. That mean they can be combined by logical
+operations (<b>|</b> for or-ing, <b>&</b> for and-ing). So for instance
+<tt>items = (IT_AXE | IT_NAILGUN)</tt> means you have both the axe and
+the nailgun.
+</p>
+
+<h4>5.7 <A NAME="d_solid">Collision detection</A></h4>
+<p><pre>
+<b><a name="SOLID_NOT">SOLID_NOT</a></b> = 0;                 // no interaction with other objects
+                               // inactive triggers
+<b><a name="SOLID_TRIGGER">SOLID_TRIGGER</a></b> = 1;             // touch on edge, but not blocking
+                               // active triggers, pickable items 
+                               // (.MDL models, like armors)
+<b><a name="SOLID_BBOX">SOLID_BBOX</a></b> = 2;                // touch on edge, block
+                               // pickable items (.BSP models, like ammo box)
+                               // grenade, missiles
+<b><a name="SOLID_SLIDEBOX">SOLID_SLIDEBOX</a></b> = 3;            // touch on edge, but not an onground
+                               // most monsters
+<b><a name="SOLID_BSP">SOLID_BSP</a></b> = 4;                 // bsp clip, touch on edge, block
+                               // buttons, platforms, doors, missiles
+</pre>
+</p>
+
+<h4>5.8 <A NAME="d_movetype">Type of movements</A></h4>
+
+<p><pre>           
+<b><a name="MOVETYPE_NONE">MOVETYPE_NONE</a></b> = 0;	       // never moves
+//float	MOVETYPE_ANGLENOCLIP = 1;
+//float	MOVETYPE_ANGLECLIP = 2;
+<b><a name="MOVETYPE_WALK">MOVETYPE_WALK</a></b> = 3;	       // Walking players only
+<b><a name="MOVETYPE_STEP">MOVETYPE_STEP</a></b> = 4;	       // Walking monster
+<b><a name="MOVETYPE_FLY">MOVETYPE_FLY</a></b> = 5;              // Hovering Flight 
+                               // meant for flying monsters (and players)
+<b><a name="MOVETYPE_TOSS">MOVETYPE_TOSS</a></b> = 6;	       // Balistic flight 
+                               // meant for gibs and the like
+<b><a name="MOVETYPE_PUSH">MOVETYPE_PUSH</a></b> = 7;	       // Not blocked by the world, push and crush 
+                               // meant for doors, spikes and crusing platforms
+<b><a name="MOVETYPE_NOCLIP">MOVETYPE_NOCLIP</a></b> = 8;           // Not blocked by the world
+<b><a name="MOVETYPE_FLYMISSILE">MOVETYPE_FLYMISSILE</a></b> = 9;       // like fly, but size enlarged against monsters
+                               // meant for rockets
+<b><a name="MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a></b> = 10;          // bounce off walls
+<b><a name="MOVETYPE_BOUNCEMISSILE">MOVETYPE_BOUNCEMISSILE</a></b> = 11    // bounce off walls, but size enlarged against monsters
+                               // meant for grenades
+</pre>
+</p>
+
+<h4>5.9 <A NAME="d_damage">Take damage</A></h4>
+<p><pre>
+<b><a name="DAMAGE_NO">DAMAGE_NO</a></b> = 0;                 // Can't be damaged
+<b><a name="DAMAGE_YES">DAMAGE_YES</a></b> = 1;                // Grenades don't explode when touching entity
+<b><a name="DAMAGE_AIM">DAMAGE_AIM</a></b> = 2;                // Grenades explode when touching entity
+</pre>
+Most damageable entities have DAMAGE_AIM, so that when they chew on a grenade,
+it explodes. If you make an entity DAMAGE_YES, the grenades will bounce off it.
+</p>
+
+<h4>5.10 Entity <A NAME="d_deadflag">dead</A> flag</h4>
+
+<p><pre>
+<b><a name="DEAD_NO">DEAD_NO</a></b> = 0;                   // still living
+<b><a name="DEAD_DYING">DEAD_DYING</a></b> = 1;                // dying (helpless)
+<b><a name="DEAD_DEAD">DEAD_DEAD</a></b> = 2;                 // really dead
+<b><a name="DEAD_RESPAWNABLE">DEAD_RESPAWNABLE</a></b> = 3;          // dead, but can respawn
+</pre>
+</p>
+
+<h4>5.11 <A NAME="d_spawnflags">Spawn flags</A></h4>
+
+<p>The spawn flags are bit fields, whose interpretation
+depend on the concerned entity. There is quite a bit of a hack,
+that could cause unexpected bugs in the Quake C code.
+<pre>
+  DOOR_START_OPEN = 1;         // allow entity to be lighted in closed position
+  SPAWN_CRUCIFIED= 1;          // for zombie
+  PLAT_LOW_TRIGGER = 1;        // for func_plat
+  SPAWNFLAG_NOTOUCH= 1;
+  SPAWNFLAG_NOMESSAGE= 1;
+  PLAYER_ONLY = 1;
+  SPAWNFLAG_SUPERSPIKE = 1;    // for spike shooter
+  SECRET_OPEN_ONCE = 1;        // secret door, stays open
+  PUSH_ONCE = 1;
+  WEAPON_SHOTGUN = 1;          // weapon, shotgun
+  H_ROTTEN = 1;                // health, rotten (5-10 points)
+  WEAPON_BIG2 = 1;             // items 
+  START_OFF = 1;               // light, is off at start.
+  SILENT = 2;
+  SPAWNFLAG_LASER = 2;         // for spike shooter
+  SECRET_1ST_LEFT = 2;         // secret door, 1st move is left of arrow
+  WEAPON_ROCKET = 2;           // weapon, rocket
+  H_MEGA = 2;	               // health, mega (100 points)
+  DOOR_DONT_LINK = 4;
+  SECRET_1ST_DOWN = 4;         // secret door, 1st move is down from arrow
+  WEAPON_SPIKES = 4;           // weapon, nailgun
+  DOOR_GOLD_KEY = 8;
+  SECRET_NO_SHOOT = 8;         // secret door, only opened by trigger
+  WEAPON_BIG = 8;              // weapon, super model
+  DOOR_SILVER_KEY = 16;
+  SECRET_YES_SHOOT = 16;       // secret door, shootable even if targeted
+  DOOR_TOGGLE = 32;
+</pre>    
+</p>
+<hr>
+
+
+</BODY></HTML>

@@ -1,0 +1,282 @@
+<html><head><title>oldone.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+OLD ONE
+
+==============================================================================
+*/</i>
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/old_one</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+<b>$</b><a href="qc-mdl.htm#s_scale">scale</a> <b>1</b>
+
+<a href="qc-types.htm#void">void</a>() <a href="oldone.htm#finale_1">finale_1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="oldone.htm#finale_2">finale_2</a>;
+<a href="qc-types.htm#void">void</a>() <a href="oldone.htm#finale_3">finale_3</a>;
+<a href="qc-types.htm#void">void</a>() <a href="oldone.htm#finale_4">finale_4</a>;
+
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="shub">shub</a></b>;
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>old1 old2 old3 old4 old5 old6 old7 old8 old9 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>old10 old11 old12 old13 old14 old15 old16 old17 old18 old19 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>old20 old21 old22 old23 old24 old25 old26 old27 old28 old29 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>old30 old31 old32 old33 old34 old35 old36 old37 old38 old39 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>old40 old41 old42 old43 old44 old45 old46 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shake1 shake2 shake3 shake4 shake5 shake6 shake7 shake8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shake9 shake10 shake11 shake12 shake12 shake13 shake14</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shake15 shake16 shake17 shake18 shake19 shake20</b>
+
+<i>//void() old_stand     =[      $old1,       old_stand    ] {};</i>
+
+<a href="qc-types.htm#void">void</a>() <b>old_idle1</b><a name="old_idle1">=</a>[      $old1,  old_idle2       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle2</b><a name="old_idle2">=</a>[      $old2,  old_idle3       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle3</b><a name="old_idle3">=</a>[      $old3,  old_idle4       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle4</b><a name="old_idle4">=</a>[      $old4,  old_idle5       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle5</b><a name="old_idle5">=</a>[      $old5,  old_idle6       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle6</b><a name="old_idle6">=</a>[      $old6,  old_idle7       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle7</b><a name="old_idle7">=</a>[      $old7,  old_idle8       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle8</b><a name="old_idle8">=</a>[      $old8,  old_idle9       ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle9</b><a name="old_idle9">=</a>[      $old9,  old_idle10      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle10</b><a name="old_idle10">=</a>[      $old10, old_idle11      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle11</b><a name="old_idle11">=</a>[      $old11, old_idle12      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle12</b><a name="old_idle12">=</a>[      $old12, old_idle13      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle13</b><a name="old_idle13">=</a>[      $old13, old_idle14      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle14</b><a name="old_idle14">=</a>[      $old14, old_idle15      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle15</b><a name="old_idle15">=</a>[      $old15, old_idle16      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle16</b><a name="old_idle16">=</a>[      $old16, old_idle17      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle17</b><a name="old_idle17">=</a>[      $old17, old_idle18      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle18</b><a name="old_idle18">=</a>[      $old18, old_idle19      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle19</b><a name="old_idle19">=</a>[      $old19, old_idle20      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle20</b><a name="old_idle20">=</a>[      $old20, old_idle21      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle21</b><a name="old_idle21">=</a>[      $old21, old_idle22      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle22</b><a name="old_idle22">=</a>[      $old22, old_idle23      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle23</b><a name="old_idle23">=</a>[      $old23, old_idle24      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle24</b><a name="old_idle24">=</a>[      $old24, old_idle25      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle25</b><a name="old_idle25">=</a>[      $old25, old_idle26      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle26</b><a name="old_idle26">=</a>[      $old26, old_idle27      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle27</b><a name="old_idle27">=</a>[      $old27, old_idle28      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle28</b><a name="old_idle28">=</a>[      $old28, old_idle29      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle29</b><a name="old_idle29">=</a>[      $old29, old_idle30      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle30</b><a name="old_idle30">=</a>[      $old30, old_idle31      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle31</b><a name="old_idle31">=</a>[      $old31, old_idle32      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle32</b><a name="old_idle32">=</a>[      $old32, old_idle33      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle33</b><a name="old_idle33">=</a>[      $old33, old_idle34      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle34</b><a name="old_idle34">=</a>[      $old34, old_idle35      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle35</b><a name="old_idle35">=</a>[      $old35, old_idle36      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle36</b><a name="old_idle36">=</a>[      $old36, old_idle37      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle37</b><a name="old_idle37">=</a>[      $old37, old_idle38      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle38</b><a name="old_idle38">=</a>[      $old38, old_idle39      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle39</b><a name="old_idle39">=</a>[      $old39, old_idle40      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle40</b><a name="old_idle40">=</a>[      $old40, old_idle41      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle41</b><a name="old_idle41">=</a>[      $old41, old_idle42      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle42</b><a name="old_idle42">=</a>[      $old42, old_idle43      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle43</b><a name="old_idle43">=</a>[      $old43, old_idle44      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle44</b><a name="old_idle44">=</a>[      $old44, old_idle45      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle45</b><a name="old_idle45">=</a>[      $old45, old_idle46      ] {};
+<a href="qc-types.htm#void">void</a>() <b>old_idle46</b><a name="old_idle46">=</a>[      $old46, <a href="oldone.htm#old_idle1">old_idle1</a>       ] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>old_thrash1</b><a name="old_thrash1">=</a>[ $shake1,  old_thrash2       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"m"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash2</b><a name="old_thrash2">=</a>[      $shake2,  old_thrash3       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"k"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash3</b><a name="old_thrash3">=</a>[      $shake3,  old_thrash4       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"k"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash4</b><a name="old_thrash4">=</a>[      $shake4,  old_thrash5       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"i"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash5</b><a name="old_thrash5">=</a>[      $shake5,  old_thrash6       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"g"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash6</b><a name="old_thrash6">=</a>[      $shake6,  old_thrash7       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"e"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash7</b><a name="old_thrash7">=</a>[      $shake7,  old_thrash8       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"c"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash8</b><a name="old_thrash8">=</a>[      $shake8,  old_thrash9       ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"a"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash9</b><a name="old_thrash9">=</a>[      $shake9,  old_thrash10      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"c"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash10</b><a name="old_thrash10">=</a>[      $shake10, old_thrash11      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"e"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash11</b><a name="old_thrash11">=</a>[      $shake11, old_thrash12      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"g"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash12</b><a name="old_thrash12">=</a>[      $shake12, old_thrash13      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"i"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash13</b><a name="old_thrash13">=</a>[      $shake13, old_thrash14      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"k"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash14</b><a name="old_thrash14">=</a>[      $shake14, old_thrash15      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"m"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash15</b><a name="old_thrash15">=</a>[      $shake15, old_thrash16      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"m"</b>);
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> + 1;
+<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> != 3)
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="oldone.htm#old_thrash1">old_thrash1</a>;
+};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash16</b><a name="old_thrash16">=</a>[      $shake16, old_thrash17      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"g"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash17</b><a name="old_thrash17">=</a>[      $shake17, old_thrash18      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"c"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash18</b><a name="old_thrash18">=</a>[      $shake18, old_thrash19      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"b"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash19</b><a name="old_thrash19">=</a>[      $shake19, old_thrash20      ] {<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"a"</b>);};
+<a href="qc-types.htm#void">void</a>() <b>old_thrash20</b><a name="old_thrash20">=</a>[      $shake20, <a href="oldone.htm#old_thrash20">old_thrash20</a>      ] {<a href="oldone.htm#finale_4">finale_4</a>();};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>finale_1</b><a name="finale_1">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	pos, pl;
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	timer;
+
+	<a href="client.htm#intermission_exittime">intermission_exittime</a> = <a href="qc-glob.htm#time">time</a> + 10000000;	<i>// never allow exit</i>
+	<a href="client.htm#intermission_running">intermission_running</a> = 1;
+
+	<i>// find the intermission spot</i>
+	pos = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"info_intermission"</b>);
+	<b>if</b> (!pos)
+		<a href="qc-built.htm#error">error</a> (<b>"no info_intermission"</b>);
+	pl = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"misc_teleporttrain"</b>);
+	<b>if</b> (!pl)
+		<a href="qc-built.htm#error">error</a> (<b>"no teleporttrain"</b>);
+	<a href="qc-built.htm#remove">remove</a> (pl);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+	<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>""</b>);
+
+	pl = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"player"</b>);
+	<b>while</b> (pl != <a href="qc-glob.htm#world">world</a>)
+	{
+		pl.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 0';
+		pl.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a> = pos.<a href="qc-enty.htm#dot_mangle">mangle</a>;
+		pl.<a href="qc-enty.htm#dot_fixangle">fixangle</a> = <a href="defs.htm#TRUE">TRUE</a>;		<i>// turn this way immediately</i>
+		pl.<a href="qc-enty.htm#dot_map">map</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_map">map</a>;
+		pl.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+		pl.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+		pl.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+		pl.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+		pl.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = 0;
+		<a href="qc-built.htm#setorigin">setorigin</a> (pl, pos.<a href="qc-enty.htm#dot_origin">origin</a>);
+		pl = <a href="qc-built.htm#find">find</a> (pl, classname, <b>"player"</b>);
+	}	
+	
+	<i>// make fake versions of all players as standins, and move the real</i>
+	<i>// players to the intermission spot</i>
+	
+	<i>// wait for 1 second</i>
+	timer = <a href="qc-built.htm#spawn">spawn</a>();
+	timer.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	timer.<a href="qc-enty.htm#dot_think">think</a> = <a href="oldone.htm#finale_2">finale_2</a>;	
+};
+
+<a href="qc-types.htm#void">void</a>() <b>finale_2</b><a name="finale_2">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	o;
+
+	<i>// start a teleport splash inside shub</i>
+
+	o = <a href="oldone.htm#shub">shub</a>.<a href="qc-enty.htm#dot_origin">origin</a> - '0 100 0';
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_TELEPORT">TE_TELEPORT</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, o_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, o_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, o_z);
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="oldone.htm#shub">shub</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"misc/r_tele1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="oldone.htm#finale_3">finale_3</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>finale_3</b><a name="finale_3">=</a>
+{
+	<i>// start shub thrashing wildly</i>
+	<a href="oldone.htm#shub">shub</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="oldone.htm#old_thrash1">old_thrash1</a>;
+	<a href="qc-built.htm#sound">sound</a> (<a href="oldone.htm#shub">shub</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"boss2/death.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"abcdefghijklmlkjihgfedcb"</b>);	
+};
+
+<a href="qc-types.htm#void">void</a>() <b>finale_4</b><a name="finale_4">=</a>
+{
+	<i>// throw tons of meat chunks	</i>
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	oldo;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	x, y, z;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	r;
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	n;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"boss2/pop2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	
+	oldo = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	z = 16;
+	<b>while</b> (z &lt;= 144)
+	{
+		x = -64;
+		<b>while</b> (x &lt;= 64)
+		{
+			y = -64;
+			<b>while</b> (y &lt;= 64)
+			{
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a> = oldo_x + x;
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a> = oldo_y + y;
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = oldo_z + z;
+
+				r = <a href="qc-built.htm#random">random</a>();
+				<b>if</b> (r &lt; 0.3)				
+					<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, -999);
+				<b>else</b> <b>if</b> (r &lt; 0.6)
+					<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, -999);
+				<b>else</b>
+					<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, -999);
+				y = y + 32;
+			}
+			x = x + 32;
+		}
+		z = z + 96;
+	}
+	<i>// start the end text</i>
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+	<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"Congratulations and well done! You have\nbeaten the hideous Shub-Niggurath, and\nher hundreds of ugly changelings and\nmonsters. You have proven that your\nskill and your cunning are greater than\nall the powers of Quake. You are the\nmaster now. Id Software salutes you."</b>);
+
+<i>// put a player model down</i>
+	n = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="qc-built.htm#setmodel">setmodel</a> (n, <b>"progs/player.mdl"</b>);
+	oldo = oldo - '32 264 0';
+	<a href="qc-built.htm#setorigin">setorigin</a> (n, oldo);
+	n.<a href="qc-enty.htm#dot_angles">angles</a> = '0 290 0';
+	n.<a href="qc-enty.htm#dot_frame">frame</a> = 1;
+
+	<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+
+<i>// switch cd track</i>
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+	<a href="qc-built.htm#lightstyle">lightstyle</a>(0, <b>"m"</b>);	
+};
+
+<i>//============================================================================</i>
+
+
+<i>/*QUAKED monster_oldone (1 0 0) (-16 -16 -24) (16 16 32)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_oldone</b><a name="monster_oldone">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/oldone.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"boss2/death.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"boss2/idle.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"boss2/sight.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"boss2/pop2.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+	
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/oldone.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-160 -128 -24', '160 128 256');
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 40000;		<i>// kill by telefrag</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="oldone.htm#old_idle1">old_idle1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="oldone.htm#finale_1">finale_1</a>;
+	<a href="oldone.htm#shub">shub</a> = <a href="qc-glob.htm#self">self</a>;
+	
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+};
+
+
+</pre></body></html>

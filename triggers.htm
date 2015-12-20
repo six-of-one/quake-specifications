@@ -1,0 +1,662 @@
+<html><head><title>triggers.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<a href="qc-types.htm#entity">entity</a> stemp, otemp, s, old;
+
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_reactivate</b><a name="trigger_reactivate">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+};
+
+<i>//=============================================================================</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="SPAWNFLAG_NOMESSAGE">SPAWNFLAG_NOMESSAGE</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="SPAWNFLAG_NOTOUCH">SPAWNFLAG_NOTOUCH</a></b> = 1;
+
+<i>// the wait time has passed, so set back up for another activation</i>
+<a href="qc-types.htm#void">void</a>() <b>multi_wait</b><a name="multi_wait">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	}
+};
+
+
+<i>// the trigger was just touched/killed/used</i>
+<i>// self.enemy should be set to the activator so it can be held through a delay</i>
+<i>// so wait for the delay time before firing</i>
+<a href="qc-types.htm#void">void</a>() <b>multi_trigger</b><a name="multi_trigger">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> &gt; <a href="qc-glob.htm#time">time</a>)
+	{
+		<b>return</b>;		<i>// allready been triggered</i>
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"trigger_secret"</b>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+			<b>return</b>;
+		<a href="qc-glob.htm#found_secrets">found_secrets</a> = <a href="qc-glob.htm#found_secrets">found_secrets</a> + 1;
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FOUNDSECRET">SVC_FOUNDSECRET</a>);
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+<i>// don't trigger again until reset</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> &gt; 0)	
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="triggers.htm#multi_wait">multi_wait</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+	}
+	<b>else</b>
+	{	<i>// we can't just remove (self) here, because this is a touch function</i>
+		<i>// called wheil C code is looping through area links...</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	}
+};
+
+<a href="qc-types.htm#void">void</a>() <b>multi_killed</b><a name="multi_killed">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#damage_attacker">damage_attacker</a>;
+	<a href="triggers.htm#multi_trigger">multi_trigger</a>();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>multi_use</b><a name="multi_use">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+	<a href="triggers.htm#multi_trigger">multi_trigger</a>();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>multi_touch</b><a name="multi_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	
+<i>// if the trigger has an angles field, check player's facing direction</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> != '0 0 0')
+	{
+		<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+		<b>if</b> (<a href="qc-built.htm#v_forward">v_forward</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> &lt; 0)
+			<b>return</b>;		<i>// not facing the right way</i>
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="triggers.htm#multi_trigger">multi_trigger</a> ();
+};
+
+<i>/*QUAKED trigger_multiple (.5 .5 .5) ? notouch
+Variable sized repeatable trigger.  Must be targeted at one or more entities.  If "health" is set, the trigger must be killed to activate each time.
+If "delay" is set, the trigger waits some time after activating before firing.
+"wait" : Seconds between triggerings. (.2 default)
+If notouch is set, the trigger is only fired by other entities, not by touching.
+NOTOUCH has been obsoleted by trigger_relay!
+sounds
+1)	secret
+2)	beep beep
+3)	large switch
+4)
+set "message" to text string
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_multiple</b><a name="trigger_multiple">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/secret.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/secret.wav"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/talk.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/talk.wav"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 3)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/trigger1.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/trigger1.wav"</b>;
+	}
+	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 0.2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="triggers.htm#multi_use">multi_use</a>;
+
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#SPAWNFLAG_NOTOUCH">SPAWNFLAG_NOTOUCH</a>)
+			<a href="qc-built.htm#objerror">objerror</a> (<b>"health and notouch don't make sense\n"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="triggers.htm#multi_killed">multi_killed</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+		<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);	<i>// make sure it links into the world</i>
+	}
+	<b>else</b>
+	{
+		<b>if</b> ( !(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#SPAWNFLAG_NOTOUCH">SPAWNFLAG_NOTOUCH</a>) )
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#multi_touch">multi_touch</a>;
+		}
+	}
+};
+
+
+<i>/*QUAKED trigger_once (.5 .5 .5) ? notouch
+Variable sized trigger. Triggers once, then removes itself.  You must set the key "target" to the name of another object in the level that has a matching
+"targetname".  If "health" is set, the trigger must be killed to activate.
+If notouch is set, the trigger is only fired by other entities, not by touching.
+if "killtarget" is set, any objects that have a matching "target" will be removed when the trigger is fired.
+if "angle" is set, the trigger will only fire when someone is facing the direction of the angle.  Use "360" for an angle of 0.
+sounds
+1)	secret
+2)	beep beep
+3)	large switch
+4)
+set "message" to text string
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_once</b><a name="trigger_once">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = -1;
+	<a href="triggers.htm#trigger_multiple">trigger_multiple</a>();
+};
+
+<i>//=============================================================================</i>
+
+<i>/*QUAKED trigger_relay (.5 .5 .5) (-8 -8 -8) (8 8 8)
+This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_relay</b><a name="trigger_relay">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>;
+};
+
+
+<i>//=============================================================================</i>
+
+<i>/*QUAKED trigger_secret (.5 .5 .5) ?
+secret counter trigger
+sounds
+1)	secret
+2)	beep beep
+3)
+4)
+set "message" to text string
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_secret</b><a name="trigger_secret">=</a>
+{
+	<a href="qc-glob.htm#total_secrets">total_secrets</a> = <a href="qc-glob.htm#total_secrets">total_secrets</a> + 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = -1;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> = <b>"You found a secret area!"</b>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> = 1;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/secret.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/secret.wav"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/talk.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/talk.wav"</b>;
+	}
+
+	<a href="triggers.htm#trigger_multiple">trigger_multiple</a> ();
+};
+
+<i>//=============================================================================</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>counter_use</b><a name="counter_use">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#string">string</a> junk;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> - 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> &lt; 0)
+		<b>return</b>;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> != 0)
+	{
+		<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>
+		&amp;&amp; (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#SPAWNFLAG_NOMESSAGE">SPAWNFLAG_NOMESSAGE</a>) == 0)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> &gt;= 4)
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="defs.htm#activator">activator</a>, <b>"There are more to go..."</b>);
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> == 3)
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="defs.htm#activator">activator</a>, <b>"Only 3 more to go..."</b>);
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> == 2)
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="defs.htm#activator">activator</a>, <b>"Only 2 more to go..."</b>);
+			<b>else</b>
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="defs.htm#activator">activator</a>, <b>"Only 1 more to go..."</b>);
+		}
+		<b>return</b>;
+	}
+	
+	<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>
+	&amp;&amp; (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#SPAWNFLAG_NOMESSAGE">SPAWNFLAG_NOMESSAGE</a>) == 0)
+		<a href="qc-built.htm#centerprint">centerprint</a>(<a href="defs.htm#activator">activator</a>, <b>"Sequence completed!"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+	<a href="triggers.htm#multi_trigger">multi_trigger</a> ();
+};
+
+<i>/*QUAKED trigger_counter (.5 .5 .5) ? nomessage
+Acts as an intermediary for an action that takes multiple inputs.
+
+If nomessage is not set, t will print "1 more.. " etc when triggered and "sequence complete" when finished.
+
+After the counter has been triggered "count" times (default 2), it will fire all of it's targets and remove itself.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_counter</b><a name="trigger_counter">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = -1;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_count">count</a> = 2;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="triggers.htm#counter_use">counter_use</a>;
+};
+
+
+<i>/*
+==============================================================================
+
+TELEPORT TRIGGERS
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="PLAYER_ONLY">PLAYER_ONLY</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="SILENT">SILENT</a></b> = 2;
+
+<a href="qc-types.htm#void">void</a>() <b>play_teleport</b><a name="play_teleport">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a> v;
+	<b>local</b>	<a href="qc-types.htm#string">string</a> tmpstr;
+
+	v = <a href="qc-built.htm#random">random</a>() * 5;
+	<b>if</b> (v &lt; 1)
+		tmpstr = <b>"misc/r_tele1.wav"</b>;
+	<b>else</b> <b>if</b> (v &lt; 2)
+		tmpstr = <b>"misc/r_tele2.wav"</b>;
+	<b>else</b> <b>if</b> (v &lt; 3)
+		tmpstr = <b>"misc/r_tele3.wav"</b>;
+	<b>else</b> <b>if</b> (v &lt; 4)
+		tmpstr = <b>"misc/r_tele4.wav"</b>;
+	<b>else</b>
+		tmpstr = <b>"misc/r_tele5.wav"</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, tmpstr, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org) <b>spawn_tfog</b><a name="spawn_tfog">=</a>
+{
+	s = <a href="qc-built.htm#spawn">spawn</a> ();
+	s.<a href="qc-enty.htm#dot_origin">origin</a> = org;
+	s.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	s.<a href="qc-enty.htm#dot_think">think</a> = <a href="triggers.htm#play_teleport">play_teleport</a>;
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_TELEPORT">TE_TELEPORT</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_z);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>tdeath_touch</b><a name="tdeath_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;
+
+<i>// frag anyone who teleports in on top of an invincible player</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"teledeath2"</b>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		{	<i>// other monsters explode themselves</i>
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 50000);
+			<b>return</b>;
+		}
+		
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 50000);
+	}
+};
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#entity">entity</a> death_owner) <b>spawn_tdeath</b><a name="spawn_tdeath">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	death;
+
+	death = <a href="qc-built.htm#spawn">spawn</a>();
+	death.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"teledeath"</b>;
+	death.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	death.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	death.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-built.htm#setsize">setsize</a> (death, death_owner.<a href="qc-enty.htm#dot_mins">mins</a> - '1 1 1', death_owner.<a href="qc-enty.htm#dot_maxs">maxs</a> + '1 1 1');
+	<a href="qc-built.htm#setorigin">setorigin</a> (death, org);
+	death.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#tdeath_touch">tdeath_touch</a>;
+	death.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	death.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	death.<a href="qc-enty.htm#dot_owner">owner</a> = death_owner;
+	
+	<a href="qc-glob.htm#force_retouch">force_retouch</a> = 2;		<i>// make sure even still objects get hit</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>teleport_touch</b><a name="teleport_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	t;
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	org;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<b>return</b>;		<i>// not fired yet</i>
+		}
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#PLAYER_ONLY">PLAYER_ONLY</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+			<b>return</b>;
+	}
+
+<i>// only teleport living creatures</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0 || <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_solid">solid</a> != <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>)
+		<b>return</b>;
+
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+
+<i>// put a tfog where the player was</i>
+	<a href="triggers.htm#spawn_tfog">spawn_tfog</a> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+
+	t = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+	<b>if</b> (!t)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"couldn't find target"</b>);
+		
+<i>// spawn a tfog flash in front of the destination</i>
+	<a href="qc-built.htm#makevectors">makevectors</a> (t.<a href="qc-enty.htm#dot_mangle">mangle</a>);
+	org = t.<a href="qc-enty.htm#dot_origin">origin</a> + 32 * <a href="qc-built.htm#v_forward">v_forward</a>;
+
+	<a href="triggers.htm#spawn_tfog">spawn_tfog</a> (org);
+	<a href="triggers.htm#spawn_tdeath">spawn_tdeath</a>(t.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="qc-glob.htm#other">other</a>);
+
+<i>// move the player and lock him down for a little while</i>
+	<b>if</b> (!<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_origin">origin</a> = t.<a href="qc-enty.htm#dot_origin">origin</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = (<a href="qc-built.htm#v_forward">v_forward</a> * <a href="qc-glob.htm#other">other</a>.velocity_x) + (<a href="qc-built.htm#v_forward">v_forward</a> * <a href="qc-glob.htm#other">other</a>.velocity_y);
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#other">other</a>, t.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_angles">angles</a> = t.<a href="qc-enty.htm#dot_mangle">mangle</a>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_fixangle">fixangle</a> = 1;		<i>// turn this way immediately</i>
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_teleport_time">teleport_time</a> = <a href="qc-glob.htm#time">time</a> + 0.7;
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>)
+			<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#v_forward">v_forward</a> * 300;
+	}
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;
+};
+
+<i>/*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
+This is the destination marker for a teleporter.  It should have a "targetname" field with the same value as a teleporter's "target" field.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_teleport_destination</b><a name="info_teleport_destination">=</a>
+{
+<i>// this does nothing, just serves as a target spot</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mangle">mangle</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <b>""</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 27';
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"no targetname"</b>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>teleport_use</b><a name="teleport_use">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	<a href="qc-glob.htm#force_retouch">force_retouch</a> = 2;		<i>// make sure even still objects get hit</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+};
+
+<i>/*QUAKED trigger_teleport (.5 .5 .5) ? PLAYER_ONLY SILENT
+Any object touching this will be transported to the corresponding info_teleport_destination entity. You must set the "target" field, and create an object with a "targetname" field that matches.
+
+If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_teleport</b><a name="trigger_teleport">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> o;
+
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#teleport_touch">teleport_touch</a>;
+	<i>// find the destination </i>
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"no target"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="triggers.htm#teleport_use">teleport_use</a>;
+
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#SILENT">SILENT</a>))
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/hum1.wav"</b>);
+		o = (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a>)*0.5;
+		<a href="qc-built.htm#ambientsound">ambientsound</a> (o, <b>"ambience/hum1.wav"</b>,0.5 , <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+	}
+};
+
+<i>/*
+==============================================================================
+
+trigger_setskill
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_skill_touch</b><a name="trigger_skill_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+		
+	<a href="qc-built.htm#cvar_set">cvar_set</a> (<b>"skill"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>);
+};
+
+<i>/*QUAKED trigger_setskill (.5 .5 .5) ?
+sets skill level to the value of "message".
+Only used on start map.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_setskill</b><a name="trigger_setskill">=</a>
+{
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#trigger_skill_touch">trigger_skill_touch</a>;
+};
+
+
+<i>/*
+==============================================================================
+
+ONLY REGISTERED TRIGGERS
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_onlyregistered_touch</b><a name="trigger_onlyregistered_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	<b>if</b> (<a href="qc-built.htm#cvar">cvar</a>(<b>"registered"</b>))
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> = <b>""</b>;
+		<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+		<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+	}
+	<b>else</b>
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> != <b>""</b>)
+		{
+			<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>);
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"misc/talk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		}
+	}
+};
+
+<i>/*QUAKED trigger_onlyregistered (.5 .5 .5) ?
+Only fires if playing the registered version, otherwise prints the message
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_onlyregistered</b><a name="trigger_onlyregistered">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/talk.wav"</b>);
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#trigger_onlyregistered_touch">trigger_onlyregistered_touch</a>;
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>hurt_on</b><a name="hurt_on">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>hurt_touch</b><a name="hurt_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="triggers.htm#hurt_on">hurt_on</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+
+	<b>return</b>;
+};
+
+<i>/*QUAKED trigger_hurt (.5 .5 .5) ?
+Any object touching this will be hurt
+set dmg to damage amount
+defalt dmg = 5
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_hurt</b><a name="trigger_hurt">=</a>
+{
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#hurt_touch">hurt_touch</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 5;
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="PUSH_ONCE">PUSH_ONCE</a></b> = 1;
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_push_touch</b><a name="trigger_push_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"grenade"</b>)
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> * 10;
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 0)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> * 10;
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+		{
+			<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_fly_sound">fly_sound</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			{
+				<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_fly_sound">fly_sound</a> = <a href="qc-glob.htm#time">time</a> + 1.5;
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"ambience/windfly.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+		}
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="triggers.htm#PUSH_ONCE">PUSH_ONCE</a>)
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+
+<i>/*QUAKED trigger_push (.5 .5 .5) ? PUSH_ONCE
+Pushes the player
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_push</b><a name="trigger_push">=</a>
+{
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/windfly.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#trigger_push_touch">trigger_push_touch</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 1000;
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_monsterjump_touch</b><a name="trigger_monsterjump_touch">=</a>
+{
+	<b>if</b> ( <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; (<a href="defs.htm#FL_MONSTER">FL_MONSTER</a> | <a href="defs.htm#FL_FLY">FL_FLY</a> | <a href="defs.htm#FL_SWIM">FL_SWIM</a>) != <a href="defs.htm#FL_MONSTER">FL_MONSTER</a> )
+		<b>return</b>;
+
+<i>// set XY even if not on ground, so the jump will clear lips</i>
+	<a href="qc-glob.htm#other">other</a>.velocity_x = <a href="qc-glob.htm#self">self</a>.movedir_x * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>;
+	<a href="qc-glob.htm#other">other</a>.velocity_y = <a href="qc-glob.htm#self">self</a>.movedir_y * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>;
+	
+	<b>if</b> ( !(<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>) )
+		<b>return</b>;
+	
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;
+
+	<a href="qc-glob.htm#other">other</a>.velocity_z = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_height">height</a>;
+};
+
+<i>/*QUAKED trigger_monsterjump (.5 .5 .5) ?
+Walking monsters that touch this will jump in the direction of the trigger's angle
+"speed" default to 200, the speed thrown forward
+"height" default to 200, the speed thrown upwards
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_monsterjump</b><a name="trigger_monsterjump">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 200;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_height">height</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_height">height</a> = 200;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> == '0 0 0')
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 360 0';
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="triggers.htm#trigger_monsterjump_touch">trigger_monsterjump_touch</a>;
+};
+
+
+</pre></body></html>

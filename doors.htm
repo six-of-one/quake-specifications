@@ -1,0 +1,792 @@
+<html><head><title>doors.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<a href="qc-types.htm#float">float</a> <b><a name="DOOR_START_OPEN">DOOR_START_OPEN</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="DOOR_DONT_LINK">DOOR_DONT_LINK</a></b> = 4;
+<a href="qc-types.htm#float">float</a> <b><a name="DOOR_GOLD_KEY">DOOR_GOLD_KEY</a></b> = 8;
+<a href="qc-types.htm#float">float</a> <b><a name="DOOR_SILVER_KEY">DOOR_SILVER_KEY</a></b> = 16;
+<a href="qc-types.htm#float">float</a> <b><a name="DOOR_TOGGLE">DOOR_TOGGLE</a></b> = 32;
+
+<i>/*
+
+Doors are similar to buttons, but can spawn a fat trigger field around them
+to open without a touch, and they link together to form simultanious
+double/quad doors.
+ 
+Door.owner is the master door.  If there is only one door, it points to itself.
+If multiple doors, all will point to a single one.
+
+Door.enemy chains from the master door through all doors linked in the chain.
+
+*/</i>
+
+
+<i>/*
+=============================================================================
+
+THINK FUNCTIONS
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#door_go_down">door_go_down</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#door_go_up">door_go_up</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>door_blocked</b><a name="door_blocked">=</a>
+{
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>);
+	
+<i>// if a door has a negative wait, it would never come back if blocked,</i>
+<i>// so let it just squash the object to death real fast</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> &gt;= 0)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_DOWN">STATE_DOWN</a>)
+			<a href="doors.htm#door_go_up">door_go_up</a> ();
+		<b>else</b>
+			<a href="doors.htm#door_go_down">door_go_down</a> ();
+	}
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>door_hit_top</b><a name="door_hit_top">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_TOP">STATE_TOP</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#DOOR_TOGGLE">DOOR_TOGGLE</a>)
+		<b>return</b>;		<i>// don't come down automatically</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="doors.htm#door_go_down">door_go_down</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>door_hit_bottom</b><a name="door_hit_bottom">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>door_go_down</b><a name="door_go_down">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>;
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_DOWN">STATE_DOWN</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#door_hit_bottom">door_hit_bottom</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>door_go_up</b><a name="door_go_up">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_UP">STATE_UP</a>)
+		<b>return</b>;		<i>// allready going up</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a>)
+	{	<i>// reset top wait time</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+		<b>return</b>;
+	}
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_UP">STATE_UP</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#door_hit_top">door_hit_top</a>);
+
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();
+};
+
+
+<i>/*
+=============================================================================
+
+ACTIVATION FUNCTIONS
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>door_fire</b><a name="door_fire">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> 	oself;
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	starte;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a> != <a href="qc-glob.htm#self">self</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"door_fire: self.owner != self"</b>);
+
+<i>// play use key sound</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise4">noise4</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> = <a href="defs.htm#string_null">string_null</a>;		<i>// no more message</i>
+	oself = <a href="qc-glob.htm#self">self</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#DOOR_TOGGLE">DOOR_TOGGLE</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_UP">STATE_UP</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a>)
+		{
+			starte = <a href="qc-glob.htm#self">self</a>;
+			<b>do</b>
+			{
+				<a href="doors.htm#door_go_down">door_go_down</a> ();
+				<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+			} <b>while</b> ( (<a href="qc-glob.htm#self">self</a> != starte) &amp;&amp; (<a href="qc-glob.htm#self">self</a> != <a href="qc-glob.htm#world">world</a>) );
+			<a href="qc-glob.htm#self">self</a> = oself;
+			<b>return</b>;
+		}
+	}
+	
+<i>// trigger all paired doors</i>
+	starte = <a href="qc-glob.htm#self">self</a>;
+	<b>do</b>
+	{
+		<a href="doors.htm#door_go_up">door_go_up</a> ();
+		<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	} <b>while</b> ( (<a href="qc-glob.htm#self">self</a> != starte) &amp;&amp; (<a href="qc-glob.htm#self">self</a> != <a href="qc-glob.htm#world">world</a>) );
+	<a href="qc-glob.htm#self">self</a> = oself;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>door_use</b><a name="door_use">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> oself;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> = <b>""</b>;			<i>// door message are for touch only</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_message">message</a> = <b>""</b>;	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_message">message</a> = <b>""</b>;
+	oself = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+	<a href="doors.htm#door_fire">door_fire</a> ();
+	<a href="qc-glob.htm#self">self</a> = oself;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>door_trigger_touch</b><a name="door_trigger_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+	<a href="doors.htm#door_use">door_use</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>door_killed</b><a name="door_killed">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> oself;
+	
+	oself = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;	<i>// wil be reset upon return</i>
+	<a href="doors.htm#door_use">door_use</a> ();
+	<a href="qc-glob.htm#self">self</a> = oself;
+};
+
+
+<i>/*
+================
+door_touch
+
+Prints messages and opens key doors
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>door_touch</b><a name="door_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_message">message</a> != <b>""</b>)
+	{
+		<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_message">message</a>);
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"misc/talk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+	
+<i>// key door stuff</i>
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>)
+		<b>return</b>;
+
+<i>// FIXME: blink key on player's status bar</i>
+	<b>if</b> ( (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a>) != <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> )
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_items">items</a> == <a href="qc-defs.htm#IT_KEY1">IT_KEY1</a>)
+		{
+			<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the silver keycard"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the silver runekey"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the silver key"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+		}
+		<b>else</b>
+		{
+			<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the gold keycard"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the gold runekey"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);			
+			}
+			<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+			{
+				<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You need the gold key"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			}
+		}
+		<b>return</b>;
+	}
+
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;	<i>// get paired door</i>
+	<a href="doors.htm#door_use">door_use</a> ();
+};
+
+<i>/*
+=============================================================================
+
+SPAWNING FUNCTIONS
+
+=============================================================================
+*/</i>
+
+
+
+<a href="qc-types.htm#entity">entity</a>(<a href="qc-types.htm#vector">vector</a> fmins, <a href="qc-types.htm#vector">vector</a> fmaxs) <b>spawn_field</b><a name="spawn_field">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	trigger;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	t1, t2;
+
+	trigger = <a href="qc-built.htm#spawn">spawn</a>();
+	trigger.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	trigger.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	trigger.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	trigger.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="doors.htm#door_trigger_touch">door_trigger_touch</a>;
+
+	t1 = fmins;
+	t2 = fmaxs;
+	<a href="qc-built.htm#setsize">setsize</a> (trigger, t1 - '60 60 8', t2 + '60 60 8');
+	<b>return</b> (trigger);
+};
+
+
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> e1, <a href="qc-types.htm#entity">entity</a> e2) <b>EntitiesTouching</b><a name="EntitiesTouching">=</a>
+{
+	<b>if</b> (e1.mins_x &gt; e2.maxs_x)
+		return FALSE;
+	<b>if</b> (e1.mins_y &gt; e2.maxs_y)
+		return FALSE;
+	<b>if</b> (e1.mins_z &gt; e2.maxs_z)
+		return FALSE;
+	<b>if</b> (e1.maxs_x &lt; e2.mins_x)
+		return FALSE;
+	<b>if</b> (e1.maxs_y &lt; e2.mins_y)
+		return FALSE;
+	<b>if</b> (e1.maxs_z &lt; e2.mins_z)
+		return FALSE;
+	return TRUE;
+};
+
+
+<i>/*
+=============
+LinkDoors
+
+
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>LinkDoors</b><a name="LinkDoors">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	t, starte;
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	cmins, cmaxs;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;		<i>// already linked by another door</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 4)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>;
+		<b>return</b>;		<i>// don't want to link this door</i>
+	}
+
+	cmins = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a>;
+	cmaxs = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a>;
+	
+	starte = <a href="qc-glob.htm#self">self</a>;
+	t = <a href="qc-glob.htm#self">self</a>;
+	
+	<b>do</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a> = starte;			<i>// master door</i>
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+			starte.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+			starte.<a href="qc-enty.htm#dot_targetname">targetname</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> != <b>""</b>)
+			starte.<a href="qc-enty.htm#dot_message">message</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>;
+
+		t = <a href="qc-built.htm#find">find</a> (t, classname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a>);	
+		<b>if</b> (!t)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = starte;		<i>// make the chain a loop</i>
+
+		<i>// shootable, fired, or key doors just needed the owner/enemy links,</i>
+		<i>// they don't spawn a field</i>
+	
+			<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+				<b>return</b>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+				<b>return</b>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>)
+				<b>return</b>;
+
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_trigger_field">trigger_field</a> = <a href="doors.htm#spawn_field">spawn_field</a>(cmins, cmaxs);
+
+			<b>return</b>;
+		}
+
+		<b>if</b> (<a href="doors.htm#EntitiesTouching">EntitiesTouching</a>(<a href="qc-glob.htm#self">self</a>,t))
+		{
+			<b>if</b> (t.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+				<a href="qc-built.htm#objerror">objerror</a> (<b>"cross connected doors"</b>);
+			
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = t;
+			<a href="qc-glob.htm#self">self</a> = t;
+
+			<b>if</b> (t.mins_x &lt; cmins_x)
+				cmins_x = t.mins_x;
+			<b>if</b> (t.mins_y &lt; cmins_y)
+				cmins_y = t.mins_y;
+			<b>if</b> (t.mins_z &lt; cmins_z)
+				cmins_z = t.mins_z;
+			<b>if</b> (t.maxs_x &gt; cmaxs_x)
+				cmaxs_x = t.maxs_x;
+			<b>if</b> (t.maxs_y &gt; cmaxs_y)
+				cmaxs_y = t.maxs_y;
+			<b>if</b> (t.maxs_z &gt; cmaxs_z)
+				cmaxs_z = t.maxs_z;
+		}
+	} <b>while</b> (1 );
+
+};
+
+
+<i>/*QUAKED func_door (0 .5 .8) ? START_OPEN x DOOR_DONT_LINK GOLD_KEY SILVER_KEY TOGGLE
+if two doors touch, they are assumed to be connected and operate as a unit.
+
+TOGGLE causes the door to wait in both the start and end states for a trigger event.
+
+START_OPEN causes the door to move to its destination when spawned, and operate in reverse.  It is used to temporarily or permanently close off an area when triggered (not usefull for touch or takedamage doors).
+
+Key doors are allways wait -1.
+
+"message"	is printed when the door is touched if it is a trigger door and it hasn't been fired yet
+"angle"		determines the opening direction
+"targetname" if set, no touch field will be spawned and a remote button or trigger field activates the door.
+"health"	if set, door must be shot open
+"speed"		movement speed (100 default)
+"wait"		wait before returning (3 default, -1 = never return)
+"lip"		lip remaining at end of move (8 default)
+"dmg"		damage to inflict when blocked (2 default)
+"sounds"
+0)	no sound
+1)	stone
+2)	base
+3)	stone chain
+4)	screechy metal
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>func_door</b><a name="func_door">=</a>
+
+{
+
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/medtry.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/meduse.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/medtry.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise4">noise4</a> = <b>"doors/meduse.wav"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/runetry.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/runeuse.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/runetry.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise4">noise4</a> = <b>"doors/runeuse.wav"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/basetry.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/baseuse.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/basetry.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise4">noise4</a> = <b>"doors/baseuse.wav"</b>;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"no worldtype set!\n"</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 0)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"misc/null.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"misc/null.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/drclos4.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/doormv1.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/drclos4.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/doormv1.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/hydro1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/hydro2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/hydro1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/hydro2.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 3)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/stndr1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/stndr2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/stndr1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/stndr2.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 4)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/ddoor1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/ddoor2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/ddoor2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/ddoor1.wav"</b>;
+	}
+
+
+	<a href="subs.htm#SetMovedir">SetMovedir</a> ();
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);	
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"door"</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="doors.htm#door_blocked">door_blocked</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="doors.htm#door_use">door_use</a>;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#DOOR_SILVER_KEY">DOOR_SILVER_KEY</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_KEY1">IT_KEY1</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#DOOR_GOLD_KEY">DOOR_GOLD_KEY</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_KEY2">IT_KEY2</a>;
+	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 100;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 3;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a> = 8;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 2;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>*(<a href="qc-built.htm#fabs">fabs</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size">size</a>) - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a>);
+
+<i>// DOOR_START_OPEN is to allow an entity to be lighted in the closed position</i>
+<i>// but spawn in the open position</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#DOOR_START_OPEN">DOOR_START_OPEN</a>)
+	{
+		<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="doors.htm#door_killed">door_killed</a>;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = -1;
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="doors.htm#door_touch">door_touch</a>;
+
+<i>// LinkDoors can't be done until all of the doors have been spawned, so</i>
+<i>// the sizes can be detected properly.</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="doors.htm#LinkDoors">LinkDoors</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+};
+
+<i>/*
+=============================================================================
+
+SECRET DOORS
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move1">fd_secret_move1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move2">fd_secret_move2</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move3">fd_secret_move3</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move4">fd_secret_move4</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move5">fd_secret_move5</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_move6">fd_secret_move6</a>;
+<a href="qc-types.htm#void">void</a>() <a href="doors.htm#fd_secret_done">fd_secret_done</a>;
+
+<a href="qc-types.htm#float">float</a> <b><a name="SECRET_OPEN_ONCE">SECRET_OPEN_ONCE</a></b> = 1;		<i>// stays open</i>
+<a href="qc-types.htm#float">float</a> <b><a name="SECRET_1ST_LEFT">SECRET_1ST_LEFT</a></b> = 2;		<i>// 1st move is left of arrow</i>
+<a href="qc-types.htm#float">float</a> <b><a name="SECRET_1ST_DOWN">SECRET_1ST_DOWN</a></b> = 4;		<i>// 1st move is down from arrow</i>
+<a href="qc-types.htm#float">float</a> <b><a name="SECRET_NO_SHOOT">SECRET_NO_SHOOT</a></b> = 8;		<i>// only opened by trigger</i>
+<a href="qc-types.htm#float">float</a> <b><a name="SECRET_YES_SHOOT">SECRET_YES_SHOOT</a></b> = 16;	<i>// shootable even if targeted</i>
+
+
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_use</b><a name="fd_secret_use">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> temp;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 10000;
+
+	<i>// exit if still moving around...</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> != <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldorigin">oldorigin</a>)
+		<b>return</b>;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a> = <a href="defs.htm#string_null">string_null</a>;		<i>// no more message</i>
+
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+	
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#SECRET_NO_SHOOT">SECRET_NO_SHOOT</a>))
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+
+	<i>// Make a sound, wait a little...</i>
+	
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+
+	temp = 1 - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#SECRET_1ST_LEFT">SECRET_1ST_LEFT</a>);	<i>// 1 or -1</i>
+	<a href="qc-built.htm#makevectors">makevectors</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mangle">mangle</a>);
+	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#SECRET_1ST_DOWN">SECRET_1ST_DOWN</a>)
+			<a href="qc-glob.htm#self">self</a>. t_width = <a href="qc-built.htm#fabs">fabs</a>(<a href="qc-built.htm#v_up">v_up</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size">size</a>);
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>. t_width = <a href="qc-built.htm#fabs">fabs</a>(<a href="qc-built.htm#v_right">v_right</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size">size</a>);
+	}
+		
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_length">t_length</a>)
+		<a href="qc-glob.htm#self">self</a>. t_length = <a href="qc-built.htm#fabs">fabs</a>(<a href="qc-built.htm#v_forward">v_forward</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size">size</a>);
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#SECRET_1ST_DOWN">SECRET_1ST_DOWN</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest1">dest1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-built.htm#v_up">v_up</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a>;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest1">dest1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_right">v_right</a> * (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a> * temp);
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest2">dest2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest1">dest1</a> + <a href="qc-built.htm#v_forward">v_forward</a> * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_length">t_length</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest1">dest1</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#fd_secret_move1">fd_secret_move1</a>);
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<i>// Wait after first movement...</i>
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move1</b><a name="fd_secret_move1">=</a> 
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 1.0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="doors.htm#fd_secret_move2">fd_secret_move2</a>;
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<i>// Start moving sideways w/sound...</i>
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move2</b><a name="fd_secret_move2">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest2">dest2</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#fd_secret_move3">fd_secret_move3</a>);
+};
+
+<i>// Wait here until time to go back...</i>
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move3</b><a name="fd_secret_move3">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="doors.htm#SECRET_OPEN_ONCE">SECRET_OPEN_ONCE</a>))
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="doors.htm#fd_secret_move4">fd_secret_move4</a>;
+	}
+};
+
+<i>// Move backward...</i>
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move4</b><a name="fd_secret_move4">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dest1">dest1</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#fd_secret_move5">fd_secret_move5</a>);		
+};
+
+<i>// Wait 1 second...</i>
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move5</b><a name="fd_secret_move5">=</a> 
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 1.0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="doors.htm#fd_secret_move6">fd_secret_move6</a>;
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_move6</b><a name="fd_secret_move6">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldorigin">oldorigin</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="doors.htm#fd_secret_done">fd_secret_done</a>);
+};
+
+<a href="qc-types.htm#void">void</a> () <b>fd_secret_done</b><a name="fd_secret_done">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a>&amp;<a href="doors.htm#SECRET_YES_SHOOT">SECRET_YES_SHOOT</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 10000;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="doors.htm#fd_secret_use">fd_secret_use</a>;	
+	}
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<a href="qc-types.htm#void">void</a> () <b>secret_blocked</b><a name="secret_blocked">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>);
+};
+
+<i>/*
+================
+secret_touch
+
+Prints messages
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>secret_touch</b><a name="secret_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>)
+	{
+		<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>);
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"misc/talk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+};
+
+
+<i>/*QUAKED func_door_secret (0 .5 .8) ? open_once 1st_left 1st_down no_shoot always_shoot
+Basic secret door. Slides back, then to the side. Angle determines direction.
+wait  = # of seconds before coming back
+1st_left = 1st move is left of arrow
+1st_down = 1st move is down from arrow
+always_shoot = even if targeted, keep shootable
+t_width = override WIDTH to move back (or height if going down)
+t_length = override LENGTH to move sideways
+"dmg"		damage to inflict when blocked (2 default)
+
+If a secret door has a targetname, it will only be opened by it's botton or trigger, not by damage.
+"sounds"
+1) medieval
+2) metal
+3) base
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a> () <b>func_door_secret</b><a name="func_door_secret">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 0)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> = 3;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/latch2.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/winch2.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/drclos4.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/latch2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/winch2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/drclos4.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/airdoor1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/airdoor2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/airdoor1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/airdoor2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/airdoor2.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 3)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/basesec1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"doors/basesec2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise2">noise2</a> = <b>"doors/basesec1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"doors/basesec2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise3">noise3</a> = <b>"doors/basesec2.wav"</b>;
+	}
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 2;
+		
+	<i>// Magic formula...</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mangle">mangle</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"door"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);	
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="doors.htm#secret_touch">secret_touch</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="doors.htm#secret_blocked">secret_blocked</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 50;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="doors.htm#fd_secret_use">fd_secret_use</a>;
+	<b>if</b> ( !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a>&amp;<a href="doors.htm#SECRET_YES_SHOOT">SECRET_YES_SHOOT</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 10000;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="doors.htm#fd_secret_use">fd_secret_use</a>;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldorigin">oldorigin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 5;		<i>// 5 seconds before closing</i>
+};
+
+</pre></body></html>

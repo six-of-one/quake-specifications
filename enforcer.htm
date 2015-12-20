@@ -1,0 +1,358 @@
+<html><head><title>enforcer.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+SOLDIER / PLAYER
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/enforcer</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 -6 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base		</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk11 walk12 walk13 walk14 walk15 walk16</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6 run7 run8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack1 attack2 attack3 attack4 attack5 attack6</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack7 attack8 attack9 attack10</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death9 death10 death11 death12 death13 death14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>fdeath1 fdeath2 fdeath3 fdeath4 fdeath5 fdeath6 fdeath7 fdeath8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>fdeath9 fdeath10 fdeath11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paina1 paina2 paina3 paina4</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3 painb4 painb5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind1 paind2 paind3 paind4 paind5 paind6 paind7 paind8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind9 paind10 paind11 paind12 paind13 paind14 paind15 paind16</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind17 paind18 paind19</b>
+
+
+<a href="qc-types.htm#void">void</a>() <b>Laser_Touch</b><a name="Laser_Touch">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> org;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+
+	<b>if</b> (<a href="qc-built.htm#pointcontents">pointcontents</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>) == <a href="qc-defs.htm#CONTENT_SKY">CONTENT_SKY</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"enforcer/enfstop.wav"</b>, 1, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+	org = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - 8*<a href="qc-built.htm#normalize">normalize</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<a href="weapons.htm#SpawnBlood">SpawnBlood</a> (org, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>*0.2, 15);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 15);
+	}
+	<b>else</b>
+	{
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_GUNSHOT">TE_GUNSHOT</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_x);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_y);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_z);
+	}
+	
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);	
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vec) <b>LaunchLaser</b><a name="LaunchLaser">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	vec;
+		
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_enforcer"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"enforcer/enfire.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	vec = <a href="qc-built.htm#normalize">normalize</a>(vec);
+	
+	<a href="defs.htm#newmis">newmis</a> = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_FLY">MOVETYPE_FLY</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-defs.htm#EF_DIMLIGHT">EF_DIMLIGHT</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="defs.htm#newmis">newmis</a>, <b>"progs/laser.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="defs.htm#newmis">newmis</a>, '0 0 0', '0 0 0');		
+
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="defs.htm#newmis">newmis</a>, org);
+
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = vec * 600;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-built.htm#vectoangles">vectoangles</a>(<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 5;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="enforcer.htm#Laser_Touch">Laser_Touch</a>;
+};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>enforcer_fire</b><a name="enforcer_fire">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> org;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	
+	org = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a> * 30 + <a href="qc-built.htm#v_right">v_right</a> * 8.5 + '0 0 16';
+
+	<a href="enforcer.htm#LaunchLaser">LaunchLaser</a>(org, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>enf_stand1</b><a name="enf_stand1">=</a>[	$stand1,	enf_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand2</b><a name="enf_stand2">=</a>[	$stand2,	enf_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand3</b><a name="enf_stand3">=</a>[	$stand3,	enf_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand4</b><a name="enf_stand4">=</a>[	$stand4,	enf_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand5</b><a name="enf_stand5">=</a>[	$stand5,	enf_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand6</b><a name="enf_stand6">=</a>[	$stand6,	enf_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_stand7</b><a name="enf_stand7">=</a>[	$stand7,	<a href="enforcer.htm#enf_stand1">enf_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_walk1</b><a name="enf_walk1">=</a>[	$walk1 ,	enf_walk2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/idle1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk2</b><a name="enf_walk2">=</a>[	$walk2 ,	enf_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk3</b><a name="enf_walk3">=</a>[	$walk3 ,	enf_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk4</b><a name="enf_walk4">=</a>[	$walk4 ,	enf_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk5</b><a name="enf_walk5">=</a>[	$walk5 ,	enf_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk6</b><a name="enf_walk6">=</a>[	$walk6 ,	enf_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk7</b><a name="enf_walk7">=</a>[	$walk7 ,	enf_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk8</b><a name="enf_walk8">=</a>[	$walk8 ,	enf_walk9	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk9</b><a name="enf_walk9">=</a>[	$walk9 ,	enf_walk10	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk10</b><a name="enf_walk10">=</a>[	$walk10,	enf_walk11	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk11</b><a name="enf_walk11">=</a>[	$walk11,	enf_walk12	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk12</b><a name="enf_walk12">=</a>[	$walk12,	enf_walk13	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk13</b><a name="enf_walk13">=</a>[	$walk13,	enf_walk14	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk14</b><a name="enf_walk14">=</a>[	$walk14,	enf_walk15	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk15</b><a name="enf_walk15">=</a>[	$walk15,	enf_walk16	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>enf_walk16</b><a name="enf_walk16">=</a>[	$walk16,	<a href="enforcer.htm#enf_walk1">enf_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_run1</b><a name="enf_run1">=</a>[	$run1  ,	enf_run2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/idle1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(18);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run2</b><a name="enf_run2">=</a>[	$run2  ,	enf_run3	] {<a href="ai.htm#ai_run">ai_run</a>(14);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run3</b><a name="enf_run3">=</a>[	$run3  ,	enf_run4	] {<a href="ai.htm#ai_run">ai_run</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run4</b><a name="enf_run4">=</a>[	$run4  ,	enf_run5	] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run5</b><a name="enf_run5">=</a>[	$run5  ,	enf_run6	] {<a href="ai.htm#ai_run">ai_run</a>(14);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run6</b><a name="enf_run6">=</a>[	$run6  ,	enf_run7	] {<a href="ai.htm#ai_run">ai_run</a>(14);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run7</b><a name="enf_run7">=</a>[	$run7  ,	enf_run8	] {<a href="ai.htm#ai_run">ai_run</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>enf_run8</b><a name="enf_run8">=</a>[	$run8  ,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(11);};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_atk1</b><a name="enf_atk1">=</a>[	$attack1,	enf_atk2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk2</b><a name="enf_atk2">=</a>[	$attack2,	enf_atk3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk3</b><a name="enf_atk3">=</a>[	$attack3,	enf_atk4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk4</b><a name="enf_atk4">=</a>[	$attack4,	enf_atk5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk5</b><a name="enf_atk5">=</a>[	$attack5,	enf_atk6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk6</b><a name="enf_atk6">=</a>[	$attack6,	enf_atk7	] {<a href="enforcer.htm#enforcer_fire">enforcer_fire</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk7</b><a name="enf_atk7">=</a>[	$attack7,	enf_atk8	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk8</b><a name="enf_atk8">=</a>[	$attack8,	enf_atk9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk9</b><a name="enf_atk9">=</a>[	$attack5,	enf_atk10	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk10</b><a name="enf_atk10">=</a>[	$attack6,	enf_atk11	] {<a href="enforcer.htm#enforcer_fire">enforcer_fire</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk11</b><a name="enf_atk11">=</a>[	$attack7,	enf_atk12	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk12</b><a name="enf_atk12">=</a>[	$attack8,	enf_atk13	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk13</b><a name="enf_atk13">=</a>[	$attack9,	enf_atk14	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_atk14</b><a name="enf_atk14">=</a>[	$attack10,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();
+<a href="subs.htm#SUB_CheckRefire">SUB_CheckRefire</a> (<a href="enforcer.htm#enf_atk1">enf_atk1</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_paina1</b><a name="enf_paina1">=</a>[	$paina1,	enf_paina2	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paina2</b><a name="enf_paina2">=</a>[	$paina2,	enf_paina3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paina3</b><a name="enf_paina3">=</a>[	$paina3,	enf_paina4	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paina4</b><a name="enf_paina4">=</a>[	$paina4,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_painb1</b><a name="enf_painb1">=</a>[	$painb1,	enf_painb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painb2</b><a name="enf_painb2">=</a>[	$painb2,	enf_painb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painb3</b><a name="enf_painb3">=</a>[	$painb3,	enf_painb4	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painb4</b><a name="enf_painb4">=</a>[	$painb4,	enf_painb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painb5</b><a name="enf_painb5">=</a>[	$painb5,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_painc1</b><a name="enf_painc1">=</a>[	$painc1,	enf_painc2	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc2</b><a name="enf_painc2">=</a>[	$painc2,	enf_painc3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc3</b><a name="enf_painc3">=</a>[	$painc3,	enf_painc4	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc4</b><a name="enf_painc4">=</a>[	$painc4,	enf_painc5	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc5</b><a name="enf_painc5">=</a>[	$painc5,	enf_painc6	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc6</b><a name="enf_painc6">=</a>[	$painc6,	enf_painc7	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc7</b><a name="enf_painc7">=</a>[	$painc7,	enf_painc8	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_painc8</b><a name="enf_painc8">=</a>[	$painc8,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_paind1</b><a name="enf_paind1">=</a>[	$paind1,	enf_paind2	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind2</b><a name="enf_paind2">=</a>[	$paind2,	enf_paind3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind3</b><a name="enf_paind3">=</a>[	$paind3,	enf_paind4	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind4</b><a name="enf_paind4">=</a>[	$paind4,	enf_paind5	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind5</b><a name="enf_paind5">=</a>[	$paind5,	enf_paind6	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind6</b><a name="enf_paind6">=</a>[	$paind6,	enf_paind7	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind7</b><a name="enf_paind7">=</a>[	$paind7,	enf_paind8	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind8</b><a name="enf_paind8">=</a>[	$paind8,	enf_paind9	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind9</b><a name="enf_paind9">=</a>[	$paind9,	enf_paind10	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind10</b><a name="enf_paind10">=</a>[	$paind10,	enf_paind11	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind11</b><a name="enf_paind11">=</a>[	$paind11,	enf_paind12	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind12</b><a name="enf_paind12">=</a>[	$paind12,	enf_paind13	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind13</b><a name="enf_paind13">=</a>[	$paind13,	enf_paind14	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind14</b><a name="enf_paind14">=</a>[	$paind14,	enf_paind15	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind15</b><a name="enf_paind15">=</a>[	$paind15,	enf_paind16	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind16</b><a name="enf_paind16">=</a>[	$paind16,	enf_paind17	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind17</b><a name="enf_paind17">=</a>[	$paind17,	enf_paind18	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind18</b><a name="enf_paind18">=</a>[	$paind18,	enf_paind19	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_paind19</b><a name="enf_paind19">=</a>[	$paind19,	<a href="enforcer.htm#enf_run1">enf_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>enf_pain</b><a name="enf_pain">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> r;
+
+	r = <a href="qc-built.htm#random">random</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	
+	<b>if</b> (r &lt; 0.5)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/pain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b>
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/pain2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<b>if</b> (r &lt; 0.2)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+		<a href="enforcer.htm#enf_paina1">enf_paina1</a> ();
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.4)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+		<a href="enforcer.htm#enf_painb1">enf_painb1</a> ();
+	}
+	<b>else</b> <b>if</b> (r &lt; 0.7)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+		<a href="enforcer.htm#enf_painc1">enf_painc1</a> ();
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 2;
+		<a href="enforcer.htm#enf_paind1">enf_paind1</a> ();
+	}
+};
+
+<i>//============================================================================</i>
+
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>enf_die1</b><a name="enf_die1">=</a>[	$death1,	enf_die2	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die2</b><a name="enf_die2">=</a>[	$death2,	enf_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die3</b><a name="enf_die3">=</a>[	$death3,	enf_die4	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = 5;<a href="items.htm#DropBackpack">DropBackpack</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_die4</b><a name="enf_die4">=</a>[	$death4,	enf_die5	] {<a href="ai.htm#ai_forward">ai_forward</a>(14);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die5</b><a name="enf_die5">=</a>[	$death5,	enf_die6	] {<a href="ai.htm#ai_forward">ai_forward</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die6</b><a name="enf_die6">=</a>[	$death6,	enf_die7	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die7</b><a name="enf_die7">=</a>[	$death7,	enf_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die8</b><a name="enf_die8">=</a>[	$death8,	enf_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die9</b><a name="enf_die9">=</a>[	$death9,	enf_die10	] {<a href="ai.htm#ai_forward">ai_forward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die10</b><a name="enf_die10">=</a>[	$death10,	enf_die11	] {<a href="ai.htm#ai_forward">ai_forward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die11</b><a name="enf_die11">=</a>[	$death11,	enf_die12	] {<a href="ai.htm#ai_forward">ai_forward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die12</b><a name="enf_die12">=</a>[	$death12,	enf_die13	] {<a href="ai.htm#ai_forward">ai_forward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>enf_die13</b><a name="enf_die13">=</a>[	$death13,	enf_die14	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_die14</b><a name="enf_die14">=</a>[	$death14,	<a href="enforcer.htm#enf_die14">enf_die14</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie1</b><a name="enf_fdie1">=</a>[	$fdeath1,	enf_fdie2	] {
+
+};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie2</b><a name="enf_fdie2">=</a>[	$fdeath2,	enf_fdie3	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie3</b><a name="enf_fdie3">=</a>[	$fdeath3,	enf_fdie4	] 
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = 5;<a href="items.htm#DropBackpack">DropBackpack</a>();};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie4</b><a name="enf_fdie4">=</a>[	$fdeath4,	enf_fdie5	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie5</b><a name="enf_fdie5">=</a>[	$fdeath5,	enf_fdie6	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie6</b><a name="enf_fdie6">=</a>[	$fdeath6,	enf_fdie7	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie7</b><a name="enf_fdie7">=</a>[	$fdeath7,	enf_fdie8	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie8</b><a name="enf_fdie8">=</a>[	$fdeath8,	enf_fdie9	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie9</b><a name="enf_fdie9">=</a>[	$fdeath9,	enf_fdie10	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie10</b><a name="enf_fdie10">=</a>[	$fdeath10,	enf_fdie11	] {};
+<a href="qc-types.htm#void">void</a>() <b>enf_fdie11</b><a name="enf_fdie11">=</a>[	$fdeath11,	<a href="enforcer.htm#enf_fdie11">enf_fdie11</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>enf_die</b><a name="enf_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -35)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_mega.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+<i>// regular death</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/death1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+		<a href="enforcer.htm#enf_die1">enf_die1</a> ();
+	<b>else</b>
+		<a href="enforcer.htm#enf_fdie1">enf_fdie1</a> ();
+};
+
+
+<i>/*QUAKED monster_enforcer (1 0 0) (-16 -16 -24) (16 16 40) Ambush
+
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_enforcer</b><a name="monster_enforcer">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/enforcer.mdl"</b>);
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/h_mega.mdl"</b>);
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/laser.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/death1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfire.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfstop.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/idle1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/pain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/pain2.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight2.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight3.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight4.wav"</b>);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/enforcer.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 80;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="enforcer.htm#enf_stand1">enf_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="enforcer.htm#enf_walk1">enf_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="enforcer.htm#enf_run1">enf_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="enforcer.htm#enf_pain">enf_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="enforcer.htm#enf_die">enf_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="enforcer.htm#enf_atk1">enf_atk1</a>;
+
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a>();
+};
+
+</pre></body></html>

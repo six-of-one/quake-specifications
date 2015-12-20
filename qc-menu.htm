@@ -1,0 +1,141 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK rel="search" type="text/html" HREF="http://sourceforge.net/p/quake-c/mailman/quake-c-users/" title="Quake C sourcforge docs reference">
+<LINK rel="cannonical" type="text/html" HREF="http://www.moddb.com/groups/qc" title="Quake C go-to resources">
+<LINK rel="help" type="text/html" HREF="http://www.moddb.com/groups/qc" title="Quake C go-to resources">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<h3><a href="index.htm" target="_top">Master index</a></h3>
+
+<H1><FONT COLOR="#007F00"><A NAME="CONTENTS">List of Contents</A></FONT></H1>
+
+<PRE><TABLE BORDER><TR><TD><TABLE> 
+<TR VALIGN=TOP><TD>1.</TD><TD><a href="qc-lang.htm#QC-LANG" target="content">The Quake-C Language</A>
+</TD><TD><TABLE>
+<TR><TD>1.1</TD><TD> <a href="qc-lang.htm#QC-LBC" target="content">  Comments, names and types </A>
+</TD></TR>
+<TR><TD>1.2</TD><TD> <a href="qc-lang.htm#QC-LVAR" target="content">Definition of Variables</A>
+</TD></TR>
+<TR><TD>1.3</TD><TD> <a href="qc-lang.htm#QC-LOPS" target="content">Operations</A>
+</TD></TR>
+<TR><TD>1.4</TD><TD> <a href="qc-lang.htm#QC-LFUN" target="content">Definition of Functions</A>
+</TD></TR>
+<TR><TD>1.5</TD><TD> <a href="qc-lang.htm#QC-LOOP" target="content">Loop and conditions</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+<TR VALIGN=TOP><TD>2.</TD><TD><a href="qc-types.htm#QC-TYPES" target="content">The Quake-C Basic Types</A>
+</TD><TD><TABLE>
+<TR><TD>2.1</TD><TD> <a href="qc-types.htm#QC-TSMP" target="content">The simple Types</A>
+</TD></TR>
+<TR><TD>2.2</TD><TD> <a href="qc-types.htm#QC-TFLD" target="content">The field types</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+<TR VALIGN=TOP><TD>3.</TD><TD><a href="qc-mdl.htm#QC-MDL" target="content">Quake-C Model definitions</A>
+</TD></TR>
+
+<TR VALIGN=TOP><TD>4.</TD><TD><a href="qc-mdl.htm#QC-USE" target="content">Using Quake-C</A>
+</TD><TD><TABLE>
+<TR><TD>4.1</TD><TD> <a href="qc-mdl.htm#QC-COMP" target="content">Compilation</A>
+</TD></TR>
+<TR><TD>4.2</TD><TD> <a href="qc-mdl.htm#QC-CEXEC" target="content">Running Quake-C code</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+<TR VALIGN=TOP><TD>5.</TD><TD><a href="qc-defs.htm#QC-DEFS" target="content">Built-in Constants</A>
+</TD><TD><TABLE>
+<TR><TD>5.1</TD><TD> <a href="qc-defs.htm#d_etemporary" target="content">temporary entities</A> 
+</TD></TR>
+<TR><TD>5.2</TD><TD> <a href="qc-defs.htm#d_channel" target="content">Sound Channels</A>
+</TD></TR>
+<TR><TD>5.3</TD><TD> <a href="qc-defs.htm#d_attenuate" target="content">Sound Attenuation</A>
+</TD></TR>
+<TR><TD>5.4</TD><TD> <a href="qc-defs.htm#d_contents" target="content">Contents of areas</A>
+</TD></TR>
+<TR><TD>5.5</TD><TD> <a href="qc-defs.htm#d_effects" target="content">light effects</A> 
+</TD></TR>
+<TR><TD>5.6</TD><TD> <a href="qc-defs.htm#d_items" target="content">Items</A>
+</TD></TR>
+<TR><TD>5.7</TD><TD> <a href="qc-defs.htm#d_solid" target="content">Collision detection</A>
+</TD></TR>
+<TR><TD>5.8</TD><TD> <a href="qc-defs.htm#d_movetype" target="content">Type of movements</A>
+</TD></TR>
+<TR><TD>5.9</TD><TD> <a href="qc-defs.htm#d_damage" target="content">Take damage</A>
+</TD></TR>
+<TR><TD>5.10</TD><TD> <a href="qc-defs.htm#d_deadflag" target="content">Entity dead flag</A> 
+</TD></TR>
+<TR><TD>5.11</TD><TD> <a href="qc-defs.htm#d_spawnflags" target="content">Spawn flags</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+  
+<TR VALIGN=TOP><TD>6.</TD><TD><a href="qc-enty.htm#QC-ENTY" target="content">Quake-C Entity Definition</A>
+</TD><TD><TABLE>
+<TR><TD>6.1</TD><TD> <a href="qc-enty.htm#QC-ETYP" target="content">Types of entities</A>
+</TD></TR>
+<TR><TD>6.2</TD><TD> <a href="qc-enty.htm#QC-EFLD" target="content">Definition of entity fields</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+<TR VALIGN=TOP><TD>7.</TD><TD><a href="qc-glob.htm#QC-GLOB" target="content">Quake-C Global Variables</A>
+</TD><TD><TABLE>
+<TR><TD>7.1</TD><TD> <a href="qc-glob.htm#d_consolev" target="content">Console Variables</A>
+</TD></TR>
+<TR><TD>7.2</TD><TD> <a href="qc-glob.htm#QC-GVAR" target="content">Global Variables</A>
+</TD></TR>
+<TR><TD>7.3</TD><TD> <a href="qc-glob.htm#QC-GFUN" target="content">Mandatory functions</A>
+</TD></TR>
+</TABLE></TD></TR>
+  
+<TR VALIGN=TOP><TD>8.</TD><TD><a href="qc-built.htm#QC-BUILT" target="content">Quake-C Built-in functions</A>
+</TD><TD><TABLE>
+<TR><TD>8.1</TD><TD> <A HREF="QC-BMATH">Math functions</A>
+</TD></TR>
+<TR><TD>8.2</TD><TD> <a href="qc-built.htm#QC-BVEC" target="content">Vector maths</A>
+</TD></TR>
+<TR><TD>8.3</TD><TD> <a href="qc-built.htm#QC-BSND" target="content">Sounds</A>
+</TD></TR>
+<TR><TD>8.4</TD><TD> <a href="qc-built.htm#QC-BENTY" target="content">Entity management</A>
+</TD></TR>
+<TR><TD>8.5</TD><TD> <a href="qc-built.htm#QC-BMOVE" target="content">Entity movements</A>
+</TD></TR>
+<TR><TD>8.6</TD><TD> <a href="qc-built.htm#QC-BFGHT" target="content">Fighting</A>
+</TD></TR>
+<TR><TD>8.7</TD><TD> <a href="qc-built.htm#QC-BCOLS" target="content">Collision checking</A>
+</TD></TR>
+<TR><TD>8.8</TD><TD> <a href="qc-built.htm#QC-BSRV" target="content">Server managment</A>
+</TD></TR>
+<TR><TD>8.9</TD><TD> <a href="qc-built.htm#QC-BPRNT" target="content">Print messages</A>
+</TD></TR>
+<TR><TD>8.10</TD><TD> <a href="qc-built.htm#QC-BCNSL" target="content">Console</A>
+</TD></TR>
+<TR><TD>8.11</TD><TD> <a href="qc-built.htm#QC-BDEBG" target="content">Debugging</A>
+</TD></TR>
+<TR><TD>8.12</TD><TD> <a href="qc-built.htm#QC-BPREC" target="content">Precaching files</A>
+</TD></TR>
+</TABLE></TD></TR>
+<TR VALIGN=TOP><TD>9.</TD><TD><a href="qc-net.htm#QC-NET" target="content">Quake-C Network Protocol</A>
+</TD><TD><TABLE>
+<TR><TD>9.1</TD><TD> <a href="qc-net.htm#QC-NDEF" target="content">Definitions</A>
+</TD></TR>
+<TR><TD>9.2</TD><TD> <a href="qc-net.htm#QC-NETF" target="content">Built-in Network functions</A>
+</TD></TR>
+<TR><TD>9.3</TD><TD> <a href="qc-net.htm#d_messages" target="content">Some message structures</A>
+</TD></TR>
+</TABLE></TD></TR>  
+<TR VALIGN=TOP><TD>10.</TD><TD><a href="qc-trick.htm#QC-TRICK" target="content">Quake-C Tips and Tricks</A>
+</TD><TD><TABLE>
+<TR><TD>10.1</TD><TD> <a href="qc-trick.htm#QC-QUIRK" target="content">The quirks of Quake and Quake-C</A>
+</TD></TR>
+<TR><TD>10.2</TD><TD> <a href="qc-trick.htm#QC-FAQ" target="content">Frequently Asked Questions about Quake-C</A>
+</TD></TR>
+<TR><TD>10.3</TD><TD> <a href="qc-trick.htm#QC-SUGG" target="content">Writing clean Quake-C code</A>
+</TD></TR>
+</TABLE></TD></TR>
+
+</TABLE></TD></TR></TABLE></PRE>
+  
+    
+</BODY></HTML>

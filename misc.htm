@@ -1,0 +1,711 @@
+<html><head><title>misc.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<i>/*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
+Used as a positional target for spotlights, etc.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_null</b><a name="info_null">=</a>
+{
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>/*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
+Used as a positional target for lightning.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_notnull</b><a name="info_notnull">=</a>
+{
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="START_OFF">START_OFF</a></b> = 1;
+
+<a href="qc-types.htm#void">void</a>() <b>light_use</b><a name="light_use">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#START_OFF">START_OFF</a>)
+	{
+		<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"m"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> - <a href="misc.htm#START_OFF">START_OFF</a>;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"a"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> + <a href="misc.htm#START_OFF">START_OFF</a>;
+	}
+};
+
+<i>/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
+Non-displayed light.
+Default light value is 300
+Default style is 0
+If targeted, it will toggle between on or off.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light</b><a name="light">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+	{	<i>// inert light</i>
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a> &gt;= 32)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#light_use">light_use</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#START_OFF">START_OFF</a>)
+			<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"a"</b>);
+		<b>else</b>
+			<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"m"</b>);
+	}
+};
+
+<i>/*QUAKED light_fluoro (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
+Non-displayed light.
+Default light value is 300
+Default style is 0
+If targeted, it will toggle between on or off.
+Makes steady fluorescent humming sound
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_fluoro</b><a name="light_fluoro">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a> &gt;= 32)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#light_use">light_use</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#START_OFF">START_OFF</a>)
+			<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"a"</b>);
+		<b>else</b>
+			<a href="qc-built.htm#lightstyle">lightstyle</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>, <b>"m"</b>);
+	}
+	
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/fl_hum1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/fl_hum1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>/*QUAKED light_fluorospark (0 1 0) (-8 -8 -8) (8 8 8)
+Non-displayed light.
+Default light value is 300
+Default style is 10
+Makes sparking, broken fluorescent sound
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_fluorospark</b><a name="light_fluorospark">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_style">style</a> = 10;
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/buzz1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/buzz1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>/*QUAKED light_globe (0 1 0) (-8 -8 -8) (8 8 8)
+Sphere globe light.
+Default light value is 300
+Default style is 0
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_globe</b><a name="light_globe">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/s_light.spr"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/s_light.spr"</b>);
+	<a href="qc-built.htm#makestatic">makestatic</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>FireAmbient</b><a name="FireAmbient">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/fire1.wav"</b>);
+<i>// attenuate fast</i>
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/fire1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>/*QUAKED light_torch_small_walltorch (0 .5 0) (-10 -10 -20) (10 10 20)
+Short wall torch
+Default light value is 200
+Default style is 0
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_torch_small_walltorch</b><a name="light_torch_small_walltorch">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/flame.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/flame.mdl"</b>);
+	<a href="misc.htm#FireAmbient">FireAmbient</a> ();
+	<a href="qc-built.htm#makestatic">makestatic</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>/*QUAKED light_flame_large_yellow (0 1 0) (-10 -10 -12) (12 12 18)
+Large yellow flame ball
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_flame_large_yellow</b><a name="light_flame_large_yellow">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/flame2.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/flame2.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 1;
+	<a href="misc.htm#FireAmbient">FireAmbient</a> ();
+	<a href="qc-built.htm#makestatic">makestatic</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>/*QUAKED light_flame_small_yellow (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
+Small yellow flame ball
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_flame_small_yellow</b><a name="light_flame_small_yellow">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/flame2.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/flame2.mdl"</b>);
+	<a href="misc.htm#FireAmbient">FireAmbient</a> ();
+	<a href="qc-built.htm#makestatic">makestatic</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>/*QUAKED light_flame_small_white (0 1 0) (-10 -10 -40) (10 10 40) START_OFF
+Small white flame ball
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>light_flame_small_white</b><a name="light_flame_small_white">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/flame2.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/flame2.mdl"</b>);
+	<a href="misc.htm#FireAmbient">FireAmbient</a> ();
+	<a href="qc-built.htm#makestatic">makestatic</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>//============================================================================</i>
+
+
+<i>/*QUAKED misc_fireball (0 .5 .8) (-8 -8 -8) (8 8 8)
+Lava Balls
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#fire_fly">fire_fly</a>;
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#fire_touch">fire_touch</a>;
+<a href="qc-types.htm#void">void</a>() <b>misc_fireball</b><a name="misc_fireball">=</a>
+{
+	
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/lavaball.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"fireball"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + (<a href="qc-built.htm#random">random</a>() * 5);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#fire_fly">fire_fly</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> == 1000;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>fire_fly</b><a name="fire_fly">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	fireball;
+
+	fireball = <a href="qc-built.htm#spawn">spawn</a>();
+	fireball.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	fireball.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_TOSS">MOVETYPE_TOSS</a>;
+	fireball.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 1000';
+	fireball.velocity_x = (<a href="qc-built.htm#random">random</a>() * 100) - 50;
+	fireball.velocity_y = (<a href="qc-built.htm#random">random</a>() * 100) - 50;
+	fireball.velocity_z = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> + (<a href="qc-built.htm#random">random</a>() * 200);
+	fireball.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"fireball"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (fireball, <b>"progs/lavaball.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (fireball, '0 0 0', '0 0 0');
+	<a href="qc-built.htm#setorigin">setorigin</a> (fireball, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	fireball.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 5;
+	fireball.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	fireball.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="misc.htm#fire_touch">fire_touch</a>;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + (<a href="qc-built.htm#random">random</a>() * 5) + 3;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#fire_fly">fire_fly</a>;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>fire_touch</b><a name="fire_touch">=</a>
+{
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 20);
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>//============================================================================</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>barrel_explode</b><a name="barrel_explode">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"explo_box"</b>;
+	<i>// did say self.owner</i>
+	<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 160, <a href="qc-glob.htm#world">world</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"weapons/r_exp3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#particle">particle</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, '0 0 0', 75, 255);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 32;
+	<a href="weapons.htm#BecomeExplosion">BecomeExplosion</a> ();
+};
+
+
+
+<i>/*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
+TESTING THING
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>misc_explobox</b><a name="misc_explobox">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	oldz;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_explob.bsp"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_explob.bsp"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/r_exp3.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 20;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="misc.htm#barrel_explode">barrel_explode</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 2;
+	oldz = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>;
+	<a href="qc-built.htm#droptofloor">droptofloor</a>();
+	<b>if</b> (oldz - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> &gt; 250)
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"item fell out of level at "</b>);
+		<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+	}
+};
+
+
+
+
+<i>/*QUAKED misc_explobox2 (0 .5 .8) (0 0 0) (32 32 64)
+Smaller exploding box, REGISTERED ONLY
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>misc_explobox2</b><a name="misc_explobox2">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	oldz;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"maps/b_exbox2.bsp"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_exbox2.bsp"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/r_exp3.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 20;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="misc.htm#barrel_explode">barrel_explode</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 2;
+	oldz = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>;
+	<a href="qc-built.htm#droptofloor">droptofloor</a>();
+	<b>if</b> (oldz - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> &gt; 250)
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"item fell out of level at "</b>);
+		<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+	}
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="SPAWNFLAG_SUPERSPIKE">SPAWNFLAG_SUPERSPIKE</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="SPAWNFLAG_LASER">SPAWNFLAG_LASER</a></b> = 2;
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vec) <a href="enforcer.htm#LaunchLaser">LaunchLaser</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>spikeshooter_use</b><a name="spikeshooter_use">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#SPAWNFLAG_LASER">SPAWNFLAG_LASER</a>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/enfire.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="enforcer.htm#LaunchLaser">LaunchLaser</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>);
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"weapons/spike2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="weapons.htm#launch_spike">launch_spike</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>);
+		<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> * 500;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#SPAWNFLAG_SUPERSPIKE">SPAWNFLAG_SUPERSPIKE</a>)
+			<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#superspike_touch">superspike_touch</a>;
+	}
+};
+
+<a href="qc-types.htm#void">void</a>() <b>shooter_think</b><a name="shooter_think">=</a>
+{
+	<a href="misc.htm#spikeshooter_use">spikeshooter_use</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> * 500;
+};
+
+
+<i>/*QUAKED trap_spikeshooter (0 .5 .8) (-8 -8 -8) (8 8 8) superspike laser
+When triggered, fires a spike in the direction set in QuakeEd.
+Laser is only for REGISTERED.
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>trap_spikeshooter</b><a name="trap_spikeshooter">=</a>
+{
+	<a href="subs.htm#SetMovedir">SetMovedir</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#spikeshooter_use">spikeshooter_use</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="misc.htm#SPAWNFLAG_LASER">SPAWNFLAG_LASER</a>)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/laser.mdl"</b>);
+		
+		<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfire.wav"</b>);
+		<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfstop.wav"</b>);
+	}
+	<b>else</b>
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/spike2.wav"</b>);
+};
+
+
+<i>/*QUAKED trap_shooter (0 .5 .8) (-8 -8 -8) (8 8 8) superspike laser
+Continuously fires spikes.
+"wait" time between spike (1.0 default)
+"nextthink" delay before firing first spike, so multiple shooters can be stagered.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trap_shooter</b><a name="trap_shooter">=</a>
+{
+	<a href="misc.htm#trap_spikeshooter">trap_spikeshooter</a> ();
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> == 0)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#shooter_think">shooter_think</a>;
+};
+
+
+
+<i>/*
+===============================================================================
+
+
+===============================================================================
+*/</i>
+
+
+
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#make_bubbles">make_bubbles</a>;
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#bubble_remove">bubble_remove</a>;
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#bubble_bob">bubble_bob</a>;
+
+<i>/*QUAKED air_bubbles (0 .5 .8) (-8 -8 -8) (8 8 8)
+
+testing air bubbles
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>air_bubbles</b><a name="air_bubbles">=</a>
+
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/s_bubble.spr"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#make_bubbles">make_bubbles</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>make_bubbles</b><a name="make_bubbles">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	bubble;
+
+	bubble = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="qc-built.htm#setmodel">setmodel</a> (bubble, <b>"progs/s_bubble.spr"</b>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (bubble, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	bubble.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NOCLIP">MOVETYPE_NOCLIP</a>;
+	bubble.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	bubble.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 15';
+	bubble.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	bubble.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#bubble_bob">bubble_bob</a>;
+	bubble.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="misc.htm#bubble_remove">bubble_remove</a>;
+	bubble.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bubble"</b>;
+	bubble.<a href="qc-enty.htm#dot_frame">frame</a> = 0;
+	bubble.<a href="qc-enty.htm#dot_cnt">cnt</a> = 0;
+	<a href="qc-built.htm#setsize">setsize</a> (bubble, '-8 -8 -8', '8 8 8');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + <a href="qc-built.htm#random">random</a>() + 0.5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#make_bubbles">make_bubbles</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>bubble_split</b><a name="bubble_split">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	bubble;
+	bubble = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="qc-built.htm#setmodel">setmodel</a> (bubble, <b>"progs/s_bubble.spr"</b>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (bubble, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	bubble.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NOCLIP">MOVETYPE_NOCLIP</a>;
+	bubble.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	bubble.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>;
+	bubble.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	bubble.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#bubble_bob">bubble_bob</a>;
+	bubble.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="misc.htm#bubble_remove">bubble_remove</a>;
+	bubble.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bubble"</b>;
+	bubble.<a href="qc-enty.htm#dot_frame">frame</a> = 1;
+	bubble.<a href="qc-enty.htm#dot_cnt">cnt</a> = 10;
+	<a href="qc-built.htm#setsize">setsize</a> (bubble, '-8 -8 -8', '8 8 8');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = 10;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> != 3)
+		<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>bubble_remove</b><a name="bubble_remove">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a>)
+	{
+<i>//		dprint ("bump");</i>
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>bubble_bob</b><a name="bubble_bob">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a>		rnd1, rnd2, rnd3;
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	vtmp1, modi;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> == 4)
+		<a href="misc.htm#bubble_split">bubble_split</a>();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> == 20)
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+
+	rnd1 = <a href="qc-glob.htm#self">self</a>.velocity_x + (-10 + (<a href="qc-built.htm#random">random</a>() * 20));
+	rnd2 = <a href="qc-glob.htm#self">self</a>.velocity_y + (-10 + (<a href="qc-built.htm#random">random</a>() * 20));
+	rnd3 = <a href="qc-glob.htm#self">self</a>.velocity_z + 10 + <a href="qc-built.htm#random">random</a>() * 10;
+
+	<b>if</b> (rnd1 &gt; 10)
+		rnd1 = 5;
+	<b>if</b> (rnd1 &lt; -10)
+		rnd1 = -5;
+		
+	<b>if</b> (rnd2 &gt; 10)
+		rnd2 = 5;
+	<b>if</b> (rnd2 &lt; -10)
+		rnd2 = -5;
+		
+	<b>if</b> (rnd3 &lt; 10)
+		rnd3 = 15;
+	<b>if</b> (rnd3 &gt; 30)
+		rnd3 = 25;
+	
+	<a href="qc-glob.htm#self">self</a>.velocity_x = rnd1;
+	<a href="qc-glob.htm#self">self</a>.velocity_y = rnd2;
+	<a href="qc-glob.htm#self">self</a>.velocity_z = rnd3;
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#bubble_bob">bubble_bob</a>;
+};
+
+<i>/*~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>
+~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~*/</i>
+
+
+<i>/*QUAKED viewthing (0 .5 .8) (-8 -8 -8) (8 8 8)
+
+Just for the debugging level.  Don't use
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>viewthing</b><a name="viewthing">=</a>
+
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/player.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/player.mdl"</b>);
+};
+
+
+<i>/*
+==============================================================================
+
+SIMPLE BMODELS
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>func_wall_use</b><a name="func_wall_use">=</a>
+{	<i>// change to alternate textures</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 1 - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a>;
+};
+
+<i>/*QUAKED func_wall (0 .5 .8) ?
+This is just a solid wall if not inhibitted
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_wall</b><a name="func_wall">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;	<i>// so it doesn't get pushed by anything</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#func_wall_use">func_wall_use</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+};
+
+
+<i>/*QUAKED func_illusionary (0 .5 .8) ?
+A simple entity that looks solid but lets you walk through it.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_illusionary</b><a name="func_illusionary">=</a>
+
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+	<a href="qc-built.htm#makestatic">makestatic</a> ();
+};
+
+<i>/*QUAKED func_episodegate (0 .5 .8) ? E1 E2 E3 E4
+This bmodel will appear if the episode has allready been completed, so players can't reenter it.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_episodegate</b><a name="func_episodegate">=</a>
+
+{
+	<b>if</b> (!(<a href="qc-glob.htm#serverflags">serverflags</a> &amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a>))
+		<b>return</b>;			<i>// can still enter episode</i>
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;	<i>// so it doesn't get pushed by anything</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#func_wall_use">func_wall_use</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+};
+
+<i>/*QUAKED func_bossgate (0 .5 .8) ?
+This bmodel appears unless players have all of the episode sigils.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_bossgate</b><a name="func_bossgate">=</a>
+
+{
+	<b>if</b> ( (<a href="qc-glob.htm#serverflags">serverflags</a> &amp; 15) == 15)
+		<b>return</b>;		<i>// all episodes completed</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;	<i>// so it doesn't get pushed by anything</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="misc.htm#func_wall_use">func_wall_use</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+};
+
+<i>//============================================================================</i>
+<i>/*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_suck_wind</b><a name="ambient_suck_wind">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/suck1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/suck1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>/*QUAKED ambient_drone (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_drone</b><a name="ambient_drone">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/drone6.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/drone6.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>/*QUAKED ambient_flouro_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_flouro_buzz</b><a name="ambient_flouro_buzz">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/buzz1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/buzz1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_drip</b><a name="ambient_drip">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/drip1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/drip1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_comp_hum (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_comp_hum</b><a name="ambient_comp_hum">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/comp1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/comp1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_thunder (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_thunder</b><a name="ambient_thunder">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/thunder1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/thunder1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_light_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_light_buzz</b><a name="ambient_light_buzz">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/fl_hum1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/fl_hum1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_swamp1 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_swamp1</b><a name="ambient_swamp1">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/swamp1.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/swamp1.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+<i>/*QUAKED ambient_swamp2 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ambient_swamp2</b><a name="ambient_swamp2">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"ambience/swamp2.wav"</b>);
+	<a href="qc-built.htm#ambientsound">ambientsound</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <b>"ambience/swamp2.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>noise_think</b><a name="noise_think">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 1, <b>"enforcer/enfire.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 2, <b>"enforcer/enfstop.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 3, <b>"enforcer/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 4, <b>"enforcer/sight2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 5, <b>"enforcer/sight3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 6, <b>"enforcer/sight4.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, 7, <b>"enforcer/pain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<i>/*QUAKED misc_noisemaker (1 0.5 0) (-10 -10 -10) (10 10 10)
+
+For optimzation testing, starts a lot of sounds.
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>misc_noisemaker</b><a name="misc_noisemaker">=</a>
+
+{
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfire.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/enfstop.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight2.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight3.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/sight4.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/pain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/pain2.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/death1.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"enforcer/idle1.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#noise_think">noise_think</a>;
+};
+
+</pre></body></html>

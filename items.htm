@@ -1,0 +1,1382 @@
+<html><head><title>items.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a>;
+<i>/* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
+BE .8 .3 .4 IN COLOR */</i>
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_regen</b><a name="SUB_regen">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mdl">mdl</a>;		<i>// restore original model</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;	<i>// allow it to be touched again</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"items/itembk2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	<i>// play respawn sound</i>
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+};
+
+
+
+<i>/*QUAKED noclass (0 0 0) (-8 -8 -8) (8 8 8)
+prints a warning message when spawned
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>noclass</b><a name="noclass">=</a>
+{
+	<a href="qc-built.htm#dprint">dprint</a> (<b>"noclass spawned at"</b>);
+	<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+	<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+	<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+
+
+<i>/*
+============
+PlaceItem
+
+plants the object on the floor
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>PlaceItem</b><a name="PlaceItem">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	oldz;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mdl">mdl</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>;		<i>// so it can be restored on respawn</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="defs.htm#FL_ITEM">FL_ITEM</a>;		<i>// make extra wide</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_TOSS">MOVETYPE_TOSS</a>;	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 6;
+	oldz = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>;
+	<b>if</b> (!<a href="qc-built.htm#droptofloor">droptofloor</a>())
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"Bonus item fell out of level at "</b>);
+		<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+};
+
+<i>/*
+============
+StartItem
+
+Sets the clipping size and plants the object on the floor
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>StartItem</b><a name="StartItem">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.2;	<i>// items start after other solids</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#PlaceItem">PlaceItem</a>;
+};
+
+<i>/*
+=========================================================================
+
+HEALTH BOX
+
+=========================================================================
+*/</i>
+
+<i>//</i>
+<i>// T_Heal: add health to an entity, limiting health to max_health</i>
+<i>// "ignore" will ignore max_health limit</i>
+<i>//</i>
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#float">float</a> healamount, <a href="qc-types.htm#float">float</a> ignore) <b>T_Heal</b><a name="T_Heal">=</a>
+{
+	<b>if</b> (e.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		return 0;
+	<b>if</b> ((!ignore) &amp;&amp; (e.<a href="qc-enty.htm#dot_health">health</a> &gt;= <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>))
+		return 0;
+	healamount = <a href="qc-built.htm#ceil">ceil</a>(healamount);
+
+	e.<a href="qc-enty.htm#dot_health">health</a> = e.<a href="qc-enty.htm#dot_health">health</a> + healamount;
+	<b>if</b> ((!ignore) &amp;&amp; (e.<a href="qc-enty.htm#dot_health">health</a> &gt;= <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>))
+		e.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>;
+		
+	<b>if</b> (e.<a href="qc-enty.htm#dot_health">health</a> &gt; 250)
+		e.<a href="qc-enty.htm#dot_health">health</a> = 250;
+	return 1;
+};
+
+<i>/*QUAKED item_health (.3 .3 1) (0 0 0) (32 32 32) rotten megahealth
+Health box. Normally gives 25 points.
+Rotten box heals 5-10 points,
+megahealth will add 100 health, then 
+rot you down to your maximum health limit, 
+one point per second.
+*/</i>
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="H_ROTTEN">H_ROTTEN</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="H_MEGA">H_MEGA</a></b> = 2;
+.<a href="qc-types.htm#dot_float">float</a>	healamount, healtype;
+<a href="qc-types.htm#void">void</a>() <a href="items.htm#health_touch">health_touch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="items.htm#item_megahealth_rot">item_megahealth_rot</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>item_health</b><a name="item_health">=</a>
+{	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#health_touch">health_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#H_ROTTEN">H_ROTTEN</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a>(<b>"maps/b_bh10.bsp"</b>);
+
+		<a href="qc-built.htm#precache_sound">precache_sound</a>(<b>"items/r_item1.wav"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a>(<a href="qc-glob.htm#self">self</a>, <b>"maps/b_bh10.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/r_item1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.healamount = 15;
+		<a href="qc-glob.htm#self">self</a>.healtype = 0;
+	}
+	<b>else</b>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#H_MEGA">H_MEGA</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a>(<b>"maps/b_bh100.bsp"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a>(<b>"items/r_item2.wav"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a>(<a href="qc-glob.htm#self">self</a>, <b>"maps/b_bh100.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/r_item2.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.healamount = 100;
+		<a href="qc-glob.htm#self">self</a>.healtype = 2;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a>(<b>"maps/b_bh25.bsp"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a>(<b>"items/health1.wav"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a>(<a href="qc-glob.htm#self">self</a>, <b>"maps/b_bh25.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/health1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.healamount = 25;
+		<a href="qc-glob.htm#self">self</a>.healtype = 1;
+	}
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>health_touch</b><a name="health_touch">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a> amount;
+	<b>local</b>	<a href="qc-types.htm#string">string</a>	s;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.healtype == 2) <i>// Megahealth?  Ignore max_health...</i>
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &gt;= 250)
+			<b>return</b>;
+		<b>if</b> (!<a href="items.htm#T_Heal">T_Heal</a>(<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.healamount, 1))
+			<b>return</b>;
+	}
+	<b>else</b>
+	{
+		<b>if</b> (!<a href="items.htm#T_Heal">T_Heal</a>(<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.healamount, 0))
+			<b>return</b>;
+	}
+	
+	<a href="qc-built.htm#sprint">sprint</a>(<a href="qc-glob.htm#other">other</a>, <b>"You receive "</b>);
+	s = <a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.healamount);
+	<a href="qc-built.htm#sprint">sprint</a>(<a href="qc-glob.htm#other">other</a>, s);
+	<a href="qc-built.htm#sprint">sprint</a>(<a href="qc-glob.htm#other">other</a>, <b>" health\n"</b>);
+	
+<i>// health touch sound</i>
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+
+	<i>// Megahealth = rot down the player's super health</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.healtype == 2)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_SUPERHEALTH">IT_SUPERHEALTH</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 5;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#item_megahealth_rot">item_megahealth_rot</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#other">other</a>;
+	}
+	<b>else</b>
+	{
+		<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> != 2)		<i>// deathmatch 2 is the silly old rules</i>
+		{
+			<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 20;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+		}
+	}
+	
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};	
+
+<a href="qc-types.htm#void">void</a>() <b>item_megahealth_rot</b><a name="item_megahealth_rot">=</a>
+{
+	<a href="qc-glob.htm#other">other</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> - 1;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+		<b>return</b>;
+	}
+
+<i>// it is possible for a player to die and respawn between rots, so don't</i>
+<i>// just blindly subtract the flag off</i>
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> - (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_SUPERHEALTH">IT_SUPERHEALTH</a>);
+	
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 1)	<i>// deathmatch 2 is silly old rules</i>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 20;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+	}
+};
+
+<i>/*
+===============================================================================
+
+ARMOR
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="items.htm#armor_touch">armor_touch</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>armor_touch</b><a name="armor_touch">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	type, value, bit;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_armor1"</b>)
+	{
+		type = 0.3;
+		value = 100;
+		bit = <a href="qc-defs.htm#IT_ARMOR1">IT_ARMOR1</a>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_armor2"</b>)
+	{
+		type = 0.6;
+		value = 150;
+		bit = <a href="qc-defs.htm#IT_ARMOR2">IT_ARMOR2</a>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_armorInv"</b>)
+	{
+		type = 0.8;
+		value = 200;
+		bit = <a href="qc-defs.htm#IT_ARMOR3">IT_ARMOR3</a>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_armortype">armortype</a>*<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a> &gt;= type*value)
+		<b>return</b>;
+		
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_armortype">armortype</a> = type;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a> = value;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> - (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; (<a href="qc-defs.htm#IT_ARMOR1">IT_ARMOR1</a> | <a href="qc-defs.htm#IT_ARMOR2">IT_ARMOR2</a> | <a href="qc-defs.htm#IT_ARMOR3">IT_ARMOR3</a>)) + bit;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 1)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 20;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+
+	<a href="qc-built.htm#sprint">sprint</a>(<a href="qc-glob.htm#other">other</a>, <b>"You got armor\n"</b>);
+<i>// armor touch sound</i>
+	<a href="qc-built.htm#sound">sound</a>(<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <b>"items/armor1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+	
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+<i>/*QUAKED item_armor1 (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_armor1</b><a name="item_armor1">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#armor_touch">armor_touch</a>;
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/armor.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/armor.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_skin">skin</a> = 0;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_armor2 (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_armor2</b><a name="item_armor2">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#armor_touch">armor_touch</a>;
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/armor.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/armor.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_skin">skin</a> = 1;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_armorInv (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_armorInv</b><a name="item_armorInv">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#armor_touch">armor_touch</a>;
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/armor.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/armor.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_skin">skin</a> = 2;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*
+===============================================================================
+
+WEAPONS
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>bound_other_ammo</b><a name="bound_other_ammo">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &gt; 100)
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = 100;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &gt; 200)
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = 200;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &gt; 100)
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = 100;		
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &gt; 100)
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = 100;		
+};
+
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> w) <b>RankForWeapon</b><a name="RankForWeapon">=</a>
+{
+	<b>if</b> (w == <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>)
+		return 1;
+	<b>if</b> (w == <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>)
+		return 2;
+	<b>if</b> (w == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+		return 3;
+	<b>if</b> (w == <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>)
+		return 4;
+	<b>if</b> (w == <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>)
+		return 5;
+	<b>if</b> (w == <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>)
+		return 6;
+	return 7;
+};
+
+<i>/*
+=============
+Deathmatch_Weapon
+
+Deathmatch weapon change rules for picking up a weapon
+
+.float		ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> old, <a href="qc-types.htm#float">float</a> new) <b>Deathmatch_Weapon</b><a name="Deathmatch_Weapon">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> or, nr;
+
+<i>// change self.weapon if desired</i>
+	or = <a href="items.htm#RankForWeapon">RankForWeapon</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a>);
+	nr = <a href="items.htm#RankForWeapon">RankForWeapon</a> (new);
+	<b>if</b> ( nr &lt; or )
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = new;
+};
+
+<i>/*
+=============
+weapon_touch
+=============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_touch</b><a name="weapon_touch">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	hadammo, best, new, old;
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	stemp;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	leave;
+
+	<b>if</b> (!(<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_CLIENT">FL_CLIENT</a>))
+		<b>return</b>;
+
+<i>// if the player was using his best weapon, change up to the new one if better		</i>
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	best = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>();
+	<a href="qc-glob.htm#self">self</a> = stemp;
+
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 2 || <a href="qc-glob.htm#coop">coop</a>)
+		leave = 1;
+	<b>else</b>
+		leave = 0;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_nailgun"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;			
+		new = <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> + 30;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_supernailgun"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;			
+		new = <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> + 30;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_supershotgun"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;			
+		new = <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> + 5;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_rocketlauncher"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;			
+		new = <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> + 5;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_grenadelauncher"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;			
+		new = <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> + 5;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"weapon_lightning"</b>)
+	{
+		<b>if</b> (leave &amp;&amp; (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>) )
+			<b>return</b>;
+		hadammo = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;			
+		new = <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> + 15;
+	}
+	<b>else</b>
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"weapon_touch: unknown classname"</b>);
+
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You got the "</b>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"\n"</b>);
+<i>// weapon touch sound</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <b>"weapons/pkup.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+
+	<a href="items.htm#bound_other_ammo">bound_other_ammo</a> ();
+
+<i>// change to the weapon</i>
+	old = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> | new;
+	
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = new;
+	<b>else</b>
+		<a href="items.htm#Deathmatch_Weapon">Deathmatch_Weapon</a> (old, new);
+
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a>();
+
+	<a href="qc-glob.htm#self">self</a> = stemp;
+
+	<b>if</b> (leave)
+		<b>return</b>;
+
+<i>// remove it in single player, or setup for respawning in deathmatch</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 1)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+	
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+<i>/*QUAKED weapon_supershotgun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_supershotgun</b><a name="weapon_supershotgun">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_shot.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_shot.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Double-barrelled Shotgun"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED weapon_nailgun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_nailgun</b><a name="weapon_nailgun">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_nail.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_nail.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"nailgun"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED weapon_supernailgun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_supernailgun</b><a name="weapon_supernailgun">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_nail2.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_nail2.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Super Nailgun"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED weapon_grenadelauncher (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_grenadelauncher</b><a name="weapon_grenadelauncher">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_rock.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_rock.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 3;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Grenade Launcher"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED weapon_rocketlauncher (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_rocketlauncher</b><a name="weapon_rocketlauncher">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_rock2.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_rock2.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 3;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Rocket Launcher"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*QUAKED weapon_lightning (0 .5 .8) (-16 -16 0) (16 16 32)
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>weapon_lightning</b><a name="weapon_lightning">=</a>
+{
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/g_light.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/g_light.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 3;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Thunderbolt"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#weapon_touch">weapon_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*
+===============================================================================
+
+AMMO
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>ammo_touch</b><a name="ammo_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	stemp;
+<b>local</b> <a href="qc-types.htm#float">float</a>		best;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+<i>// if the player was using his best weapon, change up to the new one if better		</i>
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	best = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>();
+	<a href="qc-glob.htm#self">self</a> = stemp;
+
+
+<i>// shotgun</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == 1)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &gt;= 100)
+			<b>return</b>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a>;
+	}
+
+<i>// spikes</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == 2)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &gt;= 200)
+			<b>return</b>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a>;
+	}
+
+<i>//	rockets</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == 3)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &gt;= 100)
+			<b>return</b>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a>;
+	}
+
+<i>//	cells</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == 4)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &gt;= 200)
+			<b>return</b>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a>;
+	}
+
+	<a href="items.htm#bound_other_ammo">bound_other_ammo</a> ();
+	
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You got the "</b>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"\n"</b>);
+<i>// ammo touch sound</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <b>"weapons/lock4.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+
+<i>// change to a better weapon if appropriate</i>
+
+	<b>if</b> ( <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == best )
+	{
+		stemp = <a href="qc-glob.htm#self">self</a>;
+		<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>();
+		<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+		<a href="qc-glob.htm#self">self</a> = stemp;
+	}
+
+<i>// if changed current ammo, update it</i>
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a>();
+	<a href="qc-glob.htm#self">self</a> = stemp;
+
+<i>// remove it in single player, or setup for respawning in deathmatch</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 1)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="WEAPON_BIG2">WEAPON_BIG2</a></b> = 1;
+
+<i>/*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_shells</b><a name="item_shells">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#ammo_touch">ammo_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG2">WEAPON_BIG2</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_shell1.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_shell1.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 40;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_shell0.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_shell0.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 20;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"shells"</b>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_spikes (0 .5 .8) (0 0 0) (32 32 32) big
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_spikes</b><a name="item_spikes">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#ammo_touch">ammo_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG2">WEAPON_BIG2</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_nail1.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_nail1.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 50;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_nail0.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_nail0.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 25;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"nails"</b>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_rockets (0 .5 .8) (0 0 0) (32 32 32) big
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_rockets</b><a name="item_rockets">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#ammo_touch">ammo_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG2">WEAPON_BIG2</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_rock1.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_rock1.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 10;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_rock0.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_rock0.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 5;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 3;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"rockets"</b>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*QUAKED item_cells (0 .5 .8) (0 0 0) (32 32 32) big
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_cells</b><a name="item_cells">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#ammo_touch">ammo_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG2">WEAPON_BIG2</a>)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_batt1.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_batt1.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 12;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_batt0.bsp"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_batt0.bsp"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 6;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 4;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"cells"</b>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
+DO NOT USE THIS!!!! IT WILL BE REMOVED!
+*/</i>
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="WEAPON_SHOTGUN">WEAPON_SHOTGUN</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="WEAPON_ROCKET">WEAPON_ROCKET</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="WEAPON_SPIKES">WEAPON_SPIKES</a></b> = 4;
+<a href="qc-types.htm#float">float</a> <b><a name="WEAPON_BIG">WEAPON_BIG</a></b> = 8;
+<a href="qc-types.htm#void">void</a>() <b>item_weapon</b><a name="item_weapon">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#ammo_touch">ammo_touch</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_SHOTGUN">WEAPON_SHOTGUN</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG">WEAPON_BIG</a>)
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_shell1.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_shell1.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 40;
+		}
+		<b>else</b>
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_shell0.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_shell0.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 20;
+		}
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 1;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"shells"</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_SPIKES">WEAPON_SPIKES</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG">WEAPON_BIG</a>)
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_nail1.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_nail1.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 40;
+		}
+		<b>else</b>
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_nail0.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_nail0.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 20;
+		}
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 2;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"spikes"</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_ROCKET">WEAPON_ROCKET</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="items.htm#WEAPON_BIG">WEAPON_BIG</a>)
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_rock1.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_rock1.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 10;
+		}
+		<b>else</b>
+		{
+			<a href="qc-built.htm#precache_model">precache_model</a> (<b>"maps/b_rock0.bsp"</b>);
+			<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"maps/b_rock0.bsp"</b>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_aflag">aflag</a> = 5;
+		}
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = 3;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"rockets"</b>;
+	}
+	
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '0 0 0', '32 32 56');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*
+===============================================================================
+
+KEYS
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>key_touch</b><a name="key_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	stemp;
+<b>local</b> <a href="qc-types.htm#float">float</a>		best;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>)
+		<b>return</b>;
+
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You got the "</b>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>,<b>"\n"</b>);
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#coop">coop</a>)
+	{	
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	}
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>key_setsounds</b><a name="key_setsounds">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/medkey.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/medkey.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/runekey.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/runekey.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"misc/basekey.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/basekey.wav"</b>;
+	}
+};
+
+<i>/*QUAKED item_key1 (0 .5 .8) (-16 -16 -24) (16 16 32)
+SILVER key
+In order for keys to work
+you MUST set your maps
+worldtype to one of the
+following:
+0: medieval
+1: metal
+2: base
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_key1</b><a name="item_key1">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/w_s_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/w_s_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"silver key"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/m_s_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/m_s_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"silver runekey"</b>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/b_s_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/b_s_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"silver keycard"</b>;
+	}
+	<a href="items.htm#key_setsounds">key_setsounds</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#key_touch">key_touch</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_KEY1">IT_KEY1</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_key2 (0 .5 .8) (-16 -16 -24) (16 16 32)
+GOLD key
+In order for keys to work
+you MUST set your maps
+worldtype to one of the
+following:
+0: medieval
+1: metal
+2: base
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_key2</b><a name="item_key2">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 0)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/w_g_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/w_g_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"gold key"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 1)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/m_g_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/m_g_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"gold runekey"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_worldtype">worldtype</a> == 2)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/b_g_key.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/b_g_key.mdl"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"gold keycard"</b>;
+	}
+	<a href="items.htm#key_setsounds">key_setsounds</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#key_touch">key_touch</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_KEY2">IT_KEY2</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+
+<i>/*
+===============================================================================
+
+END OF LEVEL RUNES
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>sigil_touch</b><a name="sigil_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	stemp;
+<b>local</b> <a href="qc-types.htm#float">float</a>		best;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+	<a href="qc-built.htm#centerprint">centerprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You got the rune!"</b>);
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+	<a href="qc-glob.htm#serverflags">serverflags</a> = <a href="qc-glob.htm#serverflags">serverflags</a> | (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 15);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>""</b>;		<i>// so rune doors won't find it</i>
+	
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+<i>/*QUAKED item_sigil (0 .5 .8) (-16 -16 -24) (16 16 32) E1 E2 E3 E4
+End of level sigil, pick up to end episode and return to jrstart.
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>item_sigil</b><a name="item_sigil">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"no spawnflags"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/runekey.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"misc/runekey.wav"</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 1)
+	{
+		<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/end1.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/end1.mdl"</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 2)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/end2.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/end2.mdl"</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 4)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/end3.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/end3.mdl"</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 8)
+	{
+		<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/end4.mdl"</b>);
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/end4.mdl"</b>);
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#sigil_touch">sigil_touch</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*
+===============================================================================
+
+POWERUPS
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="items.htm#powerup_touch">powerup_touch</a>;
+
+
+<a href="qc-types.htm#void">void</a>() <b>powerup_touch</b><a name="powerup_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	stemp;
+<b>local</b> <a href="qc-types.htm#float">float</a>		best;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You got the "</b>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>,<b>"\n"</b>);
+
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mdl">mdl</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>;
+		
+		<b>if</b> ((<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_invulnerability"</b>) ||
+			(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_invisibility"</b>))
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 60*5;
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 60;
+		
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="items.htm#SUB_regen">SUB_regen</a>;
+	}	
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <a href="defs.htm#string_null">string_null</a>;
+
+<i>// do the apropriate action</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_envirosuit"</b>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> = 1;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_invulnerability"</b>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> = 1;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_invisibility"</b>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> = 1;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"item_artifact_super_damage"</b>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> = 1;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	}	
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();				<i>// fire all targets / killtargets</i>
+};
+
+
+
+<i>/*QUAKED item_artifact_invulnerability (0 .5 .8) (-16 -16 -24) (16 16 32)
+Player is invulnerable for 30 seconds
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>item_artifact_invulnerability</b><a name="item_artifact_invulnerability">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#powerup_touch">powerup_touch</a>;
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/invulner.mdl"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/protect.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/protect2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/protect3.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/protect.wav"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/invulner.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Pentagram of Protection"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_INVULNERABILITY">IT_INVULNERABILITY</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+<i>/*QUAKED item_artifact_envirosuit (0 .5 .8) (-16 -16 -24) (16 16 32)
+Player takes no damage from water or slime for 30 seconds
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>item_artifact_envirosuit</b><a name="item_artifact_envirosuit">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#powerup_touch">powerup_touch</a>;
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/suit.mdl"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/suit.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/suit2.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/suit.wav"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/suit.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Biosuit"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_SUIT">IT_SUIT</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*QUAKED item_artifact_invisibility (0 .5 .8) (-16 -16 -24) (16 16 32)
+Player is invisible for 30 seconds
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>item_artifact_invisibility</b><a name="item_artifact_invisibility">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#powerup_touch">powerup_touch</a>;
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/invisibl.mdl"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/inv1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/inv2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/inv3.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/inv1.wav"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/invisibl.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Ring of Shadows"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+<i>/*QUAKED item_artifact_super_damage (0 .5 .8) (-16 -16 -24) (16 16 32)
+The next attack from the player will do 4x damage
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>item_artifact_super_damage</b><a name="item_artifact_super_damage">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#powerup_touch">powerup_touch</a>;
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/quaddama.mdl"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/damage.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/damage2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"items/damage3.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"items/damage.wav"</b>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/quaddama.mdl"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a> = <b>"Quad Damage"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-defs.htm#IT_QUAD">IT_QUAD</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 32');
+	<a href="items.htm#StartItem">StartItem</a> ();
+};
+
+
+
+<i>/*
+===============================================================================
+
+PLAYER BACKPACKS
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>BackpackTouch</b><a name="BackpackTouch">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#string">string</a>	s;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	best;
+	<b>local</b>		<a href="qc-types.htm#entity">entity</a>	stemp;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+		
+<i>// if the player was using his best weapon, change up to the new one if better		</i>
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	best = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>();
+	<a href="qc-glob.htm#self">self</a> = stemp;
+
+<i>// change weapons</i>
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>;
+
+	<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	
+	<a href="items.htm#bound_other_ammo">bound_other_ammo</a> ();
+
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"You get "</b>);
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>)
+	{
+		s = <a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, s);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>" shells  "</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>)
+	{
+		s = <a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, s);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>" nails "</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>)
+	{
+		s = <a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, s);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>" rockets  "</b>);
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>)
+	{
+		s = <a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, s);
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>" cells  "</b>);
+	}
+	
+	<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#other">other</a>, <b>"\n"</b>);
+<i>// backpack touch sound</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <b>"weapons/lock4.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#other">other</a>, <b>"bf\n"</b>);
+
+<i>// change to a better weapon if appropriate</i>
+	<b>if</b> ( <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == best )
+	{
+		stemp = <a href="qc-glob.htm#self">self</a>;
+		<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a>();
+		<a href="qc-glob.htm#self">self</a> = stemp;
+	}
+
+	
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+	
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+};
+
+<i>/*
+===============
+DropBackpack
+===============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>DropBackpack</b><a name="DropBackpack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	item;
+
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>))
+		<b>return</b>;	<i>// nothing in it</i>
+
+	item = <a href="qc-built.htm#spawn">spawn</a>();
+	item.<a href="qc-enty.htm#dot_origin">origin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - '0 0 24';
+	
+	item.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a>;
+
+	item.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>;
+	item.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;
+	item.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;
+	item.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>;
+
+	item.velocity_z = 300;
+	item.velocity_x = -100 + (<a href="qc-built.htm#random">random</a>() * 200);
+	item.velocity_y = -100 + (<a href="qc-built.htm#random">random</a>() * 200);
+	
+	item.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="defs.htm#FL_ITEM">FL_ITEM</a>;
+	item.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	item.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_TOSS">MOVETYPE_TOSS</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (item, <b>"progs/backpack.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (item, '-16 -16 0', '16 16 56');
+	item.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="items.htm#BackpackTouch">BackpackTouch</a>;
+	
+	item.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 120;	<i>// remove after 2 minutes</i>
+	item.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+};
+
+</pre></body></html>

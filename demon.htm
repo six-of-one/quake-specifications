@@ -1,0 +1,373 @@
+<html><head><title>demon.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+DEMON
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/demon3</b>
+<b>$</b><a href="qc-mdl.htm#s_scale">scale</a> <b>0.8</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>base</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand10 stand11 stand12 stand13</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>leap1 leap2 leap3 leap4 leap5 leap6 leap7 leap8 leap9 leap10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>leap11 leap12</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 pain6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8 death9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attacka1 attacka2 attacka3 attacka4 attacka5 attacka6 attacka7 attacka8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15</b>
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="demon.htm#Demon_JumpTouch">Demon_JumpTouch</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand1</b><a name="demon1_stand1">=</a>[	$stand1,	demon1_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand2</b><a name="demon1_stand2">=</a>[	$stand2,	demon1_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand3</b><a name="demon1_stand3">=</a>[	$stand3,	demon1_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand4</b><a name="demon1_stand4">=</a>[	$stand4,	demon1_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand5</b><a name="demon1_stand5">=</a>[	$stand5,	demon1_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand6</b><a name="demon1_stand6">=</a>[	$stand6,	demon1_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand7</b><a name="demon1_stand7">=</a>[	$stand7,	demon1_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand8</b><a name="demon1_stand8">=</a>[	$stand8,	demon1_stand9	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand9</b><a name="demon1_stand9">=</a>[	$stand9,	demon1_stand10	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand10</b><a name="demon1_stand10">=</a>[	$stand10,	demon1_stand11	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand11</b><a name="demon1_stand11">=</a>[	$stand11,	demon1_stand12	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand12</b><a name="demon1_stand12">=</a>[	$stand12,	demon1_stand13	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_stand13</b><a name="demon1_stand13">=</a>[	$stand13,	<a href="demon.htm#demon1_stand1">demon1_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk1</b><a name="demon1_walk1">=</a>[	$walk1,		demon1_walk2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+    <a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/idle1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(8);
+};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk2</b><a name="demon1_walk2">=</a>[	$walk2,		demon1_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk3</b><a name="demon1_walk3">=</a>[	$walk3,		demon1_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk4</b><a name="demon1_walk4">=</a>[	$walk4,		demon1_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk5</b><a name="demon1_walk5">=</a>[	$walk5,		demon1_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk6</b><a name="demon1_walk6">=</a>[	$walk6,		demon1_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk7</b><a name="demon1_walk7">=</a>[	$walk7,		demon1_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_walk8</b><a name="demon1_walk8">=</a>[	$walk8,		<a href="demon.htm#demon1_walk1">demon1_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(10);};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_run1</b><a name="demon1_run1">=</a>[	$run1,		demon1_run2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+    <a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/idle1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_run2</b><a name="demon1_run2">=</a>[	$run2,		demon1_run3	] {<a href="ai.htm#ai_run">ai_run</a>(15);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_run3</b><a name="demon1_run3">=</a>[	$run3,		demon1_run4	] {<a href="ai.htm#ai_run">ai_run</a>(36);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_run4</b><a name="demon1_run4">=</a>[	$run4,		demon1_run5	] {<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_run5</b><a name="demon1_run5">=</a>[	$run5,		demon1_run6	] {<a href="ai.htm#ai_run">ai_run</a>(15);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_run6</b><a name="demon1_run6">=</a>[	$run6,		<a href="demon.htm#demon1_run1">demon1_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(36);};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump1</b><a name="demon1_jump1">=</a>[	$leap1,		demon1_jump2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump2</b><a name="demon1_jump2">=</a>[	$leap2,		demon1_jump3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump3</b><a name="demon1_jump3">=</a>[	$leap3,		demon1_jump4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump4</b><a name="demon1_jump4">=</a>[	$leap4,		demon1_jump5	]
+{
+	<a href="fight.htm#ai_face">ai_face</a>();
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="demon.htm#Demon_JumpTouch">Demon_JumpTouch</a>;
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#v_forward">v_forward</a> * 600 + '0 0 250';
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;
+};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump5</b><a name="demon1_jump5">=</a>[	$leap5,		demon1_jump6	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump6</b><a name="demon1_jump6">=</a>[	$leap6,		demon1_jump7	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump7</b><a name="demon1_jump7">=</a>[	$leap7,		demon1_jump8	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump8</b><a name="demon1_jump8">=</a>[ 	$leap8,		demon1_jump9	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump9</b><a name="demon1_jump9">=</a>[ 	$leap9,		demon1_jump10	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump10</b><a name="demon1_jump10">=</a>[ 	$leap10,	<a href="demon.htm#demon1_jump1">demon1_jump1</a>	] {
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 3;
+<i>// if three seconds pass, assume demon is stuck and jump again</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump11</b><a name="demon1_jump11">=</a>[ 	$leap11,	demon1_jump12	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_jump12</b><a name="demon1_jump12">=</a>[ 	$leap12,	<a href="demon.htm#demon1_run1">demon1_run1</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta1</b><a name="demon1_atta1">=</a>[	$attacka1,		demon1_atta2	] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta2</b><a name="demon1_atta2">=</a>[	$attacka2,		demon1_atta3	] {<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta3</b><a name="demon1_atta3">=</a>[	$attacka3,		demon1_atta4	] {<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta4</b><a name="demon1_atta4">=</a>[	$attacka4,		demon1_atta5	] {<a href="fight.htm#ai_charge">ai_charge</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta5</b><a name="demon1_atta5">=</a>[	$attacka5,		demon1_atta6	] {<a href="fight.htm#ai_charge">ai_charge</a>(2); <a href="demon.htm#Demon_Melee">Demon_Melee</a>(200);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta6</b><a name="demon1_atta6">=</a>[	$attacka6,		demon1_atta7	] {<a href="fight.htm#ai_charge">ai_charge</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta7</b><a name="demon1_atta7">=</a>[	$attacka7,		demon1_atta8	] {<a href="fight.htm#ai_charge">ai_charge</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta8</b><a name="demon1_atta8">=</a>[	$attacka8,		demon1_atta9	] {<a href="fight.htm#ai_charge">ai_charge</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta9</b><a name="demon1_atta9">=</a>[	$attacka9,		demon1_atta10] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta10</b><a name="demon1_atta10">=</a>[	$attacka10,		demon1_atta11] {<a href="fight.htm#ai_charge">ai_charge</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta11</b><a name="demon1_atta11">=</a>[	$attacka11,		demon1_atta12] {<a href="demon.htm#Demon_Melee">Demon_Melee</a>(-200);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta12</b><a name="demon1_atta12">=</a>[	$attacka12,		demon1_atta13] {<a href="fight.htm#ai_charge">ai_charge</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta13</b><a name="demon1_atta13">=</a>[	$attacka13,		demon1_atta14] {<a href="fight.htm#ai_charge">ai_charge</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta14</b><a name="demon1_atta14">=</a>[	$attacka14,		demon1_atta15] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_atta15</b><a name="demon1_atta15">=</a>[	$attacka15,		<a href="demon.htm#demon1_run1">demon1_run1</a>] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain1</b><a name="demon1_pain1">=</a>[	$pain1,		demon1_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain2</b><a name="demon1_pain2">=</a>[	$pain2,		demon1_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain3</b><a name="demon1_pain3">=</a>[	$pain3,		demon1_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain4</b><a name="demon1_pain4">=</a>[	$pain4,		demon1_pain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain5</b><a name="demon1_pain5">=</a>[	$pain5,		demon1_pain6	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_pain6</b><a name="demon1_pain6">=</a>[	$pain6,		<a href="demon.htm#demon1_run1">demon1_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>demon1_pain</b><a name="demon1_pain">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> == <a href="demon.htm#Demon_JumpTouch">Demon_JumpTouch</a>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+    <a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/dpain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a>()*200 &gt; damage)
+		<b>return</b>;		<i>// didn't flinch</i>
+		
+	<a href="demon.htm#demon1_pain1">demon1_pain1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>demon1_die1</b><a name="demon1_die1">=</a>[	$death1,		demon1_die2	] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/ddeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die2</b><a name="demon1_die2">=</a>[	$death2,		demon1_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die3</b><a name="demon1_die3">=</a>[	$death3,		demon1_die4	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die4</b><a name="demon1_die4">=</a>[	$death4,		demon1_die5	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die5</b><a name="demon1_die5">=</a>[	$death5,		demon1_die6	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die6</b><a name="demon1_die6">=</a>[	$death6,		demon1_die7	]
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die7</b><a name="demon1_die7">=</a>[	$death7,		demon1_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die8</b><a name="demon1_die8">=</a>[	$death8,		demon1_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>demon1_die9</b><a name="demon1_die9">=</a>[	$death9,		<a href="demon.htm#demon1_die9">demon1_die9</a> ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>demon_die</b><a name="demon_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -80)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_demon.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+<i>// regular death</i>
+	<a href="demon.htm#demon1_die1">demon1_die1</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>Demon_MeleeAttack</b><a name="Demon_MeleeAttack">=</a>
+{
+	<a href="demon.htm#demon1_atta1">demon1_atta1</a> ();
+};
+
+
+<i>/*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
+
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_demon1</b><a name="monster_demon1">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/demon.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_demon.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/ddeath.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/dhit2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/djump.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/dpain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/idle1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"demon/sight2.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/demon.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="defs.htm#VEC_HULL2_MIN">VEC_HULL2_MIN</a>, <a href="defs.htm#VEC_HULL2_MAX">VEC_HULL2_MAX</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 300;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="demon.htm#demon1_stand1">demon1_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="demon.htm#demon1_walk1">demon1_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="demon.htm#demon1_run1">demon1_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="demon.htm#demon_die">demon_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> = <a href="demon.htm#Demon_MeleeAttack">Demon_MeleeAttack</a>;		<i>// one of two attacks</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="demon.htm#demon1_jump1">demon1_jump1</a>;			<i>// jump attack</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="demon.htm#demon1_pain">demon1_pain</a>;
+		
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a>();
+};
+
+
+<i>/*
+==============================================================================
+
+DEMON
+
+==============================================================================
+*/</i>
+
+
+<i>/*
+==============
+CheckDemonMelee
+
+Returns TRUE if a melee attack would hit right now
+==============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>CheckDemonMelee</b><a name="CheckDemonMelee">=</a>
+{
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{	<i>// FIXME: check canreach</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+		return TRUE;
+	}
+	return FALSE;
+};
+
+<i>/*
+==============
+CheckDemonJump
+
+==============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>CheckDemonJump</b><a name="CheckDemonJump">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dist;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	d;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.mins_z &gt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.mins_z
+	+ 0.75 * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_size_z">size_z</a>)
+		return FALSE;
+		
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.maxs_z &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.mins_z
+	+ 0.25 * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_size_z">size_z</a>)
+		return FALSE;
+		
+	dist = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	dist_z = 0;
+	
+	d = <a href="qc-built.htm#vlen">vlen</a>(dist);
+	
+	<b>if</b> (d &lt; 100)
+		return FALSE;
+		
+	<b>if</b> (d &gt; 200)
+	{
+		<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.9)
+			return FALSE;
+	}
+		
+	return TRUE;
+};
+
+<a href="qc-types.htm#float">float</a>() <b>DemonCheckAttack</b><a name="DemonCheckAttack">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	vec;
+	
+<i>// if close enough for slashing, go for it</i>
+	<b>if</b> (<a href="demon.htm#CheckDemonMelee">CheckDemonMelee</a> ())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+		return TRUE;
+	}
+	
+	<b>if</b> (<a href="demon.htm#CheckDemonJump">CheckDemonJump</a> ())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>;
+        <a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/djump.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		return TRUE;
+	}
+	
+	return FALSE;
+};
+
+
+<i>//===========================================================================</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> side) <b>Demon_Melee</b><a name="Demon_Melee">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	ldmg;
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+	
+	<a href="fight.htm#ai_face">ai_face</a> ();
+	<a href="qc-built.htm#walkmove">walkmove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a>, 12);	<i>// allow a little closing</i>
+
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 100)
+		<b>return</b>;
+	<b>if</b> (!<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		<b>return</b>;
+		
+    <a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"demon/dhit2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	ldmg = 10 + 5*<a href="qc-built.htm#random">random</a>();
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);	
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	<a href="weapons.htm#SpawnMeatSpray">SpawnMeatSpray</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*16, side * <a href="qc-built.htm#v_right">v_right</a>);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>Demon_JumpTouch</b><a name="Demon_JumpTouch">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	ldmg;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+		
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<b>if</b> ( <a href="qc-built.htm#vlen">vlen</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>) &gt; 400 )
+		{
+			ldmg = 40 + 10*<a href="qc-built.htm#random">random</a>();
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);	
+		}
+	}
+
+	<b>if</b> (!<a href="qc-built.htm#checkbottom">checkbottom</a>(<a href="qc-glob.htm#self">self</a>))
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>)
+		{	<i>// jump randomly to not get hung up</i>
+<i>//dprint ("popjump\n");</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="demon.htm#demon1_jump1">demon1_jump1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+
+<i>//			self.velocity_x = (random() - 0.5) * 600;</i>
+<i>//			self.velocity_y = (random() - 0.5) * 600;</i>
+<i>//			self.velocity_z = 200;</i>
+<i>//			self.flags = self.flags - FL_ONGROUND;</i>
+		}
+		<b>return</b>;	<i>// not on ground yet</i>
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="demon.htm#demon1_jump11">demon1_jump11</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+};
+
+
+</pre></body></html>

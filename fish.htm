@@ -1,0 +1,192 @@
+<html><head><title>fish.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/fish</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base		</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack1 attack2 attack3 attack4 attack5 attack6 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack7 attack8 attack9 attack10 attack11 attack12 attack13 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack14 attack15 attack16 attack17 attack18 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death8 death9 death10 death11 death12 death13 death14 death15 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death16 death17 death18 death19 death20 death21 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>swim1 swim2 swim3 swim4 swim5 swim6 swim7 swim8 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>swim9 swim10 swim11 swim12 swim13 swim14 swim15 swim16 swim17 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>swim18 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 pain6 pain7 pain8 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain9 </b>
+
+<a href="qc-types.htm#void">void</a>() <a href="monsters.htm#swimmonster_start">swimmonster_start</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>f_stand1</b><a name="f_stand1">=</a>[      $swim1, f_stand2 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand2</b><a name="f_stand2">=</a>[      $swim2, f_stand3 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand3</b><a name="f_stand3">=</a>[      $swim3, f_stand4 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand4</b><a name="f_stand4">=</a>[      $swim4, f_stand5 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand5</b><a name="f_stand5">=</a>[      $swim5, f_stand6 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand6</b><a name="f_stand6">=</a>[      $swim6, f_stand7 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand7</b><a name="f_stand7">=</a>[      $swim7, f_stand8 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand8</b><a name="f_stand8">=</a>[      $swim8, f_stand9 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand9</b><a name="f_stand9">=</a>[      $swim9, f_stand10  ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand10</b><a name="f_stand10">=</a>[      $swim10, f_stand11 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand11</b><a name="f_stand11">=</a>[      $swim11, f_stand12 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand12</b><a name="f_stand12">=</a>[      $swim12, f_stand13 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand13</b><a name="f_stand13">=</a>[      $swim13, f_stand14 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand14</b><a name="f_stand14">=</a>[      $swim14, f_stand15 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand15</b><a name="f_stand15">=</a>[      $swim15, f_stand16 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand16</b><a name="f_stand16">=</a>[      $swim16, f_stand17 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand17</b><a name="f_stand17">=</a>[      $swim17, f_stand18 ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_stand18</b><a name="f_stand18">=</a>[      $swim18, <a href="fish.htm#f_stand1">f_stand1</a> ] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>f_walk1</b><a name="f_walk1">=</a>[      $swim1, f_walk2 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk2</b><a name="f_walk2">=</a>[      $swim2, f_walk3 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk3</b><a name="f_walk3">=</a>[      $swim3, f_walk4 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk4</b><a name="f_walk4">=</a>[      $swim4, f_walk5 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk5</b><a name="f_walk5">=</a>[      $swim5, f_walk6 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk6</b><a name="f_walk6">=</a>[      $swim6, f_walk7 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk7</b><a name="f_walk7">=</a>[      $swim7, f_walk8 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk8</b><a name="f_walk8">=</a>[      $swim8, f_walk9 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk9</b><a name="f_walk9">=</a>[      $swim9, f_walk10  ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk10</b><a name="f_walk10">=</a>[      $swim10, f_walk11 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk11</b><a name="f_walk11">=</a>[      $swim11, f_walk12 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk12</b><a name="f_walk12">=</a>[      $swim12, f_walk13 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk13</b><a name="f_walk13">=</a>[      $swim13, f_walk14 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk14</b><a name="f_walk14">=</a>[      $swim14, f_walk15 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk15</b><a name="f_walk15">=</a>[      $swim15, f_walk16 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk16</b><a name="f_walk16">=</a>[      $swim16, f_walk17 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk17</b><a name="f_walk17">=</a>[      $swim17, f_walk18 ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>f_walk18</b><a name="f_walk18">=</a>[      $swim18, <a href="fish.htm#f_walk1">f_walk1</a> ] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+
+<a href="qc-types.htm#void">void</a>() <b>f_run1</b><a name="f_run1">=</a>[      $swim1, f_run2 ] {<a href="ai.htm#ai_run">ai_run</a>(12);
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"fish/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>f_run2</b><a name="f_run2">=</a>[      $swim3, f_run3 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run3</b><a name="f_run3">=</a>[      $swim5, f_run4 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run4</b><a name="f_run4">=</a>[      $swim7, f_run5 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run5</b><a name="f_run5">=</a>[      $swim9, f_run6 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run6</b><a name="f_run6">=</a>[      $swim11, f_run7 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run7</b><a name="f_run7">=</a>[      $swim13, f_run8 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run8</b><a name="f_run8">=</a>[      $swim15, f_run9 ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>f_run9</b><a name="f_run9">=</a>[      $swim17, <a href="fish.htm#f_run1">f_run1</a> ] {<a href="ai.htm#ai_run">ai_run</a>(12);};
+
+<a href="qc-types.htm#void">void</a>() <b>fish_melee</b><a name="fish_melee">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+	<b>local</b> <a href="qc-types.htm#float">float</a> 	ldmg;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;		<i>// removed before stroke</i>
+		
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 60)
+		<b>return</b>;
+		
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"fish/bite.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	ldmg = (<a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>()) * 3;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>f_attack1</b><a name="f_attack1">=</a>[      $attack1,       f_attack2 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack2</b><a name="f_attack2">=</a>[      $attack2,       f_attack3 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack3</b><a name="f_attack3">=</a>[      $attack3,       f_attack4 ] {<a href="fish.htm#fish_melee">fish_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_attack4</b><a name="f_attack4">=</a>[      $attack4,       f_attack5 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack5</b><a name="f_attack5">=</a>[      $attack5,       f_attack6 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack6</b><a name="f_attack6">=</a>[      $attack6,       f_attack7 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack7</b><a name="f_attack7">=</a>[      $attack7,       f_attack8 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack8</b><a name="f_attack8">=</a>[      $attack8,       f_attack9 ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack9</b><a name="f_attack9">=</a>[      $attack9,       f_attack10] {<a href="fish.htm#fish_melee">fish_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_attack10</b><a name="f_attack10">=</a>[      $attack10,      f_attack11] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack11</b><a name="f_attack11">=</a>[      $attack11,      f_attack12] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack12</b><a name="f_attack12">=</a>[      $attack12,      f_attack13] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack13</b><a name="f_attack13">=</a>[      $attack13,      f_attack14] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack14</b><a name="f_attack14">=</a>[      $attack14,      f_attack15] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack15</b><a name="f_attack15">=</a>[      $attack15,      f_attack16] {<a href="fish.htm#fish_melee">fish_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>f_attack16</b><a name="f_attack16">=</a>[      $attack16,      f_attack17] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack17</b><a name="f_attack17">=</a>[      $attack17,      f_attack18] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>f_attack18</b><a name="f_attack18">=</a>[      $attack18,      <a href="fish.htm#f_run1">f_run1</a>    ] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+
+<a href="qc-types.htm#void">void</a>() <b>f_death1</b><a name="f_death1">=</a>[      $death1,        f_death2        ] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"fish/death.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>f_death2</b><a name="f_death2">=</a>[      $death2,        f_death3        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death3</b><a name="f_death3">=</a>[      $death3,        f_death4        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death4</b><a name="f_death4">=</a>[      $death4,        f_death5        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death5</b><a name="f_death5">=</a>[      $death5,        f_death6        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death6</b><a name="f_death6">=</a>[      $death6,        f_death7        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death7</b><a name="f_death7">=</a>[      $death7,        f_death8        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death8</b><a name="f_death8">=</a>[      $death8,        f_death9        ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death9</b><a name="f_death9">=</a>[      $death9,        f_death10       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death10</b><a name="f_death10">=</a>[      $death10,       f_death11       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death11</b><a name="f_death11">=</a>[      $death11,       f_death12       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death12</b><a name="f_death12">=</a>[      $death12,       f_death13       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death13</b><a name="f_death13">=</a>[      $death13,       f_death14       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death14</b><a name="f_death14">=</a>[      $death14,       f_death15       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death15</b><a name="f_death15">=</a>[      $death15,       f_death16       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death16</b><a name="f_death16">=</a>[      $death16,       f_death17       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death17</b><a name="f_death17">=</a>[      $death17,       f_death18       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death18</b><a name="f_death18">=</a>[      $death18,       f_death19       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death19</b><a name="f_death19">=</a>[      $death19,       f_death20       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death20</b><a name="f_death20">=</a>[      $death20,       f_death21       ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_death21</b><a name="f_death21">=</a>[      $death21,       <a href="fish.htm#f_death21">f_death21</a>       ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;};
+
+<a href="qc-types.htm#void">void</a>() <b>f_pain1</b><a name="f_pain1">=</a>[      $pain1, f_pain2 ] {};
+<a href="qc-types.htm#void">void</a>() <b>f_pain2</b><a name="f_pain2">=</a>[      $pain2, f_pain3 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain3</b><a name="f_pain3">=</a>[      $pain3, f_pain4 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain4</b><a name="f_pain4">=</a>[      $pain4, f_pain5 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain5</b><a name="f_pain5">=</a>[      $pain5, f_pain6 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain6</b><a name="f_pain6">=</a>[      $pain6, f_pain7 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain7</b><a name="f_pain7">=</a>[      $pain7, f_pain8 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain8</b><a name="f_pain8">=</a>[      $pain8, f_pain9 ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>f_pain9</b><a name="f_pain9">=</a>[      $pain9, <a href="fish.htm#f_run1">f_run1</a> ] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>fish_pain</b><a name="fish_pain">=</a>
+{
+
+<i>// fish allways do pain frames</i>
+	<a href="fish.htm#f_pain1">f_pain1</a> ();
+};
+
+
+
+<i>/*QUAKED monster_fish (1 0 0) (-16 -16 -24) (16 16 24) Ambush
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_fish</b><a name="monster_fish">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/fish.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"fish/death.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"fish/bite.wav"</b>);
+	<a href="qc-built.htm#precache_sound2">precache_sound2</a> (<b>"fish/idle.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/fish.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 24');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 25;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="fish.htm#f_stand1">f_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="fish.htm#f_walk1">f_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="fish.htm#f_run1">f_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="fish.htm#f_death1">f_death1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="fish.htm#fish_pain">fish_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> = <a href="fish.htm#f_attack1">f_attack1</a>;
+	
+	<a href="monsters.htm#swimmonster_start">swimmonster_start</a> ();
+};
+
+
+</pre></body></html>

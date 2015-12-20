@@ -1,0 +1,1254 @@
+<html><head><title>weapons.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+*/</i>
+
+<a href="qc-types.htm#void">void</a> (<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> inflictor, <a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <a href="combat.htm#T_Damage">T_Damage</a>;
+<a href="qc-types.htm#void">void</a> () <a href="player.htm#player_run">player_run</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> bomb, <a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> rad, <a href="qc-types.htm#entity">entity</a> ignore) <a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vel, <a href="qc-types.htm#float">float</a> damage) <a href="weapons.htm#SpawnBlood">SpawnBlood</a>;
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#SuperDamageSound">SuperDamageSound</a>;
+
+
+<i>// called by worldspawn</i>
+<a href="qc-types.htm#void">void</a>() <b>W_Precache</b><a name="W_Precache">=</a>
+{
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/r_exp3.wav"</b>);	<i>// new rocket explosion</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/rocket1i.wav"</b>);	<i>// spike gun</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/sgun1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/guncock.wav"</b>);	<i>// player shotgun</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/ric1.wav"</b>);	<i>// ricochet (used in c code)</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/ric2.wav"</b>);	<i>// ricochet (used in c code)</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/ric3.wav"</b>);	<i>// ricochet (used in c code)</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/spike2.wav"</b>);	<i>// super spikes</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/tink1.wav"</b>);	<i>// spikes tink (used in c code)</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/grenade.wav"</b>);	<i>// grenade launcher</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/bounce.wav"</b>);		<i>// grenade bounce</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/shotgn2.wav"</b>);	<i>// super shotgun</i>
+};
+
+<a href="qc-types.htm#float">float</a>() <b>crandom</b><a name="crandom">=</a>
+{
+	<b>return</b> 2*(<a href="qc-built.htm#random">random</a>() - 0.5);
+};
+
+<i>/*
+================
+W_FireAxe
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireAxe</b><a name="W_FireAxe">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	source;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	org;
+
+	source = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 16';
+	<a href="qc-built.htm#traceline">traceline</a> (source, source + <a href="qc-built.htm#v_forward">v_forward</a>*64, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1.0)
+		<b>return</b>;
+	
+	org = <a href="qc-built.htm#trace_endpos">trace_endpos</a> - <a href="qc-built.htm#v_forward">v_forward</a>*4;
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_axhitme">axhitme</a> = 1;
+		<a href="weapons.htm#SpawnBlood">SpawnBlood</a> (org, '0 0 0', 20);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-built.htm#trace_ent">trace_ent</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 20);
+	}
+	<b>else</b>
+	{	<i>// hit wall</i>
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"player/axhit2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_GUNSHOT">TE_GUNSHOT</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_x);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_y);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_z);
+	}
+};
+
+
+<i>//============================================================================</i>
+
+
+<a href="qc-types.htm#vector">vector</a>() <b>wall_velocity</b><a name="wall_velocity">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	vel;
+	
+	vel = <a href="qc-built.htm#normalize">normalize</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+	vel = <a href="qc-built.htm#normalize">normalize</a>(vel + <a href="qc-built.htm#v_up">v_up</a>*(<a href="qc-built.htm#random">random</a>()- 0.5) + <a href="qc-built.htm#v_right">v_right</a>*(<a href="qc-built.htm#random">random</a>()- 0.5));
+	vel = vel + 2*<a href="qc-built.htm#trace_plane_normal">trace_plane_normal</a>;
+	vel = vel * 200;
+	
+	return vel;
+};
+
+
+<i>/*
+================
+SpawnMeatSpray
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vel) <b>SpawnMeatSpray</b><a name="SpawnMeatSpray">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> missile, mpuff;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	org;
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = vel;
+	missile.velocity_z = missile.velocity_z + 250 + 50*<a href="qc-built.htm#random">random</a>();
+
+	missile.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '3000 1000 2000';
+	
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/zom_gib.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, org);
+};
+
+<i>/*
+================
+SpawnBlood
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vel, <a href="qc-types.htm#float">float</a> damage) <b>SpawnBlood</b><a name="SpawnBlood">=</a>
+{
+	<a href="qc-built.htm#particle">particle</a> (org, vel*0.1, 73, damage*2);
+};
+
+<i>/*
+================
+spawn_touchblood
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> damage) <b>spawn_touchblood</b><a name="spawn_touchblood">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	vel;
+
+	vel = <a href="weapons.htm#wall_velocity">wall_velocity</a> () * 0.2;
+	<a href="weapons.htm#SpawnBlood">SpawnBlood</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + vel*0.01, vel, damage);
+};
+
+
+<i>/*
+================
+SpawnChunk
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> vel) <b>SpawnChunk</b><a name="SpawnChunk">=</a>
+{
+	<a href="qc-built.htm#particle">particle</a> (org, vel*0.02, 0, 10);
+};
+
+<i>/*
+==============================================================================
+
+MULTI-DAMAGE
+
+Collects multiple small damages into a single damage
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="multi_ent">multi_ent</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a name="multi_damage">multi_damage</a></b>;
+
+<a href="qc-types.htm#void">void</a>() <b>ClearMultiDamage</b><a name="ClearMultiDamage">=</a>
+{
+	<a href="weapons.htm#multi_ent">multi_ent</a> = <a href="qc-glob.htm#world">world</a>;
+	<a href="weapons.htm#multi_damage">multi_damage</a> = 0;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ApplyMultiDamage</b><a name="ApplyMultiDamage">=</a>
+{
+	<b>if</b> (!<a href="weapons.htm#multi_ent">multi_ent</a>)
+		<b>return</b>;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="weapons.htm#multi_ent">multi_ent</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, <a href="weapons.htm#multi_damage">multi_damage</a>);
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> hit, <a href="qc-types.htm#float">float</a> damage) <b>AddMultiDamage</b><a name="AddMultiDamage">=</a>
+{
+	<b>if</b> (!hit)
+		<b>return</b>;
+	
+	<b>if</b> (hit != <a href="weapons.htm#multi_ent">multi_ent</a>)
+	{
+		<a href="weapons.htm#ApplyMultiDamage">ApplyMultiDamage</a> ();
+		<a href="weapons.htm#multi_damage">multi_damage</a> = damage;
+		<a href="weapons.htm#multi_ent">multi_ent</a> = hit;
+	}
+	<b>else</b>
+		<a href="weapons.htm#multi_damage">multi_damage</a> = <a href="weapons.htm#multi_damage">multi_damage</a> + damage;
+};
+
+<i>/*
+==============================================================================
+
+BULLETS
+
+==============================================================================
+*/</i>
+
+
+<i>/*
+================
+TraceAttack
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> damage, <a href="qc-types.htm#vector">vector</a> dir) <b>TraceAttack</b><a name="TraceAttack">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	vel, org;
+	
+	vel = <a href="qc-built.htm#normalize">normalize</a>(dir + <a href="qc-built.htm#v_up">v_up</a>*<a href="weapons.htm#crandom">crandom</a>() + <a href="qc-built.htm#v_right">v_right</a>*<a href="weapons.htm#crandom">crandom</a>());
+	vel = vel + 2*<a href="qc-built.htm#trace_plane_normal">trace_plane_normal</a>;
+	vel = vel * 200;
+
+	org = <a href="qc-built.htm#trace_endpos">trace_endpos</a> - dir*4;
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="weapons.htm#SpawnBlood">SpawnBlood</a> (org, vel*0.2, damage);
+		<a href="weapons.htm#AddMultiDamage">AddMultiDamage</a> (<a href="qc-built.htm#trace_ent">trace_ent</a>, damage);
+	}
+	<b>else</b>
+	{
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_GUNSHOT">TE_GUNSHOT</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_x);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_y);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_z);
+	}
+};
+
+<i>/*
+================
+FireBullets
+
+Used by shotgun, super shotgun, and enemy soldier firing
+Go to the trouble of combining multiple pellets into a single damage call.
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> shotcount, <a href="qc-types.htm#vector">vector</a> dir, <a href="qc-types.htm#vector">vector</a> spread) <b>FireBullets</b><a name="FireBullets">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a> direction;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	src;
+	
+	<a href="qc-built.htm#makevectors">makevectors</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);
+
+	src = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*10;
+	src_z = <a href="qc-glob.htm#self">self</a>.absmin_z + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size_z">size_z</a> * 0.7;
+
+	<a href="weapons.htm#ClearMultiDamage">ClearMultiDamage</a> ();
+	<b>while</b> (shotcount &gt; 0)
+	{
+		direction = dir + <a href="weapons.htm#crandom">crandom</a>()*spread_x*<a href="qc-built.htm#v_right">v_right</a> + <a href="weapons.htm#crandom">crandom</a>()*spread_y*<a href="qc-built.htm#v_up">v_up</a>;
+
+		<a href="qc-built.htm#traceline">traceline</a> (src, src + direction*2048, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+		<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> != 1.0)
+			<a href="weapons.htm#TraceAttack">TraceAttack</a> (4, direction);
+
+		shotcount = shotcount - 1;
+	}
+	<a href="weapons.htm#ApplyMultiDamage">ApplyMultiDamage</a> ();
+};
+
+<i>/*
+================
+W_FireShotgun
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireShotgun</b><a name="W_FireShotgun">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> dir;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/guncock.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	
+
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> - 1;
+	dir = <a href="qc-built.htm#aim">aim</a> (<a href="qc-glob.htm#self">self</a>, 100000);
+	<a href="weapons.htm#FireBullets">FireBullets</a> (6, dir, '0.04 0.04 0');
+};
+
+
+<i>/*
+================
+W_FireSuperShotgun
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireSuperShotgun</b><a name="W_FireSuperShotgun">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> dir;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> == 1)
+	{
+		<a href="weapons.htm#W_FireShotgun">W_FireShotgun</a> ();
+		<b>return</b>;
+	}
+		
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a> ,<a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/shotgn2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	
+
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -4;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> - 2;
+	dir = <a href="qc-built.htm#aim">aim</a> (<a href="qc-glob.htm#self">self</a>, 100000);
+	<a href="weapons.htm#FireBullets">FireBullets</a> (14, dir, '0.14 0.08 0');
+};
+
+
+<i>/*
+==============================================================================
+
+ROCKETS
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>s_explode1</b><a name="s_explode1">=</a>	[0,		s_explode2] {};
+<a href="qc-types.htm#void">void</a>() <b>s_explode2</b><a name="s_explode2">=</a>	[1,		s_explode3] {};
+<a href="qc-types.htm#void">void</a>() <b>s_explode3</b><a name="s_explode3">=</a>	[2,		s_explode4] {};
+<a href="qc-types.htm#void">void</a>() <b>s_explode4</b><a name="s_explode4">=</a>	[3,		s_explode5] {};
+<a href="qc-types.htm#void">void</a>() <b>s_explode5</b><a name="s_explode5">=</a>	[4,		s_explode6] {};
+<a href="qc-types.htm#void">void</a>() <b>s_explode6</b><a name="s_explode6">=</a>	[5,		<a href="subs.htm#SUB_Remove">SUB_Remove</a>] {};
+
+<a href="qc-types.htm#void">void</a>() <b>BecomeExplosion</b><a name="BecomeExplosion">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/s_explod.spr"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="weapons.htm#s_explode1">s_explode1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>T_MissileTouch</b><a name="T_MissileTouch">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	damg;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+
+	<b>if</b> (<a href="qc-built.htm#pointcontents">pointcontents</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>) == <a href="qc-defs.htm#CONTENT_SKY">CONTENT_SKY</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+
+	damg = 100 + <a href="qc-built.htm#random">random</a>()*20;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)
+			damg = damg * 0.5;	<i>// mostly immune</i>
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, damg );
+	}
+
+	<i>// don't do radius damage to the other, because all the damage</i>
+	<i>// was done in the impact</i>
+	<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 120, <a href="qc-glob.htm#other">other</a>);
+
+<i>//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - 8*<a href="qc-built.htm#normalize">normalize</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_EXPLOSION">TE_EXPLOSION</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+
+	<a href="weapons.htm#BecomeExplosion">BecomeExplosion</a> ();
+};
+
+
+
+<i>/*
+================
+W_FireRocket
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireRocket</b><a name="W_FireRocket">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> missile, mpuff;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> - 1;
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/sgun1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_FLYMISSILE">MOVETYPE_FLYMISSILE</a>;
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+		
+<i>// set missile speed	</i>
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#aim">aim</a>(<a href="qc-glob.htm#self">self</a>, 1000);
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = missile.<a href="qc-enty.htm#dot_velocity">velocity</a> * 1000;
+	missile.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-built.htm#vectoangles">vectoangles</a>(missile.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+	
+	missile.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#T_MissileTouch">T_MissileTouch</a>;
+	
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 5;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/missile.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*8 + '0 0 16');
+};
+
+<i>/*
+===============================================================================
+
+LIGHTNING
+
+===============================================================================
+*/</i>
+
+
+<i>/*
+=================
+LightningDamage
+=================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> p1, <a href="qc-types.htm#vector">vector</a> p2, <a href="qc-types.htm#entity">entity</a> from, <a href="qc-types.htm#float">float</a> damage) <b>LightningDamage</b><a name="LightningDamage">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>		e1, e2;
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>		f;
+	
+	f = p2 - p1;
+	<a href="qc-built.htm#normalize">normalize</a> (f);
+	f_x = 0 - f_y;
+	f_y = f_x;
+	f_z = 0;
+	f = f*16;
+
+	e1 = e2 = <a href="qc-glob.htm#world">world</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (p1, p2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="qc-built.htm#particle">particle</a> (<a href="qc-built.htm#trace_endpos">trace_endpos</a>, '0 0 100', 225, damage*4);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-built.htm#trace_ent">trace_ent</a>, from, from, damage);
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+		{
+			<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+				<a href="qc-built.htm#trace_ent">trace_ent</a>.velocity_z = <a href="qc-built.htm#trace_ent">trace_ent</a>.velocity_z + 400;
+		}
+	}
+	e1 = <a href="qc-built.htm#trace_ent">trace_ent</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (p1 + f, p2 + f, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != e1 &amp;&amp; <a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="qc-built.htm#particle">particle</a> (<a href="qc-built.htm#trace_endpos">trace_endpos</a>, '0 0 100', 225, damage*4);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-built.htm#trace_ent">trace_ent</a>, from, from, damage);
+	}
+	e2 = <a href="qc-built.htm#trace_ent">trace_ent</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (p1 - f, p2 - f, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != e1 &amp;&amp; <a href="qc-built.htm#trace_ent">trace_ent</a> != e2 &amp;&amp; <a href="qc-built.htm#trace_ent">trace_ent</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="qc-built.htm#particle">particle</a> (<a href="qc-built.htm#trace_endpos">trace_endpos</a>, '0 0 100', 225, damage*4);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-built.htm#trace_ent">trace_ent</a>, from, from, damage);
+	}
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireLightning</b><a name="W_FireLightning">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>		org;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &lt; 1)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a> ();
+		<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+		<b>return</b>;
+	}
+
+<i>// explode if under water</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> &gt; 1)
+	{
+		<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 35*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>, <a href="qc-glob.htm#world">world</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = 0;
+		<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a> &lt; <a href="qc-glob.htm#time">time</a>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/lhit.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a> = <a href="qc-glob.htm#time">time</a> + 0.6;
+	}
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> - 1;
+
+	org = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 16';
+	
+	<a href="qc-built.htm#traceline">traceline</a> (org, org + <a href="qc-built.htm#v_forward">v_forward</a>*600, <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_LIGHTNING2">TE_LIGHTNING2</a>);
+	<a href="qc-net.htm#WriteEntity">WriteEntity</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, org_z);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, trace_endpos_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, trace_endpos_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, trace_endpos_z);
+
+	<a href="weapons.htm#LightningDamage">LightningDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="qc-built.htm#trace_endpos">trace_endpos</a> + <a href="qc-built.htm#v_forward">v_forward</a>*4, <a href="qc-glob.htm#self">self</a>, 30);
+};
+
+
+<i>//=============================================================================</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>GrenadeExplode</b><a name="GrenadeExplode">=</a>
+{
+	<a href="combat.htm#T_RadiusDamage">T_RadiusDamage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 120, <a href="qc-glob.htm#world">world</a>);
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_EXPLOSION">TE_EXPLOSION</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+
+	<a href="weapons.htm#BecomeExplosion">BecomeExplosion</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>GrenadeTouch</b><a name="GrenadeTouch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> == <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>)
+	{
+		<a href="weapons.htm#GrenadeExplode">GrenadeExplode</a>();
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/bounce.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	<i>// bounce sound</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> == '0 0 0')
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '0 0 0';
+};
+
+<i>/*
+================
+W_FireGrenade
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireGrenade</b><a name="W_FireGrenade">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> missile, mpuff;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> - 1;
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/grenade.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+	missile.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"grenade"</b>;
+		
+<i>// set missile speed	</i>
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.v_angle_x)
+		missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#v_forward">v_forward</a>*600 + <a href="qc-built.htm#v_up">v_up</a> * 200 + <a href="weapons.htm#crandom">crandom</a>()*<a href="qc-built.htm#v_right">v_right</a>*10 + <a href="weapons.htm#crandom">crandom</a>()*<a href="qc-built.htm#v_up">v_up</a>*10;
+	<b>else</b>
+	{
+		missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#aim">aim</a>(<a href="qc-glob.htm#self">self</a>, 10000);
+		missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = missile.<a href="qc-enty.htm#dot_velocity">velocity</a> * 600;
+		missile.velocity_z = 200;
+	}
+
+	missile.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '300 300 300';
+
+	missile.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-built.htm#vectoangles">vectoangles</a>(missile.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+	
+	missile.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#GrenadeTouch">GrenadeTouch</a>;
+	
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 2.5;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="weapons.htm#GrenadeExplode">GrenadeExplode</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/grenade.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+};
+
+
+<i>//=============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#spike_touch">spike_touch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#superspike_touch">superspike_touch</a>;
+
+
+<i>/*
+===============
+launch_spike
+
+Used for both the player and the ogre
+===============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#vector">vector</a> dir) <b>launch_spike</b><a name="launch_spike">=</a>
+{
+	<a href="defs.htm#newmis">newmis</a> = <a href="qc-built.htm#spawn">spawn</a> ();
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_FLYMISSILE">MOVETYPE_FLYMISSILE</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-built.htm#vectoangles">vectoangles</a>(dir);
+	
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#spike_touch">spike_touch</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"spike"</b>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 6;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="defs.htm#newmis">newmis</a>, <b>"progs/spike.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="defs.htm#newmis">newmis</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>);		
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="defs.htm#newmis">newmis</a>, org);
+
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = dir * 1000;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>W_FireSuperSpikes</b><a name="W_FireSuperSpikes">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	dir;
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	old;
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/spike2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> - 2;
+	dir = <a href="qc-built.htm#aim">aim</a> (<a href="qc-glob.htm#self">self</a>, 1000);
+	<a href="weapons.htm#launch_spike">launch_spike</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 16', dir);
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#superspike_touch">superspike_touch</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="defs.htm#newmis">newmis</a>, <b>"progs/s_spike.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="defs.htm#newmis">newmis</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>);		
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> ox) <b>W_FireSpikes</b><a name="W_FireSpikes">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	dir;
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	old;
+	
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &gt;= 2 &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+	{
+		<a href="weapons.htm#W_FireSuperSpikes">W_FireSuperSpikes</a> ();
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &lt; 1)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a> ();
+		<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/rocket1i.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> - 1;
+	dir = <a href="qc-built.htm#aim">aim</a> (<a href="qc-glob.htm#self">self</a>, 1000);
+	<a href="weapons.htm#launch_spike">launch_spike</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 16' + <a href="qc-built.htm#v_right">v_right</a>*ox, dir);
+
+	<a href="qc-glob.htm#self">self</a>.punchangle_x = -2;
+};
+
+
+
+.<a href="qc-types.htm#dot_float">float</a> hit_z;
+<a href="qc-types.htm#void">void</a>() <b>spike_touch</b><a name="spike_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a> rand;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_solid">solid</a> == <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>)
+		<b>return</b>;	<i>// trigger field, do nothing</i>
+
+	<b>if</b> (<a href="qc-built.htm#pointcontents">pointcontents</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>) == <a href="qc-defs.htm#CONTENT_SKY">CONTENT_SKY</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	
+<i>// hit something that bleeds</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="weapons.htm#spawn_touchblood">spawn_touchblood</a> (9);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 9);
+	}
+	<b>else</b>
+	{
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+		
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"wizspike"</b>)
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_WIZSPIKE">TE_WIZSPIKE</a>);
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"knightspike"</b>)
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_KNIGHTSPIKE">TE_KNIGHTSPIKE</a>);
+		<b>else</b>
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_SPIKE">TE_SPIKE</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+	}
+
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+
+};
+
+<a href="qc-types.htm#void">void</a>() <b>superspike_touch</b><a name="superspike_touch">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a> rand;
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_solid">solid</a> == <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>)
+		<b>return</b>;	<i>// trigger field, do nothing</i>
+
+	<b>if</b> (<a href="qc-built.htm#pointcontents">pointcontents</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>) == <a href="qc-defs.htm#CONTENT_SKY">CONTENT_SKY</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	
+<i>// hit something that bleeds</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="weapons.htm#spawn_touchblood">spawn_touchblood</a> (18);
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 18);
+	}
+	<b>else</b>
+	{
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_SUPERSPIKE">TE_SUPERSPIKE</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+		<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+	}
+
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+
+};
+
+
+<i>/*
+===============================================================================
+
+PLAYER WEAPON USE
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>W_SetCurrentAmmo</b><a name="W_SetCurrentAmmo">=</a>
+{
+	<a href="player.htm#player_run">player_run</a> ();		<i>// get out of any weapon firing states</i>
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - ( <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; (<a href="qc-defs.htm#IT_SHELLS">IT_SHELLS</a> | <a href="qc-defs.htm#IT_NAILS">IT_NAILS</a> | <a href="qc-defs.htm#IT_ROCKETS">IT_ROCKETS</a> | <a href="qc-defs.htm#IT_CELLS">IT_CELLS</a>) );
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_axe.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_shot.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_SHELLS">IT_SHELLS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_shot2.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_SHELLS">IT_SHELLS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_nail.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_NAILS">IT_NAILS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_nail2.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_NAILS">IT_NAILS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_rock.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_ROCKETS">IT_ROCKETS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_rock2.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_ROCKETS">IT_ROCKETS</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>"progs/v_light.mdl"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_CELLS">IT_CELLS</a>;
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a> = <b>""</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 0;
+	}
+};
+
+<a href="qc-types.htm#float">float</a>() <b>W_BestWeapon</b><a name="W_BestWeapon">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	it;
+	
+	it = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+
+	<b>if</b>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &gt;= 1 &amp;&amp; (it &amp; <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>) )
+		return IT_LIGHTNING;
+	<b>else</b> <b>if</b>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &gt;= 2 &amp;&amp; (it &amp; <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>) )
+		return IT_SUPER_NAILGUN;
+	<b>else</b> <b>if</b>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &gt;= 2 &amp;&amp; (it &amp; <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>) )
+		return IT_SUPER_SHOTGUN;
+	<b>else</b> <b>if</b>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &gt;= 1 &amp;&amp; (it &amp; <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>) )
+		return IT_NAILGUN;
+	<b>else</b> <b>if</b>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &gt;= 1 &amp;&amp; (it &amp; <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>) )
+		return IT_SHOTGUN;
+		
+<i>/*
+	if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
+		return IT_ROCKET_LAUNCHER;
+	else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
+		return IT_GRENADE_LAUNCHER;
+
+*/</i>
+
+
+	return IT_AXE;
+};
+
+<a href="qc-types.htm#float">float</a>() <b>W_CheckNoAmmo</b><a name="W_CheckNoAmmo">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_currentammo">currentammo</a> &gt; 0)
+		return TRUE;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+		return TRUE;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="weapons.htm#W_BestWeapon">W_BestWeapon</a> ();
+
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+	
+<i>// drop the weapon down</i>
+	return FALSE;
+};
+
+<i>/*
+============
+W_Attack
+
+An attack impulse can be triggered now
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_axe1">player_axe1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_axeb1">player_axeb1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_axec1">player_axec1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_axed1">player_axed1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_shot1">player_shot1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_nail1">player_nail1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_light1">player_light1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_rocket1">player_rocket1</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>W_Attack</b><a name="W_Attack">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	r;
+
+	<b>if</b> (!<a href="weapons.htm#W_CheckNoAmmo">W_CheckNoAmmo</a> ())
+		<b>return</b>;
+
+	<a href="qc-built.htm#makevectors">makevectors</a>	(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);			<i>// calculate forward angle for velocity</i>
+	<a href="qc-glob.htm#self">self</a>.show_hostile = <a href="qc-glob.htm#time">time</a> + 1;	<i>// wake monsters up</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"weapons/ax1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		r = <a href="qc-built.htm#random">random</a>();
+		<b>if</b> (r &lt; 0.25)
+			<a href="player.htm#player_axe1">player_axe1</a> ();
+		<b>else</b> <b>if</b> (r&lt;0.5)
+			<a href="player.htm#player_axeb1">player_axeb1</a> ();
+		<b>else</b> <b>if</b> (r&lt;0.75)
+			<a href="player.htm#player_axec1">player_axec1</a> ();
+		<b>else</b>
+			<a href="player.htm#player_axed1">player_axed1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>)
+	{
+		<a href="player.htm#player_shot1">player_shot1</a> ();
+		<a href="weapons.htm#W_FireShotgun">W_FireShotgun</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>)
+	{
+		<a href="player.htm#player_shot1">player_shot1</a> ();
+		<a href="weapons.htm#W_FireSuperShotgun">W_FireSuperShotgun</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.7;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>)
+	{
+		<a href="player.htm#player_nail1">player_nail1</a> ();
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+	{
+		<a href="player.htm#player_nail1">player_nail1</a> ();
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>)
+	{
+		<a href="player.htm#player_rocket1">player_rocket1</a>();
+		<a href="weapons.htm#W_FireGrenade">W_FireGrenade</a>();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.6;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>)
+	{
+		<a href="player.htm#player_rocket1">player_rocket1</a>();
+		<a href="weapons.htm#W_FireRocket">W_FireRocket</a>();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.8;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>)
+	{
+		<a href="player.htm#player_light1">player_light1</a>();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"weapons/lstart.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+};
+
+<i>/*
+============
+W_ChangeWeapon
+
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_ChangeWeapon</b><a name="W_ChangeWeapon">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	it, am, fl;
+	
+	it = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	am = 0;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 1)
+	{
+		fl = <a href="qc-defs.htm#IT_AXE">IT_AXE</a>;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 2)
+	{
+		fl = <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &lt; 1)
+			am = 1;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 3)
+	{
+		fl = <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &lt; 2)
+			am = 1;
+	}		
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 4)
+	{
+		fl = <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &lt; 1)
+			am = 1;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 5)
+	{
+		fl = <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &lt; 2)
+			am = 1;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 6)
+	{
+		fl = <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &lt; 1)
+			am = 1;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 7)
+	{
+		fl = <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &lt; 1)
+			am = 1;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 8)
+	{
+		fl = <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &lt; 1)
+			am = 1;
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> = 0;
+	
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; fl))
+	{	<i>// don't have the weapon or the ammo</i>
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"no weapon.\n"</b>);
+		<b>return</b>;
+	}
+	
+	<b>if</b> (am)
+	{	<i>// don't have the ammo</i>
+		<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"not enough ammo.\n"</b>);
+		<b>return</b>;
+	}
+
+<i>//</i>
+<i>// set weapon, set ammo</i>
+<i>//</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = fl;		
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+};
+
+<i>/*
+============
+CheatCommand
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>CheatCommand</b><a name="CheatCommand">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> || <a href="qc-glob.htm#coop">coop</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = 100;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = 200;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = 100;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | 
+		<a href="qc-defs.htm#IT_AXE">IT_AXE</a> |
+		<a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a> |
+		<a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a> |
+		<a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a> |
+		<a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a> |
+		<a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a> |
+		<a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a> |
+		<a href="qc-defs.htm#IT_KEY1">IT_KEY1</a> | <a href="qc-defs.htm#IT_KEY2">IT_KEY2</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = 200;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> = 0;
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+};
+
+<i>/*
+============
+CycleWeaponCommand
+
+Go to the next weapon with ammo
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>CycleWeaponCommand</b><a name="CycleWeaponCommand">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	it, am;
+	
+	it = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> = 0;
+	
+	<b>while</b> (1)
+	{
+		am = 0;
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_AXE">IT_AXE</a>;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &lt; 1)
+				am = 1;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &lt; 2)
+				am = 1;
+		}		
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &lt; 1)
+				am = 1;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> &lt; 2)
+				am = 1;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &lt; 1)
+				am = 1;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> &lt; 1)
+				am = 1;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> &lt; 1)
+				am = 1;
+		}
+	
+		<b>if</b> ( (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a>) &amp;&amp; am == 0)
+		{
+			<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+			<b>return</b>;
+		}
+	}
+
+};
+
+<i>/*
+============
+ServerflagsCommand
+
+Just for development
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ServerflagsCommand</b><a name="ServerflagsCommand">=</a>
+{
+	<a href="qc-glob.htm#serverflags">serverflags</a> = <a href="qc-glob.htm#serverflags">serverflags</a> * 2 + 1;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>QuadCheat</b><a name="QuadCheat">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> || <a href="qc-glob.htm#coop">coop</a>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> = <a href="qc-glob.htm#time">time</a> + 30;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> | <a href="qc-defs.htm#IT_QUAD">IT_QUAD</a>;
+	<a href="qc-built.htm#dprint">dprint</a> (<b>"quad cheat\n"</b>);
+};
+
+<i>/*
+============
+ImpulseCommands
+
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ImpulseCommands</b><a name="ImpulseCommands">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> &gt;= 1 &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> &lt;= 8)
+		<a href="weapons.htm#W_ChangeWeapon">W_ChangeWeapon</a> ();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 9)
+		<a href="weapons.htm#CheatCommand">CheatCommand</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 10)
+		<a href="weapons.htm#CycleWeaponCommand">CycleWeaponCommand</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 11)
+		<a href="weapons.htm#ServerflagsCommand">ServerflagsCommand</a> ();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> == 255)
+		<a href="weapons.htm#QuadCheat">QuadCheat</a> ();
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_impulse">impulse</a> = 0;
+};
+
+<i>/*
+============
+W_WeaponFrame
+
+Called every frame so impulse events can be handled as well as possible
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>W_WeaponFrame</b><a name="W_WeaponFrame">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		<b>return</b>;
+
+	<a href="weapons.htm#ImpulseCommands">ImpulseCommands</a> ();
+	
+<i>// check for attack</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+	{
+		<a href="weapons.htm#SuperDamageSound">SuperDamageSound</a> ();
+		<a href="weapons.htm#W_Attack">W_Attack</a> ();
+	}
+};
+
+<i>/*
+========
+SuperDamageSound
+
+Plays sound if needed
+========
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>SuperDamageSound</b><a name="SuperDamageSound">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_sound">super_sound</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_sound">super_sound</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"items/damage3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		}
+	}
+	<b>return</b>;
+};
+
+
+
+</pre></body></html>

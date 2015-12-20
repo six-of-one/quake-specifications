@@ -1,0 +1,666 @@
+<html><head><title>player.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<a href="qc-types.htm#void">void</a>() <a href="misc.htm#bubble_bob">bubble_bob</a>;
+
+<i>/*
+==============================================================================
+
+PLAYER
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/player_4</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 -6 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base		</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<i>//</i>
+<i>// running</i>
+<i>//</i>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axrun1 axrun2 axrun3 axrun4 axrun5 axrun6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>rockrun1 rockrun2 rockrun3 rockrun4 rockrun5 rockrun6</b>
+
+<i>//</i>
+<i>// standing</i>
+<i>//</i>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axstnd1 axstnd2 axstnd3 axstnd4 axstnd5 axstnd6</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axstnd7 axstnd8 axstnd9 axstnd10 axstnd11 axstnd12</b>
+
+
+<i>//</i>
+<i>// pain</i>
+<i>//</i>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axpain1 axpain2 axpain3 axpain4 axpain5 axpain6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 pain6</b>
+
+
+<i>//</i>
+<i>// death</i>
+<i>//</i>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axdeth1 axdeth2 axdeth3 axdeth4 axdeth5 axdeth6</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axdeth7 axdeth8 axdeth9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deatha1 deatha2 deatha3 deatha4 deatha5 deatha6 deatha7 deatha8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deatha9 deatha10 deatha11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb1 deathb2 deathb3 deathb4 deathb5 deathb6 deathb7 deathb8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathc1 deathc2 deathc3 deathc4 deathc5 deathc6 deathc7 deathc8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathc9 deathc10 deathc11 deathc12 deathc13 deathc14 deathc15</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathd1 deathd2 deathd3 deathd4 deathd5 deathd6 deathd7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathd8 deathd9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathe1 deathe2 deathe3 deathe4 deathe5 deathe6 deathe7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathe8 deathe9</b>
+
+<i>//</i>
+<i>// attacks</i>
+<i>//</i>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>nailatt1 nailatt2</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>light1 light2</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>rockatt1 rockatt2 rockatt3 rockatt4 rockatt5 rockatt6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shotatt1 shotatt2 shotatt3 shotatt4 shotatt5 shotatt6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axatt1 axatt2 axatt3 axatt4 axatt5 axatt6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axattb1 axattb2 axattb3 axattb4 axattb5 axattb6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axattc1 axattc2 axattc3 axattc4 axattc5 axattc6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>axattd1 axattd2 axattd3 axattd4 axattd5 axattd6</b>
+
+
+<i>/*
+==============================================================================
+PLAYER
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_run">player_run</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>player_stand1</b><a name="player_stand1">=</a>[	$axstnd1,	<a href="player.htm#player_stand1">player_stand1</a>	]
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=0;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.velocity_x || <a href="qc-glob.htm#self">self</a>.velocity_y)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>=0;
+		<a href="player.htm#player_run">player_run</a>();
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> &gt;= 12)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = $axstnd1 + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>;
+	}
+	<b>else</b>
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> &gt;= 5)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = $stand1 + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> + 1;	
+};
+
+<a href="qc-types.htm#void">void</a>() <b>player_run</b><a name="player_run">=</a>[	$rockrun1,	<a href="player.htm#player_run">player_run</a>	]
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=0;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.velocity_x &amp;&amp; !<a href="qc-glob.htm#self">self</a>.velocity_y)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>=0;
+		<a href="player.htm#player_stand1">player_stand1</a>();
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> == 6)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = $axrun1 + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>;
+	}
+	<b>else</b>
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> == 6)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a>;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_walkframe">walkframe</a> + 1;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>player_shot1</b><a name="player_shot1">=</a>	[$shotatt1, player_shot2	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=1;
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;};
+<a href="qc-types.htm#void">void</a>() <b>player_shot2</b><a name="player_shot2">=</a>	[$shotatt2, player_shot3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=2;};
+<a href="qc-types.htm#void">void</a>() <b>player_shot3</b><a name="player_shot3">=</a>	[$shotatt3, player_shot4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=3;};
+<a href="qc-types.htm#void">void</a>() <b>player_shot4</b><a name="player_shot4">=</a>	[$shotatt4, player_shot5	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=4;};
+<a href="qc-types.htm#void">void</a>() <b>player_shot5</b><a name="player_shot5">=</a>	[$shotatt5, player_shot6	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=5;};
+<a href="qc-types.htm#void">void</a>() <b>player_shot6</b><a name="player_shot6">=</a>	[$shotatt6, <a href="player.htm#player_run">player_run</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=6;};
+
+<a href="qc-types.htm#void">void</a>() <b>player_axe1</b><a name="player_axe1">=</a>	[$axatt1, player_axe2	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=1;};
+<a href="qc-types.htm#void">void</a>() <b>player_axe2</b><a name="player_axe2">=</a>	[$axatt2, player_axe3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=2;};
+<a href="qc-types.htm#void">void</a>() <b>player_axe3</b><a name="player_axe3">=</a>	[$axatt3, player_axe4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=3;<a href="weapons.htm#W_FireAxe">W_FireAxe</a>();};
+<a href="qc-types.htm#void">void</a>() <b>player_axe4</b><a name="player_axe4">=</a>	[$axatt4, <a href="player.htm#player_run">player_run</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=4;};
+
+<a href="qc-types.htm#void">void</a>() <b>player_axeb1</b><a name="player_axeb1">=</a>	[$axattb1, player_axeb2	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=5;};
+<a href="qc-types.htm#void">void</a>() <b>player_axeb2</b><a name="player_axeb2">=</a>	[$axattb2, player_axeb3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=6;};
+<a href="qc-types.htm#void">void</a>() <b>player_axeb3</b><a name="player_axeb3">=</a>	[$axattb3, player_axeb4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=7;<a href="weapons.htm#W_FireAxe">W_FireAxe</a>();};
+<a href="qc-types.htm#void">void</a>() <b>player_axeb4</b><a name="player_axeb4">=</a>	[$axattb4, <a href="player.htm#player_run">player_run</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=8;};
+
+<a href="qc-types.htm#void">void</a>() <b>player_axec1</b><a name="player_axec1">=</a>	[$axattc1, player_axec2	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=1;};
+<a href="qc-types.htm#void">void</a>() <b>player_axec2</b><a name="player_axec2">=</a>	[$axattc2, player_axec3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=2;};
+<a href="qc-types.htm#void">void</a>() <b>player_axec3</b><a name="player_axec3">=</a>	[$axattc3, player_axec4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=3;<a href="weapons.htm#W_FireAxe">W_FireAxe</a>();};
+<a href="qc-types.htm#void">void</a>() <b>player_axec4</b><a name="player_axec4">=</a>	[$axattc4, <a href="player.htm#player_run">player_run</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=4;};
+
+<a href="qc-types.htm#void">void</a>() <b>player_axed1</b><a name="player_axed1">=</a>	[$axattd1, player_axed2	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=5;};
+<a href="qc-types.htm#void">void</a>() <b>player_axed2</b><a name="player_axed2">=</a>	[$axattd2, player_axed3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=6;};
+<a href="qc-types.htm#void">void</a>() <b>player_axed3</b><a name="player_axed3">=</a>	[$axattd3, player_axed4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=7;<a href="weapons.htm#W_FireAxe">W_FireAxe</a>();};
+<a href="qc-types.htm#void">void</a>() <b>player_axed4</b><a name="player_axed4">=</a>	[$axattd4, <a href="player.htm#player_run">player_run</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=8;};
+
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>player_nail1</b><a name="player_nail1">=</a>[$nailatt1, player_nail2  ] 
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+		{<a href="player.htm#player_run">player_run</a> ();<b>return</b>;}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> == 9)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 1;
+	<a href="weapons.htm#SuperDamageSound">SuperDamageSound</a>();
+	<a href="weapons.htm#W_FireSpikes">W_FireSpikes</a> (4);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+};
+<a href="qc-types.htm#void">void</a>() <b>player_nail2</b><a name="player_nail2">=</a>[$nailatt2, <a href="player.htm#player_nail1">player_nail1</a>  ]
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+		{<a href="player.htm#player_run">player_run</a> ();<b>return</b>;}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> == 9)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 1;
+	<a href="weapons.htm#SuperDamageSound">SuperDamageSound</a>();
+	<a href="weapons.htm#W_FireSpikes">W_FireSpikes</a> (-4);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>player_light1</b><a name="player_light1">=</a>[$light1, player_light2  ] 
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+		{<a href="player.htm#player_run">player_run</a> ();<b>return</b>;}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> == 5)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 1;
+	<a href="weapons.htm#SuperDamageSound">SuperDamageSound</a>();
+	<a href="weapons.htm#W_FireLightning">W_FireLightning</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+};
+<a href="qc-types.htm#void">void</a>() <b>player_light2</b><a name="player_light2">=</a>[$light2, <a href="player.htm#player_light1">player_light1</a>  ]
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+		{<a href="player.htm#player_run">player_run</a> ();<b>return</b>;}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> == 5)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a> = 1;
+	<a href="weapons.htm#SuperDamageSound">SuperDamageSound</a>();
+	<a href="weapons.htm#W_FireLightning">W_FireLightning</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.2;
+};
+
+<i>//============================================================================</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>player_rocket1</b><a name="player_rocket1">=</a>[$rockatt1, player_rocket2  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=1;
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;};
+<a href="qc-types.htm#void">void</a>() <b>player_rocket2</b><a name="player_rocket2">=</a>[$rockatt2, player_rocket3  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=2;};
+<a href="qc-types.htm#void">void</a>() <b>player_rocket3</b><a name="player_rocket3">=</a>[$rockatt3, player_rocket4  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=3;};
+<a href="qc-types.htm#void">void</a>() <b>player_rocket4</b><a name="player_rocket4">=</a>[$rockatt4, player_rocket5  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=4;};
+<a href="qc-types.htm#void">void</a>() <b>player_rocket5</b><a name="player_rocket5">=</a>[$rockatt5, player_rocket6  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=5;};
+<a href="qc-types.htm#void">void</a>() <b>player_rocket6</b><a name="player_rocket6">=</a>[$rockatt6, <a href="player.htm#player_run">player_run</a>  ] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=6;};
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> num_bubbles) <a href="player.htm#DeathBubbles">DeathBubbles</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>PainSound</b><a name="PainSound">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a>		rs;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; 0)
+		<b>return</b>;
+
+	<b>if</b> (<a href="defs.htm#damage_attacker">damage_attacker</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"teledeath"</b>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/teledth1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+		<b>return</b>;
+	}
+
+<i>// water pain sounds</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_WATER">CONTENT_WATER</a> &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> == 3)
+	{
+		<a href="player.htm#DeathBubbles">DeathBubbles</a>(1);
+		<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/drown1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/drown2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>return</b>;
+	}
+
+<i>// slime pain sounds</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_SLIME">CONTENT_SLIME</a>)
+	{
+<i>// FIX ME	put in some steam here</i>
+		<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/lburn1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/lburn2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_LAVA">CONTENT_LAVA</a>)
+	{
+		<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/lburn1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/lburn2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_axhitme">axhitme</a> = 0;
+		<b>return</b>;
+	}
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+
+<i>// don't make multiple pain sounds right after each other</i>
+
+<i>// ax pain sound</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_axhitme">axhitme</a> == 1)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_axhitme">axhitme</a> = 0;
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/axhit1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>return</b>;
+	}
+	
+
+	rs = <a href="qc-built.htm#rint">rint</a>((<a href="qc-built.htm#random">random</a>() * 5) + 1);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>""</b>;
+	<b>if</b> (rs == 1)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain1.wav"</b>;
+	<b>else</b> <b>if</b> (rs == 2)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain2.wav"</b>;
+	<b>else</b> <b>if</b> (rs == 3)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain3.wav"</b>;
+	<b>else</b> <b>if</b> (rs == 4)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain4.wav"</b>;
+	<b>else</b> <b>if</b> (rs == 5)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain5.wav"</b>;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/pain6.wav"</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>return</b>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>player_pain1</b><a name="player_pain1">=</a>	[	$pain1,	player_pain2	] {<a href="player.htm#PainSound">PainSound</a>();<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=0;};
+<a href="qc-types.htm#void">void</a>() <b>player_pain2</b><a name="player_pain2">=</a>	[	$pain2,	player_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_pain3</b><a name="player_pain3">=</a>	[	$pain3,	player_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_pain4</b><a name="player_pain4">=</a>	[	$pain4,	player_pain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_pain5</b><a name="player_pain5">=</a>	[	$pain5,	player_pain6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_pain6</b><a name="player_pain6">=</a>	[	$pain6,	<a href="player.htm#player_run">player_run</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>player_axpain1</b><a name="player_axpain1">=</a>	[	$axpain1,	player_axpain2	] {<a href="player.htm#PainSound">PainSound</a>();<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>=0;};
+<a href="qc-types.htm#void">void</a>() <b>player_axpain2</b><a name="player_axpain2">=</a>	[	$axpain2,	player_axpain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_axpain3</b><a name="player_axpain3">=</a>	[	$axpain3,	player_axpain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_axpain4</b><a name="player_axpain4">=</a>	[	$axpain4,	player_axpain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_axpain5</b><a name="player_axpain5">=</a>	[	$axpain5,	player_axpain6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_axpain6</b><a name="player_axpain6">=</a>	[	$axpain6,	<a href="player.htm#player_run">player_run</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>player_pain</b><a name="player_pain">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponframe">weaponframe</a>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;		<i>// eyes don't have pain frames</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+		<a href="player.htm#player_axpain1">player_axpain1</a> ();
+	<b>else</b>
+		<a href="player.htm#player_pain1">player_pain1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_diea1">player_diea1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_dieb1">player_dieb1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_diec1">player_diec1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_died1">player_died1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_diee1">player_diee1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_die_ax1">player_die_ax1</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>DeathBubblesSpawn</b><a name="DeathBubblesSpawn">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	bubble;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> != 3)
+		<b>return</b>;
+	bubble = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="qc-built.htm#setmodel">setmodel</a> (bubble, <b>"progs/s_bubble.spr"</b>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (bubble, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 24');
+	bubble.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NOCLIP">MOVETYPE_NOCLIP</a>;
+	bubble.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	bubble.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 15';
+	bubble.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	bubble.<a href="qc-enty.htm#dot_think">think</a> = <a href="misc.htm#bubble_bob">bubble_bob</a>;
+	bubble.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"bubble"</b>;
+	bubble.<a href="qc-enty.htm#dot_frame">frame</a> = 0;
+	bubble.<a href="qc-enty.htm#dot_cnt">cnt</a> = 0;
+	<a href="qc-built.htm#setsize">setsize</a> (bubble, '-8 -8 -8', '8 8 8');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="player.htm#DeathBubblesSpawn">DeathBubblesSpawn</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> + 1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> &gt;= <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_bubble_count">bubble_count</a>)
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> num_bubbles) <b>DeathBubbles</b><a name="DeathBubbles">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	bubble_spawner;
+	
+	bubble_spawner = <a href="qc-built.htm#spawn">spawn</a>();
+	<a href="qc-built.htm#setorigin">setorigin</a> (bubble_spawner, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	bubble_spawner.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	bubble_spawner.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	bubble_spawner.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	bubble_spawner.<a href="qc-enty.htm#dot_think">think</a> = <a href="player.htm#DeathBubblesSpawn">DeathBubblesSpawn</a>;
+	bubble_spawner.<a href="qc-enty.htm#dot_air_finished">air_finished</a> = 0;
+	bubble_spawner.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	bubble_spawner.<a href="qc-enty.htm#dot_bubble_count">bubble_count</a> = num_bubbles;
+	<b>return</b>;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>DeathSound</b><a name="DeathSound">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a>		rs;
+
+	<i>// water death sounds</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> == 3)
+	{
+		<a href="player.htm#DeathBubbles">DeathBubbles</a>(20);
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/h2odeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+		<b>return</b>;
+	}
+	
+	rs = <a href="qc-built.htm#rint">rint</a> ((<a href="qc-built.htm#random">random</a>() * 4) + 1);
+	<b>if</b> (rs == 1)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/death1.wav"</b>;
+	<b>if</b> (rs == 2)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/death2.wav"</b>;
+	<b>if</b> (rs == 3)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/death3.wav"</b>;
+	<b>if</b> (rs == 4)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/death4.wav"</b>;
+	<b>if</b> (rs == 5)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"player/death5.wav"</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+	<b>return</b>;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>PlayerDead</b><a name="PlayerDead">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+<i>// allow respawn after a certain time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_DEAD">DEAD_DEAD</a>;
+};
+
+<a href="qc-types.htm#vector">vector</a>(<a href="qc-types.htm#float">float</a> dm) <b>VelocityForDamage</b><a name="VelocityForDamage">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> v;
+
+	v_x = 100 * <a href="weapons.htm#crandom">crandom</a>();
+	v_y = 100 * <a href="weapons.htm#crandom">crandom</a>();
+	v_z = 200 + 100 * <a href="qc-built.htm#random">random</a>();
+
+	<b>if</b> (dm &gt; -50)
+	{
+<i>//		dprint ("level 1\n");</i>
+		v = v * 0.7;
+	}
+	<b>else</b> <b>if</b> (dm &gt; -200)
+	{
+<i>//		dprint ("level 3\n");</i>
+		v = v * 2;
+	}
+	<b>else</b>
+		v = v * 10;
+
+	return v;
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> gibname, <a href="qc-types.htm#float">float</a> dm) <b>ThrowGib</b><a name="ThrowGib">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> new;
+
+	new = <a href="qc-built.htm#spawn">spawn</a>();
+	new.<a href="qc-enty.htm#dot_origin">origin</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (new, gibname);
+	<a href="qc-built.htm#setsize">setsize</a> (new, '0 0 0', '0 0 0');
+	new.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="player.htm#VelocityForDamage">VelocityForDamage</a> (dm);
+	new.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	new.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	new.avelocity_x = <a href="qc-built.htm#random">random</a>()*600;
+	new.avelocity_y = <a href="qc-built.htm#random">random</a>()*600;
+	new.avelocity_z = <a href="qc-built.htm#random">random</a>()*600;
+	new.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+	new.<a href="qc-enty.htm#dot_ltime">ltime</a> = <a href="qc-glob.htm#time">time</a>;
+	new.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 10 + <a href="qc-built.htm#random">random</a>()*10;
+	new.<a href="qc-enty.htm#dot_frame">frame</a> = 0;
+	new.<a href="qc-enty.htm#dot_flags">flags</a> = 0;
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> gibname, <a href="qc-types.htm#float">float</a> dm) <b>ThrowHead</b><a name="ThrowHead">=</a>
+{
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, gibname);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 8';
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 0', '16 16 56');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="player.htm#VelocityForDamage">VelocityForDamage</a> (dm);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> - 24;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = <a href="weapons.htm#crandom">crandom</a>() * '0 600 0';
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>GibPlayer</b><a name="GibPlayer">=</a>
+{
+	<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_player.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_DEAD">DEAD_DEAD</a>;
+
+	<b>if</b> (<a href="defs.htm#damage_attacker">damage_attacker</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"teledeath"</b>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/teledth1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="defs.htm#damage_attacker">damage_attacker</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"teledeath2"</b>)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/teledth1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+		<b>return</b>;
+	}
+		
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/gib.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+	<b>else</b>
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>PlayerDie</b><a name="PlayerDie">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	i;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> = 0;	<i>// don't die as eyes</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = modelindex_player;	<i>// don't use eyes</i>
+
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> || <a href="qc-glob.htm#coop">coop</a>)
+		<a href="items.htm#DropBackpack">DropBackpack</a>();
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weaponmodel">weaponmodel</a>=<b>""</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 -8';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_DYING">DEAD_DYING</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_TOSS">MOVETYPE_TOSS</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.velocity_z &lt; 10)
+		<a href="qc-glob.htm#self">self</a>.velocity_z = <a href="qc-glob.htm#self">self</a>.velocity_z + <a href="qc-built.htm#random">random</a>()*300;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -40)
+	{
+		<a href="player.htm#GibPlayer">GibPlayer</a> ();
+		<b>return</b>;
+	}
+
+	<a href="player.htm#DeathSound">DeathSound</a>();
+	
+	<a href="qc-glob.htm#self">self</a>.angles_x = 0;
+	<a href="qc-glob.htm#self">self</a>.angles_z = 0;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+	{
+		<a href="player.htm#player_die_ax1">player_die_ax1</a> ();
+		<b>return</b>;
+	}
+	
+	i = <a href="qc-built.htm#cvar">cvar</a>(<b>"temp1"</b>);
+	<b>if</b> (!i)
+		i = 1 + <a href="qc-built.htm#floor">floor</a>(<a href="qc-built.htm#random">random</a>()*6);
+	
+	<b>if</b> (i == 1)
+		<a href="player.htm#player_diea1">player_diea1</a>();
+	<b>else</b> <b>if</b> (i == 2)
+		<a href="player.htm#player_dieb1">player_dieb1</a>();
+	<b>else</b> <b>if</b> (i == 3)
+		<a href="player.htm#player_diec1">player_diec1</a>();
+	<b>else</b> <b>if</b> (i == 4)
+		<a href="player.htm#player_died1">player_died1</a>();
+	<b>else</b>
+		<a href="player.htm#player_diee1">player_diee1</a>();
+
+};
+
+<a href="qc-types.htm#void">void</a>() <b>set_suicide_frame</b><a name="set_suicide_frame">=</a>
+{	<i>// used by klill command and diconnect command</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> != <b>"progs/player.mdl"</b>)
+		<b>return</b>;	<i>// allready gibbed</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = $deatha11;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_TOSS">MOVETYPE_TOSS</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_DEAD">DEAD_DEAD</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>player_diea1</b><a name="player_diea1">=</a>	[	$deatha1,	player_diea2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea2</b><a name="player_diea2">=</a>	[	$deatha2,	player_diea3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea3</b><a name="player_diea3">=</a>	[	$deatha3,	player_diea4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea4</b><a name="player_diea4">=</a>	[	$deatha4,	player_diea5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea5</b><a name="player_diea5">=</a>	[	$deatha5,	player_diea6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea6</b><a name="player_diea6">=</a>	[	$deatha6,	player_diea7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea7</b><a name="player_diea7">=</a>	[	$deatha7,	player_diea8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea8</b><a name="player_diea8">=</a>	[	$deatha8,	player_diea9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea9</b><a name="player_diea9">=</a>	[	$deatha9,	player_diea10	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea10</b><a name="player_diea10">=</a>	[	$deatha10,	player_diea11	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diea11</b><a name="player_diea11">=</a>	[	$deatha11,	<a href="player.htm#player_diea11">player_diea11</a> ] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>player_dieb1</b><a name="player_dieb1">=</a>	[	$deathb1,	player_dieb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb2</b><a name="player_dieb2">=</a>	[	$deathb2,	player_dieb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb3</b><a name="player_dieb3">=</a>	[	$deathb3,	player_dieb4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb4</b><a name="player_dieb4">=</a>	[	$deathb4,	player_dieb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb5</b><a name="player_dieb5">=</a>	[	$deathb5,	player_dieb6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb6</b><a name="player_dieb6">=</a>	[	$deathb6,	player_dieb7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb7</b><a name="player_dieb7">=</a>	[	$deathb7,	player_dieb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb8</b><a name="player_dieb8">=</a>	[	$deathb8,	player_dieb9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_dieb9</b><a name="player_dieb9">=</a>	[	$deathb9,	<a href="player.htm#player_dieb9">player_dieb9</a>	] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>player_diec1</b><a name="player_diec1">=</a>	[	$deathc1,	player_diec2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec2</b><a name="player_diec2">=</a>	[	$deathc2,	player_diec3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec3</b><a name="player_diec3">=</a>	[	$deathc3,	player_diec4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec4</b><a name="player_diec4">=</a>	[	$deathc4,	player_diec5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec5</b><a name="player_diec5">=</a>	[	$deathc5,	player_diec6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec6</b><a name="player_diec6">=</a>	[	$deathc6,	player_diec7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec7</b><a name="player_diec7">=</a>	[	$deathc7,	player_diec8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec8</b><a name="player_diec8">=</a>	[	$deathc8,	player_diec9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec9</b><a name="player_diec9">=</a>	[	$deathc9,	player_diec10	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec10</b><a name="player_diec10">=</a>	[	$deathc10,	player_diec11	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec11</b><a name="player_diec11">=</a>	[	$deathc11,	player_diec12	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec12</b><a name="player_diec12">=</a>	[	$deathc12,	player_diec13	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec13</b><a name="player_diec13">=</a>	[	$deathc13,	player_diec14	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec14</b><a name="player_diec14">=</a>	[	$deathc14,	player_diec15	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diec15</b><a name="player_diec15">=</a>	[	$deathc15,	<a href="player.htm#player_diec15">player_diec15</a> ] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>player_died1</b><a name="player_died1">=</a>	[	$deathd1,	player_died2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died2</b><a name="player_died2">=</a>	[	$deathd2,	player_died3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died3</b><a name="player_died3">=</a>	[	$deathd3,	player_died4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died4</b><a name="player_died4">=</a>	[	$deathd4,	player_died5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died5</b><a name="player_died5">=</a>	[	$deathd5,	player_died6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died6</b><a name="player_died6">=</a>	[	$deathd6,	player_died7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died7</b><a name="player_died7">=</a>	[	$deathd7,	player_died8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died8</b><a name="player_died8">=</a>	[	$deathd8,	player_died9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_died9</b><a name="player_died9">=</a>	[	$deathd9,	<a href="player.htm#player_died9">player_died9</a>	] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>player_diee1</b><a name="player_diee1">=</a>	[	$deathe1,	player_diee2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee2</b><a name="player_diee2">=</a>	[	$deathe2,	player_diee3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee3</b><a name="player_diee3">=</a>	[	$deathe3,	player_diee4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee4</b><a name="player_diee4">=</a>	[	$deathe4,	player_diee5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee5</b><a name="player_diee5">=</a>	[	$deathe5,	player_diee6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee6</b><a name="player_diee6">=</a>	[	$deathe6,	player_diee7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee7</b><a name="player_diee7">=</a>	[	$deathe7,	player_diee8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee8</b><a name="player_diee8">=</a>	[	$deathe8,	player_diee9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_diee9</b><a name="player_diee9">=</a>	[	$deathe9,	<a href="player.htm#player_diee9">player_diee9</a>	] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax1</b><a name="player_die_ax1">=</a>	[	$axdeth1,	player_die_ax2	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax2</b><a name="player_die_ax2">=</a>	[	$axdeth2,	player_die_ax3	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax3</b><a name="player_die_ax3">=</a>	[	$axdeth3,	player_die_ax4	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax4</b><a name="player_die_ax4">=</a>	[	$axdeth4,	player_die_ax5	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax5</b><a name="player_die_ax5">=</a>	[	$axdeth5,	player_die_ax6	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax6</b><a name="player_die_ax6">=</a>	[	$axdeth6,	player_die_ax7	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax7</b><a name="player_die_ax7">=</a>	[	$axdeth7,	player_die_ax8	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax8</b><a name="player_die_ax8">=</a>	[	$axdeth8,	player_die_ax9	] {};
+<a href="qc-types.htm#void">void</a>() <b>player_die_ax9</b><a name="player_die_ax9">=</a>	[	$axdeth9,	<a href="player.htm#player_die_ax9">player_die_ax9</a>	] {<a href="player.htm#PlayerDead">PlayerDead</a>();};
+
+</pre></body></html>

@@ -1,0 +1,372 @@
+<html><head><title>plats.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_center_touch">plat_center_touch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_outside_touch">plat_outside_touch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_trigger_use">plat_trigger_use</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_go_up">plat_go_up</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_go_down">plat_go_down</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#plat_crush">plat_crush</a>;
+<a href="qc-types.htm#float">float</a> <b><a name="PLAT_LOW_TRIGGER">PLAT_LOW_TRIGGER</a></b> = 1;
+
+<a href="qc-types.htm#void">void</a>() <b>plat_spawn_inside_trigger</b><a name="plat_spawn_inside_trigger">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	trigger;
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	tmin, tmax;
+
+<i>//</i>
+<i>// middle trigger</i>
+<i>//	</i>
+	trigger = <a href="qc-built.htm#spawn">spawn</a>();
+	trigger.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="plats.htm#plat_center_touch">plat_center_touch</a>;
+	trigger.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	trigger.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	trigger.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>;
+	
+	tmin = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a> + '25 25 0';
+	tmax = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a> - '25 25 -8';
+	tmin_z = tmax_z - (<a href="qc-glob.htm#self">self</a>.pos1_z - <a href="qc-glob.htm#self">self</a>.pos2_z + 8);
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="plats.htm#PLAT_LOW_TRIGGER">PLAT_LOW_TRIGGER</a>)
+		tmax_z = tmin_z + 8;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size_x">size_x</a> &lt;= 50)
+	{
+		tmin_x = (<a href="qc-glob.htm#self">self</a>.mins_x + <a href="qc-glob.htm#self">self</a>.maxs_x) / 2;
+		tmax_x = tmin_x + 1;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size_y">size_y</a> &lt;= 50)
+	{
+		tmin_y = (<a href="qc-glob.htm#self">self</a>.mins_y + <a href="qc-glob.htm#self">self</a>.maxs_y) / 2;
+		tmax_y = tmin_y + 1;
+	}
+	
+	<a href="qc-built.htm#setsize">setsize</a> (trigger, tmin, tmax);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_hit_top</b><a name="plat_hit_top">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_TOP">STATE_TOP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="plats.htm#plat_go_down">plat_go_down</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 3;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_hit_bottom</b><a name="plat_hit_bottom">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_go_down</b><a name="plat_go_down">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_DOWN">STATE_DOWN</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="plats.htm#plat_hit_bottom">plat_hit_bottom</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_go_up</b><a name="plat_go_up">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_UP">STATE_UP</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="plats.htm#plat_hit_top">plat_hit_top</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_center_touch</b><a name="plat_center_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+		
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>)
+		<a href="plats.htm#plat_go_up">plat_go_up</a> ();
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 1;	<i>// delay going down</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_outside_touch</b><a name="plat_outside_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+		
+<i>//dprint ("plat_outside_touch\n");</i>
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a>)
+		<a href="plats.htm#plat_go_down">plat_go_down</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_trigger_use</b><a name="plat_trigger_use">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a>)
+		<b>return</b>;		<i>// allready activated</i>
+	<a href="plats.htm#plat_go_down">plat_go_down</a>();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>plat_crush</b><a name="plat_crush">=</a>
+{
+<i>//dprint ("plat_crush\n");</i>
+
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 1);
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_UP">STATE_UP</a>)
+		<a href="plats.htm#plat_go_down">plat_go_down</a> ();
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_DOWN">STATE_DOWN</a>)
+		<a href="plats.htm#plat_go_up">plat_go_up</a> ();
+	<b>else</b>
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"plat_crush: bad self.state\n"</b>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>plat_use</b><a name="plat_use">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> != <a href="defs.htm#STATE_UP">STATE_UP</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"plat_use: not in up state"</b>);
+	<a href="plats.htm#plat_go_down">plat_go_down</a>();
+};
+
+
+<i>/*QUAKED func_plat (0 .5 .8) ? PLAT_LOW_TRIGGER
+speed	default 150
+
+Plats are always drawn in the extended position, so they will light correctly.
+
+If the plat is the target of another trigger or button, it will start out disabled in the extended position until it is trigger, when it will lower and become a normal plat.
+
+If the "height" key is set, that will determine the amount the plat moves, instead of being implicitly determined by the model's height.
+Set "sounds" to one of the following:
+1) base fast
+2) chain slow
+*/</i>
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>func_plat</b><a name="func_plat">=</a>
+
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a> t;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_length">t_length</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_length">t_length</a> = 80;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_t_width">t_width</a> = 10;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 0)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> = 2;
+<i>// FIX THIS TO LOAD A GENERIC PLAT SOUND</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/plat1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/plat2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"plats/plat1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"plats/plat2.wav"</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/medplat1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/medplat2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"plats/medplat1.wav"</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = <b>"plats/medplat2.wav"</b>;
+	}
+
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mangle">mangle</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"plat"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);	
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a> , <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="plats.htm#plat_crush">plat_crush</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 150;
+
+<i>// pos1 is the top position, pos2 is the bottom</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_height">height</a>)
+		<a href="qc-glob.htm#self">self</a>.pos2_z = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_height">height</a>;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.pos2_z = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size_z">size_z</a> + 8;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="plats.htm#plat_trigger_use">plat_trigger_use</a>;
+
+	<a href="plats.htm#plat_spawn_inside_trigger">plat_spawn_inside_trigger</a> ();	<i>// the "start moving" trigger	</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_UP">STATE_UP</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="plats.htm#plat_use">plat_use</a>;
+	}
+	<b>else</b>
+	{
+		<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+	}
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#train_next">train_next</a>;
+<a href="qc-types.htm#void">void</a>() <a href="plats.htm#func_train_find">func_train_find</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>train_blocked</b><a name="train_blocked">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>train_use</b><a name="train_use">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> != <a href="plats.htm#func_train_find">func_train_find</a>)
+		<b>return</b>;		<i>// already activated</i>
+	<a href="plats.htm#train_next">train_next</a>();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>train_wait</b><a name="train_wait">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="plats.htm#train_next">train_next</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>train_next</b><a name="train_next">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+
+	targ = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a> = targ.<a href="qc-enty.htm#dot_target">target</a>;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"train_next: no next target"</b>);
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_wait">wait</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = targ.<a href="qc-enty.htm#dot_wait">wait</a>;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 0;
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (targ.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="plats.htm#train_wait">train_wait</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>func_train_find</b><a name="func_train_find">=</a>
+
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+
+	targ = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a> = targ.<a href="qc-enty.htm#dot_target">target</a>;
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a>);
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+	{	<i>// not triggered, so start immediately</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="plats.htm#train_next">train_next</a>;
+	}
+};
+
+<i>/*QUAKED func_train (0 .5 .8) ?
+Trains are moving platforms that players can ride.
+The targets origin specifies the min point of the train at each corner.
+The train spawns at the first target it is pointing at.
+If the train is the target of a button or trigger, it will not begin moving until activated.
+speed	default 100
+dmg		default	2
+sounds
+1) ratchet metal
+
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_train</b><a name="func_train">=</a>
+{	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 100;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"func_train without a target"</b>);
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 2;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 0)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = (<b>"misc/null.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = (<b>"misc/null.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = (<b>"plats/train2.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/train2.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = (<b>"plats/train1.wav"</b>);
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"plats/train1.wav"</b>);
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="plats.htm#train_blocked">train_blocked</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="plats.htm#train_use">train_use</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"train"</b>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a> , <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+
+<i>// start trains on the second frame, to make sure their targets have had</i>
+<i>// a chance to spawn</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="plats.htm#func_train_find">func_train_find</a>;
+};
+
+<i>/*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
+This is used for the final bos
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>misc_teleporttrain</b><a name="misc_teleporttrain">=</a>
+{	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 100;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"func_train without a target"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="plats.htm#train_blocked">train_blocked</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="plats.htm#train_use">train_use</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '100 200 300';
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = (<b>"misc/null.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise1">noise1</a> = (<b>"misc/null.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/null.wav"</b>);
+
+	<a href="qc-built.htm#precache_model2">precache_model2</a> (<b>"progs/teleport.mdl"</b>);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/teleport.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_mins">mins</a> , <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_maxs">maxs</a>);
+	<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+
+<i>// start trains on the second frame, to make sure their targets have had</i>
+<i>// a chance to spawn</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="plats.htm#func_train_find">func_train_find</a>;
+};
+
+
+</pre></body></html>

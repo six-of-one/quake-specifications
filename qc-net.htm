@@ -1,0 +1,234 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-NET">9. Quake-C Network Protocol</A></FONT></H1>
+  
+
+<p>Quake-C is not supposed to handle a lot of network messages, since
+most are already handled by specialied functions, in the C code. 
+However, Built-in functions have not been built for every kind of messages
+in the Quake protocol, so you migth end-up composing protocol messages in 
+Quake-C. I highly recommend that you build a single function to handle
+a given message type, because the structure of those messages might change,
+and then all your code would have to be checked for bugs.
+</p>
+
+<p>Note that with Quake-C you can only create Server to client messages
+(documented in the DEM specs). You cannot create client to server messages,
+since Quake-C is run by the server only, not the clients.
+</p>
+
+<h2><A NAME="QC-NDEF">Definitions for protocol messages</A></h2>
+
+
+<h4>How <A NAME="d_message">messages</A> are sent</h4>
+
+<p><pre>
+<b><a name="MSG_BROADCAST">MSG_BROADCAST</a></b> = 0;  // unreliable message, sent to all
+<b><a name="MSG_ONE">MSG_ONE</a></b> = 1;       // reliable message, sent to <a href="qc-net.htm#msg_entity" target="content">msg_entity</a>
+<b><a name="MSG_ALL">MSG_ALL</a></b> = 2;       // reliable message, sent to all
+<b><a name="MSG_INIT">MSG_INIT</a></b> = 3;	// write to the init string
+</pre>
+</p>
+<p><ul>
+<li> Use unreliable (but fast) messages, when it's of no importance that
+    a client misses the message.<br>
+    <b>examples:</b> sound, explosions, monster deaths, taunts....<br>
+<li> Use reliable messages when it's very important that every
+    client sees the message, or a game incoherency might happen.<br>
+    <b>examples:</b> shots, player deaths, door moves, game ends ...
+     and CD track changes!.
+</ul>
+</p>
+
+<h4>Type of message</h4> 
+
+<p>These are some of message types defined in the Quake network protocol.
+<pre>
+<a name="SVC_SETVIEWPORT">SVC_SETVIEWPORT</a> = 5;
+<a name="SVC_SETANGLES">SVC_SETANGLES</a> = 10;
+<b><a name="SVC_TEMPENTITY">SVC_TEMPENTITY</a></b> = 23;
+<b><a name="SVC_KILLEDMONSTER">SVC_KILLEDMONSTER</a></b> = 27;
+<b><a name="SVC_FOUNDSECRET">SVC_FOUNDSECRET</a></b> = 28;
+<b><a name="SVC_INTERMISSION">SVC_INTERMISSION</a></b> = 30;
+<b><a name="SVC_FINALE">SVC_FINALE</a></b> = 31;
+<b><a name="SVC_CDTRACK">SVC_CDTRACK</a></b> = 32;
+<b><a name="SVC_SELLSCREEN">SVC_SELLSCREEN</a></b> = 33;
+<a name="SVC_UPDATE">SVC_UPDATE</a></b> = 128;
+</pre>
+</p>
+
+<H2><A NAME="QC-NETF">Built-in Network functions</A></H2>
+
+<p><b>Beware</b>: when generating messages, you had better respect
+the format of the existing messages. Otherwise the game clients might
+not be able to interpret them (and will likely crash).</p>
+
+<p>The functions below all write to clients (players
+connected via the network, or the local player).</p>
+
+
+<h2>Global variable for network messages</h2>
+
+<h4>Variable: <a name="msg_entity">msg_entity</a></h4>
+<pre>
+entity	<b>msg_entity</b>;
+</pre>
+If you want to send a message to just one entity <tt>e</tt>, then
+set <b>msg_entity</b><tt>= e</tt> and send the message with
+flag MSG_ONE, instead of MSG_ALL.<br>
+Never used. Maybe it doesn't even work.
+
+
+<h2>Builtin functions for composing network messages</h2>
+
+<h4>Function: <a name="WriteByte">WriteByte</a></h4>
+<pre>
+void <b>WriteByte</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+
+<h4>Function: <a name="WriteChar">WriteChar</a></h4>
+<pre>
+void <b>WriteChar</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+
+<h4>Function: <a name="WriteShort">WriteShort</a></h4>
+<pre>
+void <b>WriteShort</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+
+<h4>Function: <a name="WriteLong">WriteLong</a></h4>
+<pre>
+void <b>WriteLong</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+
+<h4>Function: <a name="WriteCoord">WriteCoord</a></h4>
+<pre>
+void <b>WriteCoord</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+
+<h4>Function: <a name="WriteAngle">WriteAngle</a></h4>
+<pre>
+void <b>WriteAngle</b>(float <i>to</i>, float <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+This function writes a single byte, that represents 
+<i>256*(angle/380)</i>.
+
+<h4>Function: <a name="WriteString">WriteString</a></h4>
+<pre>
+void <b>WriteString</b>(float <i>to</i>, string <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>
+This function writes a string, terminated by <i>\0</i> (the
+null character in C).
+
+<h4>Function: <a name="WriteEntity">WriteEntity</a></h4>
+<pre>
+void <b>WriteEntity</b>(float <i>to</i>, entity <i>value</i>)
+       <i>to</i> = see <a href="qc-net.htm#d_messages" target="content">messages</a>
+</pre>   
+This function writes an entity reference, taking two bytes.
+
+
+<h2><A NAME="d_messages">9.3 Some message structures</A></h2>
+
+<p>Here are some of the messages defined in the Quake network protocol.</p>
+
+<p>Beware, the structure of those messages might change in future
+version (Satan forbids!).</p>
+
+
+<h4>Message: <A NAME="msg_setviewport">Set View Position</A></h4>
+<p><pre>
+  <a href="qc-net.htm#msg_entity" target="content">msg_entity</a> = <i>player</i>
+  WriteByte (MSG_ONE, SVC_SETVIEWPORT);
+  WriteEntity( MSG_ONE, <i>camera</i>);
+</pre>
+This message is meant for a single client <i>player</i>. It sets the
+view position to the position of the entity <i>camera</i>.
+</p>
+
+<h4>Message: <A NAME="msg_setviewangles">Set View Angles</A></h4>
+<p><pre>
+  <a href="qc-net.htm#msg_entity" target="content">msg_entity</a> = <i>player</i>
+  WriteByte (MSG_ONE, SVC_SETVIEWANGLES);
+  WriteAngle( MSG_ONE, <i>camera</i>.angles_x); 
+  WriteAngle( MSG_ONE, <i>camera</i>.angles_y);
+  WriteAngle( MSG_ONE, <i>camera</i>.angles_z);
+</pre>
+This message is meant for a single client <i>player</i>. It set the orientation
+of it's view to the same orientation than the entity <i>camera</i>.
+</p>
+
+
+
+<h4>Message: <A NAME="msg_temporary">Temporary</A> Entity</h4>
+<pre>
+  WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+  WriteByte (MSG_BROADCAST, <a href="qc-defs.htm#d_etemporary" target="content">entityname</a>);
+  WriteCoord (MSG_BROADCAST, origin_x);
+  WriteCoord (MSG_BROADCAST, origin_y);
+  WriteCoord (MSG_BROADCAST, origin_z);
+</pre>
+
+<h4>Message: Set CD Track</h4>
+<pre>
+  WriteByte (MSG_ALL, SVC_CDTRACK);
+  WriteByte (MSG_ALL, <i>val1</i>);        // CD start track
+  WriteByte (MSG_ALL, <i>val2</i>);        // CD end track
+</pre>
+
+<h4>Message: Final Message</h4>
+<pre>
+  WriteByte (MSG_ALL, SVC_FINALE);
+  WriteString (MSG_ALL, "any text you like\n");
+</pre>
+
+<h4>Message: Sell Screen</h4>
+<pre>
+WriteByte (MSG_ALL, SVC_SELLSCREEN);
+</pre>
+Shows the infamous sell screen (like you needed it to understand).
+
+<h4>Message: Inter Mission</h4>
+<pre>
+WriteByte (MSG_ALL, SVC_INTERMISSION);
+</pre>
+Shows the inter mission camera view.
+
+<h4>Message: Killed Monster</h4>
+<pre>
+WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+</pre>
+Increase by one the count of killed monsters, as available to the client.
+Can be displayed with <b>showscores</b>.
+
+<h4>Message: Found Secrets</h4>
+<pre>
+WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+</pre>
+Increase by one the count of secrets founds.
+
+<h4>Message: Update Entity</h4>
+
+<p>This message has a rather complex structure. I already generated
+some valid update messages, but since the message structure seems highly 
+susceptible to change in the next versions of Quake, I would recommend
+that you never use such messages: as a matter of fact, Quake itslef is
+very capable of generating all the required messages... unless you start
+creating deathmatch cameras or the like.
+</p>
+
+<hr>
+
+
+</BODY></HTML>

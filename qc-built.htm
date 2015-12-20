@@ -1,0 +1,660 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-BUILT">8. Quake-C Built-in functions</A></FONT></H1>
+ 
+
+<p>These are the built-in functions of Quake C. Since they are hard-coded
+in C, they cannot be redefined, but they are very fast.
+</p>
+
+<h3><A NAME="QC-BMATH">8.1 Math functions</A></h3>
+
+<h4>Function: <a name="anglemod">anglemod</a></h4>
+<p><pre>
+float <b>anglemod</b> (float <i>angle</i>)
+</pre>
+returns <i>angle</i> in degree, module 360.
+</p>    
+<h4>Function: <a name="rint">rint</a></h4>
+<p><pre> 
+ float <b>rint</b>(float <i>val</i>)
+</pre>
+Returns <i>val</i>, rounded up to the closest integer value.
+</p> 
+<h4>Function: <a name="floor">floor</a></h4>
+<p><pre> 
+ float <b>floor</b>(float <i>val</i>)
+</pre>
+Returns <i>val</i>, rounded up to the integer below (like the equivalent function in C).
+</p> 
+<h4>Function: <a name="ceil">ceil</a></h4>
+<p><pre> 
+ float <b>ceil</b>(float <i>val</i>)
+</pre>
+Returns <i>val</i>, rounded up to the integer above
+(like the equivalent function in C).
+</p>
+<h4>Function: <a name="fabs">fabs</a></h4>
+<p><pre> 
+ float <b>fabs</b>(float <i>val</i>)
+</pre>
+Returns absolute value of <i>val</i>
+(like the equivalent function in C).
+</p>
+
+<h4>Function: <a name="random"></a>random</h4>
+<p>Returns a random floating point number between 0.0 and 1.0.</p>
+
+
+<h4>Function: <a name="ftos">ftos</a></h4>
+<p><pre>
+string <b>ftos</b>(float <i>value</i>)
+</pre>
+Float to string: converts <i>value</i> to string.
+</p>
+    
+
+
+<h3><A NAME="QC-BVEC">8.2 Vector maths</A></h3>
+
+<h4>Function: <a name="normalize">normalize</a></h4>
+<p><pre>
+vector <b>normalize</b>(vector v)
+   returns a vector of length 1
+</pre>
+Gives the vector colinear to <i>v</i>, but of length 1.
+This can be useful for calculation of distance along an axis.
+</p>
+<h4>Function: <a name="vlen">vlen</a></h4>
+<p><pre>
+float <b>vlen</b>(vector v)
+</pre>
+Returns the length of vector <i>v</i> (never &lt; 0).
+</p>
+
+<h4>Function: <a name="vectoyaw">vectoyaw</a></h4>
+<p><pre>
+float vectoyaw(vector <i>v</i>)
+   returns and angle in degree
+</pre>
+Vector to yaw: calculates the yaw angle (bearing) corresponding
+to a given 3D direction <i>v</i>.
+</p>
+<h4>Function: <a name="vectoangles">vectoangles</a></h4>
+<p><pre>
+vector vectoangles(vector <i>v</i>)
+   returns vector 'pitch  yaw  0 '
+</pre>
+Vector to angles: calculates the pitch angle (aiming) and 
+yaw angle (bearing) corresponding to a given 3D direction <i>v</i>.
+</p>
+<h4>Function: <a name)"vtos">vtos</a></h4>
+<p><pre>
+string <b>vtos</b>(vector <i>v</i>)
+</pre>
+Vector to String: print a vector, as a string.
+</p>
+<h4>Function: <a name="makevectors">makevectors</a></h4>
+<p><pre>
+void <b>makevectors</b>(vector <i>angles</i>)
+  <i>angle</i> = 'pitch yaw 0' 
+</pre>
+Calculate the vectors pointing forward, right and 
+up, according to the provided angles.<br>
+Returns result in the global variables:
+<pre>	
+vector	<a name="v_forward">v_forward</a>;  // points forward
+vector  <a name="v_up">v_up</a>;       // points up
+vector  <a name="v_right">v_right</a>;    // points toward the right
+</pre>
+</p>
+
+<hr>
+
+<h3><A NAME="QC-BSND">8.3 Sounds</A></h3>
+
+<h4>Function: <a name="sound">sound</a></h4>
+<pre>
+void <b>sound</b> (entity <i>source</i>, float <i>channel</i>, string <i>sample</i>, float <i>volume</i>, float <i>attenuation</i>)
+  <i>source</i> = entity emiting the sound (ex: self)
+  <i>channel</i> = <a href="qc-defs.htm#d_channel" target="content">channel</a> to use for sound 
+  <i>sample</i> = name of the sample WAV file (ex: "ogre/ogdrag.wav")
+  <i>volume</i> = 0.0 for low volume, 1.0 for maximum volume
+  <i>attenuation</i>= <a href="qc-defs.htm#d_attenuate" target="content">attenuation</a> of sound 
+</pre>
+The entity emits a sound, on one of it's 8 channels.
+
+<h4>Function: <a name="ambientsound">ambientsound</a></h4>
+
+<pre>
+void <b>ambientsound</b>(vector <i>position</i>, string <i>sample</i>, float <i>volume</i>, float <i>attenuation</i>)
+  <i>position</i> = position, in 3D space, inside the level
+  <i>sample</i> = name of the sample WAV file (ex: "ogre/ogdrag.wav")
+  <i>volume</i> = 0.0 for low volume, 1.0 for maximum volume
+  <i>attenuation</i>= <a href="qc-defs.htm#d_attenuate" target="content">attenuation</a> of sound 
+</pre>
+An ambient sound is emited, from the given position.
+
+<hr>
+
+<h3><A NAME="QC-BENTY">8.4 Entity management</A></h3>
+
+<h4>Function: <a name="spawn">spawn</a></h4>
+<pre>
+entity <b>spawn</b> ()
+       returns an empty entity.
+</pre>
+Create a new entity, totally empty. You can manually set 
+every field, or just set the origin and call one of the 
+existing entity setup functions.
+
+<h4>Function: <a name="remove">remove</a></h4>
+<pre>
+void <b>remove</b> (entity <i>e</i>)
+</pre>
+Removes entity <i>e</i> from the world (R.I.P.).
+
+<h4>Function: <a name="makestatic">makestatic</a></h4>
+<pre>
+void <b>makestatic</b> (entity <i>e</i>)
+</pre>
+Make an entity <a href="qc-enty.htm#qkc_static" target="content">static</a> to the world, by sending a 
+broadcast message to the network.
+<br>
+The entity is then removed from the list of <a href="qc-enty.htm#qkc_dynamic" target="content">dynamic</a>
+entities in the world, and it cannot be deleted (until the level ends).
+
+<h4>Function: <a name="nextent">nextent</a></h4>
+<pre>
+entity <b>nextent</b>(entity <i>e</i>)
+</pre>
+Returns entity that is just after <i>e</i> in the entity list.
+<br>
+Useful to browse the list of entities, because it skips the 
+undefined ones.
+
+<h4>Function: <a name="find">find</a></h4>
+<p><pre>
+entity <b>find</b> (entity <i>start</i>, .string <i>field</i>, string <i>match</i>)
+	<i>start</i> = begining of list to search (<a href="qc-glob.htm#world" target="content">world</a>, for the begining of list)
+	<i>field</i> = entity field that must be examined (ex: </b>targetname<b>)
+	<i>match</i> = value that must be matched (ex: <b>other.target</b>)
+	returns the entity found, or <a href="qc-glob.htm#world" target="content">world</a> if no entity was found.
+</pre>
+Searches the server entity list beginning at start, looking 
+for an entity that has entity.field = match.</p>  
+<p>Example: find the first player entity
+<pre>
+ e = <b>find</b>( <a href="qc-glob.htm#world" target="content">world</a>, <a href="qc-enty.htm#dot_classname" target="content">classname</a>, "player");
+</pre>
+Take care that field is a name of an entity field, without dot, and without quotes.
+</p>
+
+<h4>Function: <a name="findradius">findradius</a></h4>
+
+<pre>
+entity <b>findradius</b> (vector <i>origin</i>, float <i>radius</i>)
+        <i>origin</i> = origin of sphere
+        <i>radius</i> = radius of sphere
+</pre>
+Returns a chain of entities that have their origins within a spherical area.
+<br>
+The entity returned is <i>e</i>, and the next in the chain is
+<i>e</i>.<a href="qc-enty.htm#dot_chain" target="content">chain</a>, until <i>e</i>==FALSE.
+<br>
+Typical usage: find and harm the victims of an explosion.
+<pre>
+  e = findradius( origin, radius)
+  while(e)
+  {
+    T_Damage(e, ... ) // Let God sort his ones!
+    e = e.<a href="qc-enty.htm#dot_chain" target="content">chain</a>
+  }
+</pre>
+
+<h4>Function: <a name="setmodel">setmodel</a></h4>
+<pre>
+void <b>setmodel</b> (entity <i>e</i>, string <i>model</i>)
+  <i>e</i> = entity whose model is to be set
+  <i>model</i> = name of the model (ex: "progs/soldier.mdl")
+</pre>
+Changes the model associated to an entity. This model should 
+also be declared by <a href="qc-built.htm#precache_model" target="content">precache_model</a>.
+Please set <i>e</i>.<a href="qc-enty.htm#dot_movetype" target="content">movetype</a> and 
+<i>e</i>.<a href="qc-enty.htm#dot_solid" target="content">solid</a> first.
+  
+<h4>Function: <a name="lightstyle">lightstyle</a></h4>
+<pre>
+void lightstyle(float <i>style</i>, string <i>value</i>)
+        <i>style</i> = index of the light style, from 0 to 63.
+        <i>value</i> = (ex: "abcdefghijklmlkjihgfedcb")
+</pre>
+Modifies a given light style. The light style is used to create
+cyclic lighting effects, like torches or teleporter lighting.
+<br>
+There are 64 light styles, from 0 to 63. If <i>style</i> is 
+not strictly comprised in these values, the game may crash.
+<br>
+styles 32-62 are assigned by the light program for switchable 
+lights.
+<br>
+<i>value</i> is a set of characters, whose ascii value 
+indicates a light level, from "a" (0) to "z" (30).
+
+
+<hr>
+
+<h3><A NAME="QC-BMOVE">8.5 Entity movements</A></h3>
+
+<h4>Function: <a name="ChangeYaw">ChangeYaw</a></h4>
+<pre>
+void ChangeYaw()
+</pre>
+Change the horizontal orientation of <a href="qc-glob.htm#self" target="content">self</a>.
+Turns towards self.<a href="qc-enty.htm#dot_ideal_yaw" target="content">ideal_yaw</a> at 
+self.<a href="qc-enty.htm#dot_yaw_speed" target="content">yaw_speed</a>, and sets the
+global variable current_yaw.
+<br>
+Called every 0.1 sec by monsters  
+
+<h4>Function: <a name="walkmove">walkmove</a></h4>
+<pre>
+float walkmove(float <i>yaw</i>, float <i>dist</i>)
+       returns TRUE or FALSE 
+</pre>
+Moves <a href="qc-glob.htm#self" target="content">self</a> in the given direction.
+<br>
+Returns FALSE if could not move (used to detect blocked monsters).
+
+<h4>Function: <a name="droptofloor">droptofloor</a></h4>
+<pre>
+float droptofloor()
+       returns TRUE or FALSE 
+</pre>
+Drops <a href="qc-glob.htm#self" target="content">self</a> to the floor, if the floor is
+less than <b>-256</b> coordinates below.
+<br>
+Returns TRUE if landed on floor.
+<br>
+Mainly used to spawn items or walking monsters on the floor.
+
+
+<h4>Function: <a name="setorigin">setorigin</a></h4>
+<pre>
+void <b>setorigin</b> (entity <i>e</i>, vector <i>position</i>)
+  <i>e</i> = entity to be moved
+  <i>position</i> = new position for the entity
+</pre>
+Move an entity to a given location. That function is to be used
+when spawning an entity or when teleporting it.
+<br>
+This is the only valid way to move an object without using 
+the physics of the world (setting velocity and waiting).
+<br>
+<b>DO NOT</b> change directly <i>e</i>.origin, otherwise internal
+links would be screwed, and entity clipping would be messed up.
+
+
+<h4>Function: <a name="setsize">setsize</a></h4>
+<pre>
+void <b>setsize</b> (entity <i>e</i>, vector <i>min</i>, vector <i>max</i>)
+  <i>e</i> = entity whose bounding box is to be set  
+  <i>min</i> = minimum, for bounding box (ex: VEC_HULL2_MIN)
+  <i>max</i> = maximum, for bounding box (ex: VEC_HULL2_MAX)
+</pre>
+Set the size of the entity bounding box, relative to the
+entity origin. The size box is rotated by the current angle.
+
+
+<h4>Function: <a name="movetogoal">movetogoal</a></h4>
+<pre>
+void <b>movetogoal</b> (float <i>step</i>)
+</pre>
+Move <a href="qc-glob.htm#self" target="content">self</a> toward it's goal.
+<br>
+Used for monsters.
+
+
+<hr>
+
+<h3><A NAME="QC-BFGHT">8.6 Fighting</A></h3>
+
+<h4>Function: <a name="aim">aim</a></h4>
+<pre>
+vector <b>aim</b>(entity <i>e</i>, float <i>missilespeed</i>)
+</pre>
+Returns a vector along which the entity <i>e</i> can shoot.
+<br>
+Usually, <i>e</i> is a player, and the vector returned is
+calculated by auto-aiming to the closest enemy entity.
+
+
+<h4>Function: <a name="particle">particle</a></h4>
+<pre>
+void <b>particle</b>(vector <i>origin</i>, vector <i>dir</i>, float <i>color</i>, float <i>count</i>)
+    <i>origin</i> = initial position
+    <i>dir</i> = initial direction
+    <i>color</i> = color index (73,75, 
+    <i>count</i> = time to live, in seconds
+</pre>
+Create a particle effect (small dot that flies away).
+<pre>
+color = 0   for chunk
+color = 75  for yellow
+color = 73  for blood red
+color = 225 for entity damage
+</pre>
+
+<h4>Function: <a name="checkclient">checkclient</a></h4>
+<pre>
+entity <b>checkclient</a>()
+</pre>
+Returns  client (or object that has a client enemy) that 
+would be a valid target.
+<br>
+If there are more than one valid options, they are cycled 
+each frame.
+<br>
+If (self.<a href="qc-enty.htm#dot_origin" target="content">origin</a> + self.<a href="qc-enty.htm#dot_view_ofs" target="content">viewofs</a>)
+ is not in the PVS of the target, 0 (false) is returned.
+
+
+<hr>
+
+
+<h3><A NAME="QC-BCOLS">8.7 Collision checking</A></h3>
+
+<h4>Function: <a name="traceline">traceline</a></h4>
+<pre>
+traceline (vector <i>v1</i>, vector <i>v2</i>, float <i>nomonsters</i>, entity <i>forent</i>)
+  <i>v1</i>= start of line
+  <i>v2</i>= end of line
+  <i>nomonster</i>= if TRUE, then see through other monsters, else FALSE.
+  <i>forent</i>= ignore this entity, it's owner, and it's owned entities.
+    if <i>forent</i> = <a href="qc-glob.htm#world" target="content">world</a>, then ignore no entity.
+</pre>
+Trace a line of sight, possibly ignoring monsters, and possibly ignoring the
+entity <i>forent</i> (usually, <i>forent</i> = <a href="qc-glob.htm#self" target="content">self</a>).
+<br>
+This function is used very often, tracing and shot targeting.<br>
+Traces  are blocked by bounding boxes and exact bsp entities.
+<br>
+Returns the results in the global variables:
+<pre>
+float <a name="trace_allsolid">trace_allsolid</a>;
+  // never used
+float <a name="trace_startsolid">trace_startsolid</a>;
+  // never used
+float <a name="trace_fraction">trace_fraction</a>;
+  // fraction (percent) of the line that was traced, before
+  // an obstacle was hit. Equal to 1 if no obstacle were found.
+vector <a name="trace_endpos">trace_endpos</a>; 
+  // point where line ended or met an obstacle.
+vector <a name="trace_plane_normal">trace_plane_normal</a>;
+  // direction vector of trace (?)
+float  <a name="trace_plane_dist">trace_plane_dist</a>;  
+  // distance to impact along direction vector (?)
+entity <a name="trace_ent">trace_ent</a>;      
+  // entity hit by the line
+float  <a name="trace_inopen">trace_inopen</a>;
+  // boolean, true if line went through non-water area.
+float  <a name="trace_inwater">trace_inwater</a>;
+  // boolean, true if line went through water area.
+</pre>
+
+
+
+<h4>Function: <a name="checkpos">checkpos</a></h4>
+<b>CURRENTLY DISABLED. DO NOT USE.</b>
+<pre>
+scalar <b>checkpos</b> (entity <i>e</i>, vector <i>position</i>)
+</pre>
+Returns true if the given entity can move to the given position from it's
+current position by walking or rolling.
+
+
+<h4>Function: <a name="checkbottom">checkbottom</a></h4>
+<pre>
+float <b>checkbottom</b>(entity <i>e</i>)
+       <i>e</i> = entity that is to be checked
+       return TRUE or FALSE
+</pre>
+Returns TRUE if on the ground.
+<br>
+Used only for jumping monster, that need to jump randomly
+not to get hung up (or whatever it actually means).
+
+
+<h4>Function: <a name="pointcontents">pointcontents</a></h4>
+<pre>
+float <b>pointcontents</b>(vector <i>pos</i>) 
+</pre>
+Returns the <a href="qc-defs.htm#d_contents" target="content">contents</a> of the area 
+situated at position <i>pos</i>.
+<br>
+Used to know if an area is in water, in slime or in lava.
+<br>
+Makes use of the BSP tree, and is supposed to be very fast.
+
+<hr>
+
+<h3><A NAME="QC-BSRV">8.8 Server managment</A></h3>
+
+
+<h4>Function: <a name="changelevel">changelevel</a></h4>
+<pre>
+void <b>changelevel</b> (string <i>mapname</i>)
+</pre>
+Warp to the game map named <i>mapname</i>.
+Actually executes the console command "changelevel" + <i>mapname</i>,
+so if you want to alias it...
+
+<h4>Function: <a name="setspawnparms">setspawnparms</a></h4>
+<pre>
+void <b>setspawnparms</b> (entity <i>client</i>)
+</pre>
+Restore the original spawn parameters of a client entity.
+<br>
+Doesn't work if <i>client</i> is not a player.
+
+
+<h4>Function: <a name="stuffcmd">stuffcmd</a></h4>
+<pre>
+stuffcmd (entity <i>client</i>, string <i>text</i>)
+       <i>client</i> = player that is to receive the command
+       <i>text</i> = text of the command, ended by <b>\n</b> (newline).
+</pre>
+Send a command to a given player, as if it had been typed
+on the player's console.<br>
+<p>Don't forget the <b>\n</b> (newline) at the end, otherwise your command
+will not be executed, and will stand still on the console window.</p>
+<p>Examples:
+<pre>
+   stuffcmd(self, "bf\n");         // create a flash of light on the screen
+   stuffcmd(self, "name Buddy\n"); // name the player Buddy
+</pre>
+</p>
+
+<p>Mostly used to send the command <b>bf</b>, that creates a flash
+of light on the client's screen.</p>
+
+
+<hr>
+
+<h3><A NAME="QC-BPRNT">8.9 Print messages</A></h3>
+
+<h4>Function: <a name="bprint">bprint</a></h4>
+<pre>
+void <b>bprint</b> (string <i>text</i>)
+	<i>text</i> = text of the message
+</pre>
+Broadcast a message to all players on the current server.
+
+<h4>Function: <a name="centerprint"></a>centerprint</h4>
+<a name="cprint"></a>
+<pre>
+void <b>centerprint</b>( entity <i>client</i>, string <i>text</i>)
+	<i>client</i> = player that is to receive the message
+	<i>text</i> = text of the message
+</pre>
+Sends a message to a specific player, and print it centered.
+
+<h4>Function: <a name="sprint">sprint</a></h4>
+
+<pre>
+void <b>sprint</b> (entity <i>client</i>, string <i>text</i>)
+        <i>client</i> = player that is to receive the message
+	<i>text</i> = text of the message
+</pre>
+Sends a message to a player.
+
+
+<hr>
+<h3><A NAME="QC-BCNSL">8.10 Console</A></h3>
+
+<h4>Function: <a name="localcmd">localcmd</a></h4>
+<pre>
+void localcmd (string text)
+       <i>text</i> = text of the command, ended by <b>\n</b> (newline).
+</pre>
+Execute a command on the server, as if it had been typed on
+the server's console.
+<p>Examples:
+<pre>
+   localcmd("restart\n");      // restart the level
+   localcmd("teamplay 1\n");   // set deathmatch mode to teamplay
+   localcmd("killserver\n");   // poor server...
+</pre>
+</p>
+
+
+<h4>Function: <a name="dprint">dprint</a></h4>
+<pre>
+void <b>dprint</b> (string <i>text</i>)
+	<i>text</i> = text of the message
+</pre>
+Prints a message to the server console.
+
+<h4>Function: <a name="cvar">cvar</a></h4>
+<pre>
+float <b>cvar</b> (string <i>variable</i>)
+      <i>variable</i> = see <a href="qc-glob.htm#d_consolev" target="content">console variables</a>
+</pre>
+returns the value of a console variable.
+
+<h4>Function: <a name="cvar_set">cvar_set</a></h4>
+<pre>
+float <b>cvar_set</b> (string <i>variable</i>, string <i>value</i>)
+      <i>variable</i> = see <a href="qc-glob.htm#d_consolev" target="content">console variables</a>
+</pre>
+sets the value of a console variable.
+
+
+<hr>
+
+<h3><A NAME="QC-BDEBG">8.11 Debugging</A></h3>
+
+<h4>Function: <a name="eprint">eprint</a></h4>
+<pre>
+void <b>eprint</b> (entity <i>e</i>)
+	<i>e</i> = entity to print
+</pre>
+Print details about a given entity (for debug purposes).
+
+
+<h4>Function: <a name="coredump">coredump</a></h4>
+<pre>
+void coredump()
+</pre>
+Print all entities
+
+<h4>Function: <a name="traceon">traceon</a></h4>
+<pre>
+void traceon()
+</pre>
+Start tracing functions, end them with <a href="qc-built.htm#traceoff" target="content">traceoff()</a>
+
+<h4>Function: <a name="traceoff"></a>traceoff</h4>
+<pre>
+void traceoff()
+</pre>
+End traces started by <a href="qc-built.htm#traceon" target="content">traceon()</a>
+
+<h4>Function: <a name="break">break</a></h4>
+<pre>
+void break()
+</pre>
+Exit the programs. Never used?
+
+<h4>Function: <a name="error"></a>error</h4>
+<pre>
+void error (string <i>text</i>)
+</pre>
+Print an error message.
+
+<h4>Function: <a name="objerror">objerror</a></h4>
+<pre>
+void objerror (string <i>text</i>)
+</pre>
+Print an error message related to object <a href="qc-glob.htm#self" target="content">self</a>.
+
+<hr>
+<h3><A NAME="QC-BPREC">8.12 Precaching files</A></h3>
+
+<p>Those functions are used to declare models, sounds 
+and stuff, <b>before</b> the PAK file is built.</p>
+
+<p>Just <b>follow this rule</b>: whenever one of your functions makes use of
+a file that's not defined in Quake, <b>precache</b> this file in
+a function that will be called by <b>worldspawn()</b>.</p>
+<p>Then, the QCC compiler can automatically include in the PAK file
+all the files that you really need to run your programs.</p>
+<p>And when the level starts running, those precache orders will
+be executed, so as to attribute a fixed table index to all those
+files.</p>
+
+<p><b>DO NOT USE</b> those functions in code that will be called after
+<b>worldspawn()</b> was called. As a matter of fact, that could bomb
+Quake (restarting the level, without crashing the game).</p>
+
+<p>Files can only be precached in spawn functions.</p>
+
+<h4>Function: <a name="precache_file">precache_file</a></h4>
+<pre>
+void <b>precache_file</b>(string <i>file</i>)
+  <i>file</i> = name of the file to include in PAK file.
+</pre>
+Does nothing during game play.
+<br>
+Use <a name="precache_file2">precache_file2</a> for registered Quake.
+
+<h4>Function: <a name="precache_model">precache_model</a></h4>
+<pre>
+void <b>precache_model</b>(string <i>file</i>)
+  <i>file</i> = name of the MDL or BSP file to include in PAK file.
+</pre>
+Does nothing during game play.<br>
+Must be used in a model's <b>spawn function</b>, to declare the
+model file.
+<br>
+Use <a name="precache_model2">precache_model2</a> for registered Quake.
+
+<h4>Function: <a name="precache_sound">precache_sound</a></h4>
+<pre>
+void <b>precache_sound</b>(string <i>file</i>)
+  <i>file</i> = name of the WAV file to include in PAK file.
+</pre>
+Does nothing during game play.<br>
+Must be used in a model's <b>spawn function</b>, to declare the
+sound files.
+<br>
+Use <a name="precache_sound2">precache_sound2</a> for registered Quake.
+
+<hr>
+
+
+</BODY></HTML>
