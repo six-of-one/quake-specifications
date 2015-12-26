@@ -1,0 +1,393 @@
+<html><head><title>boss.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+BOSS-ONE
+
+==============================================================================
+*/</i>
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/boss1</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 -15</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+<b>$</b><a href="qc-mdl.htm#s_scale">scale</a> <b>5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>rise1 rise2 rise3 rise4 rise5 rise6 rise7 rise8 rise9 rise10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>rise11 rise12 rise13 rise14 rise15 rise16 rise17 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk9 walk10 walk11 walk12 walk13 walk14 walk15</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk16 walk17 walk18 walk19 walk20 walk21 walk22</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk23 walk24 walk25 walk26 walk27 walk28 walk29 walk30 walk31</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8 death9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack9 attack10 attack11 attack12 attack13 attack14 attack15</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack16 attack17 attack18 attack19 attack20 attack21 attack22</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack23</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shocka1 shocka2 shocka3 shocka4 shocka5 shocka6 shocka7 shocka8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shocka9 shocka10 </b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shockb1 shockb2 shockb3 shockb4 shockb5 shockb6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shockc1 shockc2 shockc3 shockc4 shockc5 shockc6 shockc7 shockc8 </b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>shockc9 shockc10</b>
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> p) <a href="boss.htm#boss_missile">boss_missile</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>boss_face</b><a name="boss_face">=</a>
+{
+	
+<i>// go for another player if multi player</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0 || <a href="qc-built.htm#random">random</a>() &lt; 0.02)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, classname, <b>"player"</b>);
+		<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, classname, <b>"player"</b>);
+	}
+	<a href="fight.htm#ai_face">ai_face</a>();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_rise1</b><a name="boss_rise1">=</a>[	$rise1, boss_rise2 ] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"boss1/out1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise2</b><a name="boss_rise2">=</a>[	$rise2, boss_rise3 ] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"boss1/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise3</b><a name="boss_rise3">=</a>[	$rise3, boss_rise4 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise4</b><a name="boss_rise4">=</a>[	$rise4, boss_rise5 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise5</b><a name="boss_rise5">=</a>[	$rise5, boss_rise6 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise6</b><a name="boss_rise6">=</a>[	$rise6, boss_rise7 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise7</b><a name="boss_rise7">=</a>[	$rise7, boss_rise8 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise8</b><a name="boss_rise8">=</a>[	$rise8, boss_rise9 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise9</b><a name="boss_rise9">=</a>[	$rise9, boss_rise10 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise10</b><a name="boss_rise10">=</a>[	$rise10, boss_rise11 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise11</b><a name="boss_rise11">=</a>[	$rise11, boss_rise12 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise12</b><a name="boss_rise12">=</a>[	$rise12, boss_rise13 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise13</b><a name="boss_rise13">=</a>[	$rise13, boss_rise14 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise14</b><a name="boss_rise14">=</a>[	$rise14, boss_rise15 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise15</b><a name="boss_rise15">=</a>[	$rise15, boss_rise16 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise16</b><a name="boss_rise16">=</a>[	$rise16, boss_rise17 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_rise17</b><a name="boss_rise17">=</a>[	$rise17, boss_missile1 ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_idle1</b><a name="boss_idle1">=</a>[	$walk1, boss_idle2 ]
+{
+<i>// look for other players</i>
+};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle2</b><a name="boss_idle2">=</a>[	$walk2, boss_idle3 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle3</b><a name="boss_idle3">=</a>[	$walk3, boss_idle4 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle4</b><a name="boss_idle4">=</a>[	$walk4, boss_idle5 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle5</b><a name="boss_idle5">=</a>[	$walk5, boss_idle6 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle6</b><a name="boss_idle6">=</a>[	$walk6, boss_idle7 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle7</b><a name="boss_idle7">=</a>[	$walk7, boss_idle8 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle8</b><a name="boss_idle8">=</a>[	$walk8, boss_idle9 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle9</b><a name="boss_idle9">=</a>[	$walk9, boss_idle10 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle10</b><a name="boss_idle10">=</a>[	$walk10, boss_idle11 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle11</b><a name="boss_idle11">=</a>[	$walk11, boss_idle12 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle12</b><a name="boss_idle12">=</a>[	$walk12, boss_idle13 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle13</b><a name="boss_idle13">=</a>[	$walk13, boss_idle14 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle14</b><a name="boss_idle14">=</a>[	$walk14, boss_idle15 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle15</b><a name="boss_idle15">=</a>[	$walk15, boss_idle16 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle16</b><a name="boss_idle16">=</a>[	$walk16, boss_idle17 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle17</b><a name="boss_idle17">=</a>[	$walk17, boss_idle18 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle18</b><a name="boss_idle18">=</a>[	$walk18, boss_idle19 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle19</b><a name="boss_idle19">=</a>[	$walk19, boss_idle20 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle20</b><a name="boss_idle20">=</a>[	$walk20, boss_idle21 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle21</b><a name="boss_idle21">=</a>[	$walk21, boss_idle22 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle22</b><a name="boss_idle22">=</a>[	$walk22, boss_idle23 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle23</b><a name="boss_idle23">=</a>[	$walk23, boss_idle24 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle24</b><a name="boss_idle24">=</a>[	$walk24, boss_idle25 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle25</b><a name="boss_idle25">=</a>[	$walk25, boss_idle26 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle26</b><a name="boss_idle26">=</a>[	$walk26, boss_idle27 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle27</b><a name="boss_idle27">=</a>[	$walk27, boss_idle28 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle28</b><a name="boss_idle28">=</a>[	$walk28, boss_idle29 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle29</b><a name="boss_idle29">=</a>[	$walk29, boss_idle30 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle30</b><a name="boss_idle30">=</a>[	$walk30, boss_idle31 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_idle31</b><a name="boss_idle31">=</a>[	$walk31, <a href="boss.htm#boss_idle1">boss_idle1</a> ] {<a href="boss.htm#boss_face">boss_face</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_missile1</b><a name="boss_missile1">=</a>[	$attack1, boss_missile2 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile2</b><a name="boss_missile2">=</a>[	$attack2, boss_missile3 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile3</b><a name="boss_missile3">=</a>[	$attack3, boss_missile4 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile4</b><a name="boss_missile4">=</a>[	$attack4, boss_missile5 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile5</b><a name="boss_missile5">=</a>[	$attack5, boss_missile6 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile6</b><a name="boss_missile6">=</a>[	$attack6, boss_missile7 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile7</b><a name="boss_missile7">=</a>[	$attack7, boss_missile8 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile8</b><a name="boss_missile8">=</a>[	$attack8, boss_missile9 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile9</b><a name="boss_missile9">=</a>[	$attack9, boss_missile10 ] {<a href="boss.htm#boss_missile">boss_missile</a>('100 100 200');};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile10</b><a name="boss_missile10">=</a>[	$attack10, boss_missile11 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile11</b><a name="boss_missile11">=</a>[	$attack11, boss_missile12 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile12</b><a name="boss_missile12">=</a>[	$attack12, boss_missile13 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile13</b><a name="boss_missile13">=</a>[	$attack13, boss_missile14 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile14</b><a name="boss_missile14">=</a>[	$attack14, boss_missile15 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile15</b><a name="boss_missile15">=</a>[	$attack15, boss_missile16 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile16</b><a name="boss_missile16">=</a>[	$attack16, boss_missile17 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile17</b><a name="boss_missile17">=</a>[	$attack17, boss_missile18 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile18</b><a name="boss_missile18">=</a>[	$attack18, boss_missile19 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile19</b><a name="boss_missile19">=</a>[	$attack19, boss_missile20 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile20</b><a name="boss_missile20">=</a>[	$attack20, boss_missile21 ] {<a href="boss.htm#boss_missile">boss_missile</a>('100 -100 200');};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile21</b><a name="boss_missile21">=</a>[	$attack21, boss_missile22 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile22</b><a name="boss_missile22">=</a>[	$attack22, boss_missile23 ] {<a href="boss.htm#boss_face">boss_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>boss_missile23</b><a name="boss_missile23">=</a>[	$attack23, <a href="boss.htm#boss_missile1">boss_missile1</a> ] {<a href="boss.htm#boss_face">boss_face</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka1</b><a name="boss_shocka1">=</a>[	$shocka1, boss_shocka2 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka2</b><a name="boss_shocka2">=</a>[	$shocka2, boss_shocka3 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka3</b><a name="boss_shocka3">=</a>[	$shocka3, boss_shocka4 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka4</b><a name="boss_shocka4">=</a>[	$shocka4, boss_shocka5 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka5</b><a name="boss_shocka5">=</a>[	$shocka5, boss_shocka6 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka6</b><a name="boss_shocka6">=</a>[	$shocka6, boss_shocka7 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka7</b><a name="boss_shocka7">=</a>[	$shocka7, boss_shocka8 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka8</b><a name="boss_shocka8">=</a>[	$shocka8, boss_shocka9 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka9</b><a name="boss_shocka9">=</a>[	$shocka9, boss_shocka10 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shocka10</b><a name="boss_shocka10">=</a>[	$shocka10, <a href="boss.htm#boss_missile1">boss_missile1</a> ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb1</b><a name="boss_shockb1">=</a>[	$shockb1, boss_shockb2 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb2</b><a name="boss_shockb2">=</a>[	$shockb2, boss_shockb3 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb3</b><a name="boss_shockb3">=</a>[	$shockb3, boss_shockb4 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb4</b><a name="boss_shockb4">=</a>[	$shockb4, boss_shockb5 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb5</b><a name="boss_shockb5">=</a>[	$shockb5, boss_shockb6 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb6</b><a name="boss_shockb6">=</a>[	$shockb6, boss_shockb7 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb7</b><a name="boss_shockb7">=</a>[	$shockb1, boss_shockb8 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb8</b><a name="boss_shockb8">=</a>[	$shockb2, boss_shockb9 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb9</b><a name="boss_shockb9">=</a>[	$shockb3, boss_shockb10 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockb10</b><a name="boss_shockb10">=</a>[	$shockb4, <a href="boss.htm#boss_missile1">boss_missile1</a> ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc1</b><a name="boss_shockc1">=</a>[	$shockc1, boss_shockc2 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc2</b><a name="boss_shockc2">=</a>[	$shockc2, boss_shockc3 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc3</b><a name="boss_shockc3">=</a>[	$shockc3, boss_shockc4 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc4</b><a name="boss_shockc4">=</a>[	$shockc4, boss_shockc5 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc5</b><a name="boss_shockc5">=</a>[	$shockc5, boss_shockc6 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc6</b><a name="boss_shockc6">=</a>[	$shockc6, boss_shockc7 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc7</b><a name="boss_shockc7">=</a>[	$shockc7, boss_shockc8 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc8</b><a name="boss_shockc8">=</a>[	$shockc8, boss_shockc9 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc9</b><a name="boss_shockc9">=</a>[	$shockc9, boss_shockc10 ] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_shockc10</b><a name="boss_shockc10">=</a>[	$shockc10, boss_death1 ] {};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_death1</b><a name="boss_death1">=</a> [$death1, boss_death2] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"boss1/death.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>boss_death2</b><a name="boss_death2">=</a> [$death2, boss_death3] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death3</b><a name="boss_death3">=</a> [$death3, boss_death4] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death4</b><a name="boss_death4">=</a> [$death4, boss_death5] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death5</b><a name="boss_death5">=</a> [$death5, boss_death6] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death6</b><a name="boss_death6">=</a> [$death6, boss_death7] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death7</b><a name="boss_death7">=</a> [$death7, boss_death8] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death8</b><a name="boss_death8">=</a> [$death8, boss_death9] {};
+<a href="qc-types.htm#void">void</a>() <b>boss_death9</b><a name="boss_death9">=</a> [$death9, boss_death10]
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"boss1/out1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_LAVASPLASH">TE_LAVASPLASH</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>boss_death10</b><a name="boss_death10">=</a> [$death9, <a href="boss.htm#boss_death10">boss_death10</a>]
+{
+	<a href="qc-glob.htm#killed_monsters">killed_monsters</a> = <a href="qc-glob.htm#killed_monsters">killed_monsters</a> + 1;
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_KILLEDMONSTER">SVC_KILLEDMONSTER</a>);	<i>// FIXME: reliable broadcast</i>
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+	<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> p) <b>boss_missile</b><a name="boss_missile">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	offang;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	org, vec, d;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	t;
+
+	offang = <a href="qc-built.htm#vectoangles">vectoangles</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);	
+	<a href="qc-built.htm#makevectors">makevectors</a> (offang);
+
+	org = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + p_x*<a href="qc-built.htm#v_forward">v_forward</a> + p_y*<a href="qc-built.htm#v_right">v_right</a> + p_z*'0 0 1';
+	
+<i>// lead the player on hard mode</i>
+	<b>if</b> (<a href="defs.htm#skill">skill</a> &gt; 1)
+	{
+		t = <a href="qc-built.htm#vlen">vlen</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - org) / 300;
+		vec = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>;
+		vec_z = 0;
+		d = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> + t * vec;		
+	}
+	<b>else</b>
+	{
+		d = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	}
+	
+	vec = <a href="qc-built.htm#normalize">normalize</a> (d - org);
+
+	<a href="weapons.htm#launch_spike">launch_spike</a> (org, vec);
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="defs.htm#newmis">newmis</a>, <b>"progs/lavaball.mdl"</b>);
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '200 100 300';
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="defs.htm#newmis">newmis</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>);		
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = vec*300;
+	<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="weapons.htm#T_MissileTouch">T_MissileTouch</a>; <i>// rocket explosion</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"boss1/throw.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+<i>// check for dead enemy</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<a href="boss.htm#boss_idle1">boss_idle1</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>boss_awake</b><a name="boss_awake">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+	
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/boss.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-128 -128 -24', '128 128 256');
+	
+	<b>if</b> (<a href="defs.htm#skill">skill</a> == 0)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 1;
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 3;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="defs.htm#TE_LAVASPLASH">TE_LAVASPLASH</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_x">origin_x</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_y">origin_y</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_BROADCAST">MSG_BROADCAST</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a> = 20;
+	<a href="boss.htm#boss_rise1">boss_rise1</a> ();
+};
+
+
+<i>/*QUAKED monster_boss (1 0 0) (-128 -128 -24) (128 128 256)
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_boss</b><a name="monster_boss">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/boss.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/lavaball.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"weapons/rocket1i.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"boss1/out1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"boss1/sight1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"misc/power.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"boss1/throw.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"boss1/pain.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"boss1/death.wav"</b>);
+
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="boss.htm#boss_awake">boss_awake</a>;
+};
+
+<i>//===========================================================================</i>
+
+<a href="qc-types.htm#entity">entity</a>	le1, le2;
+<a href="qc-types.htm#float">float</a> <b><a name="lightning_end">lightning_end</a></b>;
+
+<a href="qc-types.htm#void">void</a>() <b>lightning_fire</b><a name="lightning_fire">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> p1, p2;
+	
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &gt;= <a href="boss.htm#lightning_end">lightning_end</a>)
+	{	<i>// done here, put the terminals back up</i>
+		<a href="qc-glob.htm#self">self</a> = le1;
+		<a href="doors.htm#door_go_down">door_go_down</a> ();
+		<a href="qc-glob.htm#self">self</a> = le2;
+		<a href="doors.htm#door_go_down">door_go_down</a> ();
+		<b>return</b>;
+	}
+	
+	p1 = (le1.<a href="qc-enty.htm#dot_mins">mins</a> + le1.<a href="qc-enty.htm#dot_maxs">maxs</a>) * 0.5;
+	p1_z = le1.absmin_z - 16;
+	
+	p2 = (le2.<a href="qc-enty.htm#dot_mins">mins</a> + le2.<a href="qc-enty.htm#dot_maxs">maxs</a>) * 0.5;
+	p2_z = le2.absmin_z - 16;
+	
+	<i>// compensate for length of bolt</i>
+	p2 = p2 - <a href="qc-built.htm#normalize">normalize</a>(p2-p1)*100;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="boss.htm#lightning_fire">lightning_fire</a>;
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_TEMPENTITY">SVC_TEMPENTITY</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="defs.htm#TE_LIGHTNING3">TE_LIGHTNING3</a>);
+	<a href="qc-net.htm#WriteEntity">WriteEntity</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-glob.htm#world">world</a>);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p1_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p1_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p1_z);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p2_x);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p2_y);
+	<a href="qc-net.htm#WriteCoord">WriteCoord</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, p2_z);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>lightning_use</b><a name="lightning_use">=</a>
+{
+	<b>if</b> (<a href="boss.htm#lightning_end">lightning_end</a> &gt;= <a href="qc-glob.htm#time">time</a> + 1)
+		<b>return</b>;
+
+	le1 = <a href="qc-built.htm#find">find</a>( <a href="qc-glob.htm#world">world</a>, target, <b>"lightning"</b>);
+	le2 = <a href="qc-built.htm#find">find</a>( le1, target, <b>"lightning"</b>);
+	<b>if</b> (!le1 || !le2)
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"missing lightning targets\n"</b>);
+		<b>return</b>;
+	}
+	
+	<b>if</b> (
+	 (le1.<a href="qc-enty.htm#dot_state">state</a> != <a href="defs.htm#STATE_TOP">STATE_TOP</a> &amp;&amp; le1.<a href="qc-enty.htm#dot_state">state</a> != <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>)
+	|| (le2.<a href="qc-enty.htm#dot_state">state</a> != <a href="defs.htm#STATE_TOP">STATE_TOP</a> &amp;&amp; le2.<a href="qc-enty.htm#dot_state">state</a> != <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>)
+	|| (le1.<a href="qc-enty.htm#dot_state">state</a> != le2.<a href="qc-enty.htm#dot_state">state</a>) )
+	{
+<i>//		dprint ("not aligned\n");</i>
+		<b>return</b>;
+	}
+
+<i>// don't let the electrodes go back up until the bolt is done</i>
+	le1.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+	le2.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+	<a href="boss.htm#lightning_end">lightning_end</a> = <a href="qc-glob.htm#time">time</a> + 1;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"misc/power.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="boss.htm#lightning_fire">lightning_fire</a> ();		
+
+<i>// advance the boss pain if down</i>
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"monster_boss"</b>);
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+	<b>if</b> (le1.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a> &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 0)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"boss1/pain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> - 1;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &gt;= 2)
+			<a href="boss.htm#boss_shocka1">boss_shocka1</a>();
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> == 1)
+			<a href="boss.htm#boss_shockb1">boss_shockb1</a>();
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> == 0)
+			<a href="boss.htm#boss_shockc1">boss_shockc1</a>();
+	}	
+};
+
+
+<i>/*QUAKED event_lightning (0 1 1) (-16 -16 -16) (16 16 16)
+Just for boss level.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>event_lightning</b><a name="event_lightning">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="boss.htm#lightning_use">lightning_use</a>;
+};
+
+
+
+</pre></body></html>

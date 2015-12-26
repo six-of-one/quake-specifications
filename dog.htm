@@ -1,0 +1,373 @@
+<html><head><title>dog.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+DOG
+
+==============================================================================
+*/</i>
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/dog</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8 death9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb1 deathb2 deathb3 deathb4 deathb5 deathb6 deathb7 deathb8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4 pain5 pain6</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3 painb4 painb5 painb6 painb7 painb8 painb9 painb10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb11 painb12 painb13 painb14 painb15 painb16</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 run11 run12</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>leap1 leap2 leap3 leap4 leap5 leap6 leap7 leap8 leap9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8</b>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="dog.htm#dog_leap1">dog_leap1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="dog.htm#dog_run1">dog_run1</a>;
+
+<i>/*
+================
+dog_bite
+
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>dog_bite</b><a name="dog_bite">=</a>
+{
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+<b>local</b> <a href="qc-types.htm#float">float</a> 	ldmg;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;
+
+	<a href="fight.htm#ai_charge">ai_charge</a>(10);
+
+	<b>if</b> (!<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		<b>return</b>;
+
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 100)
+		<b>return</b>;
+		
+	ldmg = (<a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>()) * 8;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>Dog_JumpTouch</b><a name="Dog_JumpTouch">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	ldmg;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+		
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<b>if</b> ( <a href="qc-built.htm#vlen">vlen</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>) &gt; 300 )
+		{
+			ldmg = 10 + 10*<a href="qc-built.htm#random">random</a>();
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);	
+		}
+	}
+
+	<b>if</b> (!<a href="qc-built.htm#checkbottom">checkbottom</a>(<a href="qc-glob.htm#self">self</a>))
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>)
+		{	<i>// jump randomly to not get hung up</i>
+<i>//dprint ("popjump\n");</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="dog.htm#dog_leap1">dog_leap1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+
+<i>//			self.velocity_x = (random() - 0.5) * 600;</i>
+<i>//			self.velocity_y = (random() - 0.5) * 600;</i>
+<i>//			self.velocity_z = 200;</i>
+<i>//			self.flags = self.flags - FL_ONGROUND;</i>
+		}
+		<b>return</b>;	<i>// not on ground yet</i>
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="dog.htm#dog_run1">dog_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>dog_stand1</b><a name="dog_stand1">=</a>[	$stand1,	dog_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand2</b><a name="dog_stand2">=</a>[	$stand2,	dog_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand3</b><a name="dog_stand3">=</a>[	$stand3,	dog_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand4</b><a name="dog_stand4">=</a>[	$stand4,	dog_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand5</b><a name="dog_stand5">=</a>[	$stand5,	dog_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand6</b><a name="dog_stand6">=</a>[	$stand6,	dog_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand7</b><a name="dog_stand7">=</a>[	$stand7,	dog_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand8</b><a name="dog_stand8">=</a>[	$stand8,	dog_stand9	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_stand9</b><a name="dog_stand9">=</a>[	$stand9,	<a href="dog.htm#dog_stand1">dog_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_walk1</b><a name="dog_walk1">=</a>[	$walk1 ,	dog_walk2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk2</b><a name="dog_walk2">=</a>[	$walk2 ,	dog_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk3</b><a name="dog_walk3">=</a>[	$walk3 ,	dog_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk4</b><a name="dog_walk4">=</a>[	$walk4 ,	dog_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk5</b><a name="dog_walk5">=</a>[	$walk5 ,	dog_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk6</b><a name="dog_walk6">=</a>[	$walk6 ,	dog_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk7</b><a name="dog_walk7">=</a>[	$walk7 ,	dog_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>dog_walk8</b><a name="dog_walk8">=</a>[	$walk8 ,	<a href="dog.htm#dog_walk1">dog_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_run1</b><a name="dog_run1">=</a>[	$run1  ,	dog_run2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run2</b><a name="dog_run2">=</a>[	$run2  ,	dog_run3	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run3</b><a name="dog_run3">=</a>[	$run3  ,	dog_run4	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run4</b><a name="dog_run4">=</a>[	$run4  ,	dog_run5	] {<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run5</b><a name="dog_run5">=</a>[	$run5  ,	dog_run6	] {<a href="ai.htm#ai_run">ai_run</a>(64);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run6</b><a name="dog_run6">=</a>[	$run6  ,	dog_run7	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run7</b><a name="dog_run7">=</a>[	$run7  ,	dog_run8	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run8</b><a name="dog_run8">=</a>[	$run8  ,	dog_run9	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run9</b><a name="dog_run9">=</a>[	$run9  ,	dog_run10	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run10</b><a name="dog_run10">=</a>[	$run10  ,	dog_run11	] {<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run11</b><a name="dog_run11">=</a>[	$run11  ,	dog_run12	] {<a href="ai.htm#ai_run">ai_run</a>(64);};
+<a href="qc-types.htm#void">void</a>() <b>dog_run12</b><a name="dog_run12">=</a>[	$run12  ,	<a href="dog.htm#dog_run1">dog_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(32);};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_atta1</b><a name="dog_atta1">=</a>[	$attack1,	dog_atta2	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta2</b><a name="dog_atta2">=</a>[	$attack2,	dog_atta3	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta3</b><a name="dog_atta3">=</a>[	$attack3,	dog_atta4	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta4</b><a name="dog_atta4">=</a>[	$attack4,	dog_atta5	] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/dattack1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="dog.htm#dog_bite">dog_bite</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta5</b><a name="dog_atta5">=</a>[	$attack5,	dog_atta6	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta6</b><a name="dog_atta6">=</a>[	$attack6,	dog_atta7	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta7</b><a name="dog_atta7">=</a>[	$attack7,	dog_atta8	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_atta8</b><a name="dog_atta8">=</a>[	$attack8,	<a href="dog.htm#dog_run1">dog_run1</a>	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_leap1</b><a name="dog_leap1">=</a>[	$leap1,		dog_leap2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap2</b><a name="dog_leap2">=</a>[	$leap2,		dog_leap3	]
+{
+	<a href="fight.htm#ai_face">ai_face</a>();
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="dog.htm#Dog_JumpTouch">Dog_JumpTouch</a>;
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#v_forward">v_forward</a> * 300 + '0 0 200';
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_leap3</b><a name="dog_leap3">=</a>[	$leap3,		dog_leap4	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap4</b><a name="dog_leap4">=</a>[	$leap4,		dog_leap5	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap5</b><a name="dog_leap5">=</a>[	$leap5,		dog_leap6	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap6</b><a name="dog_leap6">=</a>[	$leap6,		dog_leap7	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap7</b><a name="dog_leap7">=</a>[	$leap7,		dog_leap8	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap8</b><a name="dog_leap8">=</a>[	$leap8,		dog_leap9	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_leap9</b><a name="dog_leap9">=</a>[	$leap9,		<a href="dog.htm#dog_leap9">dog_leap9</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_pain1</b><a name="dog_pain1">=</a>[	$pain1 ,	dog_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_pain2</b><a name="dog_pain2">=</a>[	$pain2 ,	dog_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_pain3</b><a name="dog_pain3">=</a>[	$pain3 ,	dog_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_pain4</b><a name="dog_pain4">=</a>[	$pain4 ,	dog_pain5	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_pain5</b><a name="dog_pain5">=</a>[	$pain5 ,	dog_pain6	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_pain6</b><a name="dog_pain6">=</a>[	$pain6 ,	<a href="dog.htm#dog_run1">dog_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_painb1</b><a name="dog_painb1">=</a>[	$painb1 ,	dog_painb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb2</b><a name="dog_painb2">=</a>[	$painb2 ,	dog_painb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb3</b><a name="dog_painb3">=</a>[	$painb3 ,	dog_painb4	] {<a href="ai.htm#ai_pain">ai_pain</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb4</b><a name="dog_painb4">=</a>[	$painb4 ,	dog_painb5	] {<a href="ai.htm#ai_pain">ai_pain</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb5</b><a name="dog_painb5">=</a>[	$painb5 ,	dog_painb6	] {<a href="ai.htm#ai_pain">ai_pain</a>(12);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb6</b><a name="dog_painb6">=</a>[	$painb6 ,	dog_painb7	] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb7</b><a name="dog_painb7">=</a>[	$painb7 ,	dog_painb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb8</b><a name="dog_painb8">=</a>[	$painb8 ,	dog_painb9	] {<a href="ai.htm#ai_pain">ai_pain</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb9</b><a name="dog_painb9">=</a>[	$painb9 ,	dog_painb10	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb10</b><a name="dog_painb10">=</a>[	$painb10 ,	dog_painb11	] {<a href="ai.htm#ai_pain">ai_pain</a>(10);};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb11</b><a name="dog_painb11">=</a>[	$painb11 ,	dog_painb12	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb12</b><a name="dog_painb12">=</a>[	$painb12 ,	dog_painb13	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb13</b><a name="dog_painb13">=</a>[	$painb13 ,	dog_painb14	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb14</b><a name="dog_painb14">=</a>[	$painb14 ,	dog_painb15	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb15</b><a name="dog_painb15">=</a>[	$painb15 ,	dog_painb16	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_painb16</b><a name="dog_painb16">=</a>[	$painb16 ,	<a href="dog.htm#dog_run1">dog_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_pain</b><a name="dog_pain">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/dpain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+		<a href="dog.htm#dog_pain1">dog_pain1</a> ();
+	<b>else</b>
+		<a href="dog.htm#dog_painb1">dog_painb1</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_die1</b><a name="dog_die1">=</a>[	$death1,	dog_die2	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die2</b><a name="dog_die2">=</a>[	$death2,	dog_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die3</b><a name="dog_die3">=</a>[	$death3,	dog_die4	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die4</b><a name="dog_die4">=</a>[	$death4,	dog_die5	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die5</b><a name="dog_die5">=</a>[	$death5,	dog_die6	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die6</b><a name="dog_die6">=</a>[	$death6,	dog_die7	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die7</b><a name="dog_die7">=</a>[	$death7,	dog_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die8</b><a name="dog_die8">=</a>[	$death8,	dog_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_die9</b><a name="dog_die9">=</a>[	$death9,	<a href="dog.htm#dog_die9">dog_die9</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb1</b><a name="dog_dieb1">=</a>[	$deathb1,	dog_dieb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb2</b><a name="dog_dieb2">=</a>[	$deathb2,	dog_dieb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb3</b><a name="dog_dieb3">=</a>[	$deathb3,	dog_dieb4	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb4</b><a name="dog_dieb4">=</a>[	$deathb4,	dog_dieb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb5</b><a name="dog_dieb5">=</a>[	$deathb5,	dog_dieb6	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb6</b><a name="dog_dieb6">=</a>[	$deathb6,	dog_dieb7	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb7</b><a name="dog_dieb7">=</a>[	$deathb7,	dog_dieb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb8</b><a name="dog_dieb8">=</a>[	$deathb8,	dog_dieb9	] {};
+<a href="qc-types.htm#void">void</a>() <b>dog_dieb9</b><a name="dog_dieb9">=</a>[	$deathb9,	<a href="dog.htm#dog_dieb9">dog_dieb9</a>	] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>dog_die</b><a name="dog_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -35)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_dog.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+<i>// regular death</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/ddeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+		<a href="dog.htm#dog_die1">dog_die1</a> ();
+	<b>else</b>
+		<a href="dog.htm#dog_dieb1">dog_dieb1</a> ();
+};
+
+<i>//============================================================================</i>
+
+<i>/*
+==============
+CheckDogMelee
+
+Returns TRUE if a melee attack would hit right now
+==============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>CheckDogMelee</b><a name="CheckDogMelee">=</a>
+{
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{	<i>// FIXME: check canreach</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+		return TRUE;
+	}
+	return FALSE;
+};
+
+<i>/*
+==============
+CheckDogJump
+
+==============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>CheckDogJump</b><a name="CheckDogJump">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dist;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	d;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.mins_z &gt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.mins_z
+	+ 0.75 * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_size_z">size_z</a>)
+		return FALSE;
+		
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.maxs_z &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.mins_z
+	+ 0.25 * <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_size_z">size_z</a>)
+		return FALSE;
+		
+	dist = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	dist_z = 0;
+	
+	d = <a href="qc-built.htm#vlen">vlen</a>(dist);
+	
+	<b>if</b> (d &lt; 80)
+		return FALSE;
+		
+	<b>if</b> (d &gt; 150)
+		return FALSE;
+		
+	return TRUE;
+};
+
+<a href="qc-types.htm#float">float</a>() <b>DogCheckAttack</b><a name="DogCheckAttack">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	vec;
+	
+<i>// if close enough for slashing, go for it</i>
+	<b>if</b> (<a href="dog.htm#CheckDogMelee">CheckDogMelee</a> ())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+		return TRUE;
+	}
+	
+	<b>if</b> (<a href="dog.htm#CheckDogJump">CheckDogJump</a> ())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>;
+		return TRUE;
+	}
+	
+	return FALSE;
+};
+
+
+<i>//===========================================================================</i>
+
+<i>/*QUAKED monster_dog (1 0 0) (-32 -32 -24) (32 32 40) Ambush
+
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_dog</b><a name="monster_dog">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_dog.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/dog.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"dog/dattack1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"dog/ddeath.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"dog/dpain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"dog/dsight.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"dog/idle.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/dog.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-32 -32 -24', '32 32 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 25;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="dog.htm#dog_stand1">dog_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="dog.htm#dog_walk1">dog_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="dog.htm#dog_run1">dog_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="dog.htm#dog_pain">dog_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="dog.htm#dog_die">dog_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> = <a href="dog.htm#dog_atta1">dog_atta1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="dog.htm#dog_leap1">dog_leap1</a>;
+
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a>();
+};
+
+</pre></body></html>

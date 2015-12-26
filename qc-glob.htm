@@ -1,0 +1,252 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-GLOB">7. Quake-C Global Variables</A></FONT></H1>
+
+
+
+<H2><A NAME="d_consolev">7.1 Console Variables</A></H2>
+
+<p>These variables can be read or modified from the console, during game play.
+The player can change them, to affect the program behavior.</p>
+
+<p><pre>
+"teamplay"      // boolean, true if playing in teams.
+"samelevel"     // boolean, if true, then cannot change level.
+"noexit"        // boolean, true if can't exit level in deathmatch.
+"timelimit" 	// number of minutes the deathmatch will last.
+"fraglimit"     // maximum number of frags before deathmatch ends.
+"skill"         // text of skill message (?)
+"sv_gravity"    // gravity pull, normal value is 800.
+"registered"    // boolean, game is registered (do not change).
+"temp1"         // to store custom <b>floating point</b> values
+</pre>
+</p>
+
+<p>Beware that the variables you can read in Quake-C are those that are
+<b>defined on the server</b>, not those defined on the client. So if a
+player sets a value on his console, there is no chance that you can
+ever get this value (unless his console is also the server console).
+</p>
+<p>Well, at least you can read values set by the server administrator,
+for what it's worth.
+</p>
+
+
+
+<h2><A NAME="QC-GVAR">7.2 Global Variables</A></h2>
+ 
+<p>These variables are accessible in every functions.<br>
+Quake C function are <b>not</b> supposed to modify them directly.</p>
+
+<h4>Variable: <a name="world">world</a></h4>
+
+<p>
+the server's world object, which holds all global
+state for the server, like the deathmatch flags
+and the body ques.
+</p>
+
+<h4>Variable: <a name="time">time</a></h4>
+
+<p><pre>
+  float <b>time</b>;               // in seconds
+</pre>
+The current game <b>time</b>, a floating point value in seconds.
+Note that because the entities in the world are simulated
+sequentially, time is <b>NOT</b> strictly increasing.  
+An impact late in one entity's time slice may set time 
+higher than the think function of the next entity.
+The difference is limited to 0.1 seconds.
+</p>
+
+<h4>Variable: <a name="frametime">frametime</a></h4>
+<pre>
+  float <b>frametime</b>;           // in seconds
+</pre>
+ No idea what this can be. Used only when jumping in water.
+
+<h4>Variable: <a name="self">self</a></h4>
+<pre>
+ <a href="qc-types.htm#entity" target="content">entity</a> self;
+</pre>
+The entity that is subject to the current function.
+
+<h4>Variable: <a name="other">other</a></h4>
+<pre>
+ <a href="qc-types.htm#entity" target="content">entity</a> <b>other</b>;
+</pre>
+The object concerned by an impact, not used for thinks.
+
+<h4>Variable: <a name="force_retouch">force_retouch</a></h4>
+<pre>
+  float <b>force_retouch</b>;  // counter
+</pre>
+Force all entities to touch triggers next frame.  this is needed 
+because non-moving things don't normally scan for triggers, and 
+when a trigger is created (like a teleport trigger), it needs to
+catch everything.<br>
+It is decremented each frame, so it is usually set to <b>2</b> 
+to guarantee everything is touched.
+
+
+<h4>Variable: <a name="mapname">mapname</a></h4>
+<pre>
+  string <b>mapname</b>;
+</pre>
+Name of the level map currently being played, like <i>"start"</i>.
+
+<h4>Variable: <a name="deathmatch">deathmatch</a></h4>
+<pre>
+  float <b>deathmatch</b>;  // a boolean value, 0 or 1
+</pre>
+True if playing deathmatch.
+
+<h4>Variable: <a name="coop">coop</a></h4>
+<pre>
+  float <b>coop</b>;  // a boolean value, 0 or 1
+</pre>
+True if playing cooperative.
+
+<h4>Variable: <a name="teamplay">teamplay</a></h4>
+<pre>
+  float <b>teamplay</b>;  // a boolean value, 0 or 1
+</pre>
+True if playing by teams.
+
+
+<h4>Variable: <a name="serverflags">serverflags</a></h4>
+<pre>
+  float <b>serverflags</b>;  // bit fields
+</pre>
+
+Propagated from level to level, and used to keep track of
+the completed episodes.<br>
+If <tt>serverflag & ( 1 << e))</tt> is true, then
+episode <tt>e</tt> was already completed.<br>
+Generally equal to <tt>player.spawnflags & 15</tt>. 
+
+
+<h4>Variable: <a name="total_secrets">total_secrets</a></h4>
+<pre>
+  float <b>total_secrets</b>;  // counter
+</pre>
+Number of secrets found by the players.
+Affected only by <b>trigger_secret</b>.
+
+<h4>Variable: <a name="found_secrets">found_secrets</a></h4>
+<pre>
+  float <b>found_secrets</b>;  // counter
+</pre>
+Number of secrets found.
+
+<h4>Variable: <a name="total_monsters">total_monsters</a></h4>
+<pre>
+  float <b>total_monsters</b>;  // counter
+</pre>
+Total number of monsters that were spawned, since the
+begining of the level.
+
+
+<h4>Variable: <a name="killed_monsters">killed_monsters</a></h4>
+<p><pre>
+  float <b>killed_monsters</b>;  // counter
+</pre>
+Store the total number of monsters killed.
+
+
+
+<h4>Variable: <a name="parms">parm1...parm16</a></h4>
+<pre>
+  float	<a name="parm1">parm1</a>; // items bit flag (IT_SHOTGUN | IT_AXE )
+  float <a name="parm2">parm2</a>; // health
+  float <a name="parm3">parm3</a>; // armorvalue
+  float parm4, parm5, parm6, parm7; // ammo
+  float <a name="parm8">parm8</a>; // weapon 
+  float <a name="parm9">parm9</a>; // armortype*100
+  float parm10, parm11, parm12, parm13, parm14, parm15, parm16;
+</pre>
+<p>Those parameters seem to be a bit of hack. They are used when
+a client connects.<br>
+Spawnparms are used to encode information about clients across server level changes
+</p>
+
+<hr>
+
+<h2><A NAME="QC-GFUN">7.3 Mandatory functions</A></h2>
+
+<p>These functions must be defined in Quake C, since they are 
+invoked by Quake under certain conditions.</p>
+
+<h4>Misc</h4>
+<pre>
+void <b><a name="f_main">main</a></b>();
+</pre>
+Only used for testing progs.
+<pre>
+void <b><a name="f_StartFrame">StartFrame</a></b>();
+</pre>
+Called at the start of each frame.
+
+<h4>Behavior of players</h4>
+<pre>
+void <b><a name="f_PlayerPreThink">PlayerPreThink</a></b>();
+</pre>
+Called with <a href="qc-glob.htm#self" target="content">self</a>=player, for every frame, 
+before physics are run.
+<pre>
+void <b><a name="f_PlayerPostThink">PlayerPostThink</a></b>();
+</pre>
+Called with <a href="qc-glob.htm#self" target="content">self</a>=player, for every frame, 
+after physics are run.
+
+
+<h4>Management of network game clients</h4>
+
+<p><pre>
+void <b><a name="f_ClientKill">ClientKill</a></b>();
+</pre>
+Called when a player suicides.
+</p>
+
+<p><pre>
+void <b><a name="f_ClientConnect">ClientConnect</a></b>();
+</pre>
+Called when a player connects to a server, but <b>also</b>,
+for every player, when a new level starts.<br>
+It is used to announces the new player to every other players.
+</p>
+
+<p><pre>
+void <b><a name="f_PutClientInServer">PutClientInServer</a></b>();
+</pre>
+Call after setting the <a href="qc-glob.htm#parms" target="content">parm1... parm16</a>.
+</p>
+
+<p><pre>
+void <b><a name="f_ClientDisconnect">ClientDisconnect</a></b>();
+</pre>
+Called when a player disconnects from a server<br>
+Announce that the player has left the game.
+</p>
+<p><pre>
+void <b><a name="f_SetNewParms">SetNewParms</a></b>(); 
+</pre>
+ Called when a client first connects to  a server. Sets 
+ <a href="qc-glob.htm#parms" target="content">parm1...parm16</a> so that they can be 
+ saved off for restarts.
+</p>
+
+<p><pre>
+void <b><a name="f_SetChangeParms">SetChangeParms</a></b>();
+</pre>
+ Call to set parms for self so they can?
+</p>
+
+ 
+<hr>
+
+</BODY></HTML>

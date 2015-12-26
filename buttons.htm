@@ -1,0 +1,147 @@
+<html><head><title>buttons.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>// button and multiple button</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="buttons.htm#button_wait">button_wait</a>;
+<a href="qc-types.htm#void">void</a>() <a href="buttons.htm#button_return">button_return</a>;
+
+<a href="qc-types.htm#void">void</a>() <b>button_wait</b><a name="button_wait">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_TOP">STATE_TOP</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="buttons.htm#button_return">button_return</a>;
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 1;			<i>// use alternate textures</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>button_done</b><a name="button_done">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>button_return</b><a name="button_return">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_DOWN">STATE_DOWN</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="buttons.htm#button_done">button_done</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 0;			<i>// use normal textures</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;	<i>// can be shot again</i>
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>button_blocked</b><a name="button_blocked">=</a>
+{	<i>// do nothing, just don't ome all the way back out</i>
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>button_fire</b><a name="button_fire">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_UP">STATE_UP</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> == <a href="defs.htm#STATE_TOP">STATE_TOP</a>)
+		<b>return</b>;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_UP">STATE_UP</a>;
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>, <a href="buttons.htm#button_wait">button_wait</a>);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>button_use</b><a name="button_use">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+	<a href="buttons.htm#button_fire">button_fire</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>button_touch</b><a name="button_touch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="buttons.htm#button_fire">button_fire</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>button_killed</b><a name="button_killed">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#damage_attacker">damage_attacker</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;	<i>// wil be reset upon return</i>
+	<a href="buttons.htm#button_fire">button_fire</a> ();
+};
+
+
+<i>/*QUAKED func_button (0 .5 .8) ?
+When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
+
+"angle"		determines the opening direction
+"target"	all entities with a matching targetname will be used
+"speed"		override the default 40 speed
+"wait"		override the default 1 second wait (-1 = never return)
+"lip"		override the default 4 pixel lip remaining at end of move
+"health"	if set, the button must be killed instead of touched
+"sounds"
+0) steam metal
+1) wooden clunk
+2) metallic click
+3) in-out
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>func_button</b><a name="func_button">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a>		gtemp, ftemp;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 0)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"buttons/airbut1.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"buttons/airbut1.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 1)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"buttons/switch21.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"buttons/switch21.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 2)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"buttons/switch02.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"buttons/switch02.wav"</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_sounds">sounds</a> == 3)
+	{
+		<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"buttons/switch04.wav"</b>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a> = <b>"buttons/switch04.wav"</b>;
+	}
+	
+	<a href="subs.htm#SetMovedir">SetMovedir</a> ();
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_blocked">blocked</a> = <a href="buttons.htm#button_blocked">button_blocked</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="buttons.htm#button_use">button_use</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="buttons.htm#button_killed">button_killed</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_YES">DAMAGE_YES</a>;
+	}
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="buttons.htm#button_touch">button_touch</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_speed">speed</a> = 40;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_wait">wait</a> = 1;
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a> = 4;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_state">state</a> = <a href="defs.htm#STATE_BOTTOM">STATE_BOTTOM</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos2">pos2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pos1">pos1</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>*(<a href="qc-built.htm#fabs">fabs</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_size">size</a>) - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lip">lip</a>);
+};
+
+
+</pre></body></html>

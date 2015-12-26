@@ -1,0 +1,159 @@
+<HTML><HEAD>
+<TITLE>Quake-C Specificacions  v1.0</TITLE>
+<LINK REV="MADE" HREF="mailto:Olivier.Montanuy@wanadoo.fr">
+</HEAD>  
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><FONT COLOR="#007F00"><A NAME="QC-TYPES">2. The Quake-C Basic Types</A></FONT></H1>
+
+
+<h2><A NAME="QC-TSMP">2.1 The simple Types</A></h2>
+
+<h4>2.1.1 <a name="void">Void</a> type</h4>
+
+<p>An empty result, mostly used for definition of procedures (i.e. functions 
+that return no result at all).
+</p>
+
+<h4>2.1.2 <a name="float">Float</a> type</h4>
+
+<p>A floating point value.</p>
+<p>Floats are also used to store booleans (TRUE, FALSE) or integer values
+linke counters, or bit flags.
+<pre>
+    Valid syntax: <b>12</b>  <b>1.6</b>   <b>0.5</b>   <b>-100</b>  
+    Invalid syntax: <b>.5</b>
+</pre>
+</p>
+<p>A parsing ambiguity is present with negative constants. "a-5" will be parsed 
+as "a", then "-5", causing an error.  Separate the - from the digits with a 
+space "a - 5" to get the proper behavior.
+</p>
+
+<h4>2.1.3 <a name="vector">Vector</a> type</h4>
+
+<p>A vector, made of 3 <a href="qc-types.htm#float" target="content">float</a> coordinates.
+<br>
+Used to represent positions or directions in 3D space.
+<br>
+Valid syntax: <b>'0 0 0'</b>  or <b>'20.5 -10 0.00001'</b>
+<br>
+</p>
+<p>Note the simple quotes around the vector. Do not use
+double quotes, they are reserved for strings.</p>
+
+<p>If you declare a vector <b>foobar</b>, then you can
+access it's x, y and z fields with: <b>foobar_x</b>,
+<b>foobar_y</b>,<b>foobar_z</b>.
+</p>
+
+<h4>2.1.4 <a name="string">String</a> type</h4>
+
+<p>This is used to store character string.
+<br>
+Used to indicate file names, or messages to be broadcast to players.
+<br>
+Valid syntax: <b>"maps/jrwiz1.bsp"</b> or <b>"ouch!\n"</b>
+<br>
+Use <b>\n</b> for newline.
+</p>
+<p>Note: that character strings cannot be modified, or concatenated.
+Because they are stored at fixed locations in memory, and if
+would be postentially troublesome to allow modification.
+</p>
+
+<h4>2.1.5 <a name="entity">entity</a> type</h4>
+
+<p>The reference of an entity in the game, like things, players, monsters.<br>
+For instance, this is the type of the entities <a href="qc-glob.htm#self" target="content">self</a>
+and <a href="qc-glob.htm#other" target="content">other</a>.
+</p> 
+<p>The entity type is a structured type, made of <a href="qc-types.htm#QC-TFLD" target="content">fields</a>.<br>
+A <a href="qc-enty.htm#dot_chain" target="content">description</a> of each field is available.
+</p>
+
+ 
+<hr>
+<h2><A NAME="QC-TFLD">2.2 The field types</A></h2>
+
+<h4>2.2.1 What's a field?</h4>
+
+<p>Countrary to the other types, the <a href="qc-types.htm#entity" target="content">entity</a> type 
+is a reference to an instance of a structured object, that contains
+many informations of totally different kinds.</p>
+
+<p>To access all these informations conveniently, they are stored as
+fields of the entity object, and each field is given a name and a type,
+that makes it distinct of the others.</p>
+
+<p>Some of the fields do not store value, but instead they store the
+function to be executed in certain conditions. They are called the
+<b>methods</b> that can be aplied to the object.</p>
+
+<p>If Quake-C was an object oriented programming language, those method
+functions and would be distinguished from the other fields. And, above
+all, you would be able to create new object types, with their own fields.</p>
+
+<p>As Quake-C stands currently, <b>all the field definitions</b> are
+definitions of entity fields. So anywhere in your code you could add
+definition of new fields, and the compiler would interpret them
+as an extension of the entity definition.</p>
+
+
+<h4>2.2.2 Creating new fields</h4>
+
+<p>The only way to extend the <a href="qc-types.htm#entity" target="content">entity</a> type
+is to add some fields at the end of the structures.</p>
+
+<p>This is done via a field definitions, whose general structure is:
+<pre>
+   <b>.<a href="qc-types.htm#QC-TSMP" target="content">type</a> field_name;</b>
+</pre>
+</p>
+
+<p> For instance, if you wanted to add a sling to the game, and needed
+to store the count of pellets for every player, you would add
+the following line in the source code:
+<pre>
+   <b>.<a href="qc-types.htm#QC-TSMP" target="content">float</a> ammo_sling;</b>
+</pre>
+That will add a fields <b>ammo_sling</b> to every entity in the game,
+and in particular to the player entities.
+</p>
+
+<p>Here are all the possible definitions of entity fields, with their <a href="qc-types.htm#QC-TSMP" target="content">types</a>:
+<pre>
+    <a name="dot_float">.float</a> <i>field_name</i>;
+    <a name="dot_string">.string</a> <i>field_name</i>;
+    <a name="dot_vector">.vector</a> <i>field_name</i>;
+    <a name="dot_entity">.entity</a> <i>field_name</i>;
+</pre>
+</p>
+
+<p>The strange bit is that you can add those type definitions almost
+anywhere in the source code. They are not supposed to be grouped in
+a single place, where the entity type would be defined.
+</p>
+
+<h4>2.2.3 Allowed modifications of types</h4>
+
+<p>In the first file read by the Quake-C compiler, <b>defs.qc</b>,
+there must be a definition for the entity fields, and world fields.
+This definition is hard coded. You had better not touch it,
+or you will have to recompile Quake itself.
+<p>
+
+<p>The globals are defined before the special definition
+<b>void end_sys_globals;</b><br>
+The entity fields are defined before the special
+definition <b>void end_sys_fields;</b></p>
+
+<p>It's not important if you don't understand the nonsense
+above. It's an ugly hack. Just <b>don't modify defs.qc</b> 
+before those two tags, and you won't be in trouble.</p>
+
+
+
+<hr>
+
+</BODY></HTML>

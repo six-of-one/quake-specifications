@@ -1,0 +1,1470 @@
+<html><head><title>client.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<i>// prototypes</i>
+<a href="qc-types.htm#void">void</a> () <a href="weapons.htm#W_WeaponFrame">W_WeaponFrame</a>;
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_pain">player_pain</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#player_stand1">player_stand1</a>;
+<a href="qc-types.htm#void">void</a> (<a href="qc-types.htm#vector">vector</a> org) <a href="triggers.htm#spawn_tfog">spawn_tfog</a>;
+<a href="qc-types.htm#void">void</a> (<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#entity">entity</a> death_owner) <a href="triggers.htm#spawn_tdeath">spawn_tdeath</a>;
+
+<a href="qc-types.htm#float">float</a>	modelindex_eyes, modelindex_player;
+
+<i>/*
+=============================================================================
+
+				LEVEL CHANGING / INTERMISSION
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="intermission_running">intermission_running</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a name="intermission_exittime">intermission_exittime</a></b>;
+
+<i>/*QUAKED info_intermission (1 0.5 0.5) (-16 -16 -16) (16 16 16)
+This is the camera point for the intermission.
+Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch roll yaw'
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_intermission</b><a name="info_intermission">=</a>
+{
+};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_SetChangeParms">SetChangeParms</a></b><a name="SetChangeParms">=</a>
+{
+<i>// remove items</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; 
+	(<a href="qc-defs.htm#IT_KEY1">IT_KEY1</a> | <a href="qc-defs.htm#IT_KEY2">IT_KEY2</a> | <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a> | <a href="qc-defs.htm#IT_INVULNERABILITY">IT_INVULNERABILITY</a> | <a href="qc-defs.htm#IT_SUIT">IT_SUIT</a> | <a href="qc-defs.htm#IT_QUAD">IT_QUAD</a>) );
+	
+<i>// cap super health</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 100)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 100;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; 50)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 50;
+	<a href="qc-glob.htm#parm1">parm1</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a>;
+	<a href="qc-glob.htm#parm2">parm2</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>;
+	<a href="qc-glob.htm#parm3">parm3</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> &lt; 25)
+		parm4 = 25;
+	<b>else</b>
+		parm4 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a>;
+	parm5 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a>;
+	parm6 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a>;
+	parm7 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a>;
+	<a href="qc-glob.htm#parm8">parm8</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a>;
+	<a href="qc-glob.htm#parm9">parm9</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_armortype">armortype</a> * 100;
+};
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_SetNewParms">SetNewParms</a></b><a name="SetNewParms">=</a>
+{
+	<a href="qc-glob.htm#parm1">parm1</a> = <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a> | <a href="qc-defs.htm#IT_AXE">IT_AXE</a>;
+	<a href="qc-glob.htm#parm2">parm2</a> = 100;
+	<a href="qc-glob.htm#parm3">parm3</a> = 0;
+	parm4 = 25;
+	parm5 = 0;
+	parm6 = 0;
+	parm6 = 0;
+	<a href="qc-glob.htm#parm8">parm8</a> = 1;
+	<a href="qc-glob.htm#parm9">parm9</a> = 0;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>DecodeLevelParms</b><a name="DecodeLevelParms">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#serverflags">serverflags</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/start.bsp"</b>)
+			<a href="client.htm#SetNewParms">SetNewParms</a> ();		<i>// take away all stuff on starting new episode</i>
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#parm1">parm1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = <a href="qc-glob.htm#parm2">parm2</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a> = <a href="qc-glob.htm#parm3">parm3</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_shells">ammo_shells</a> = parm4;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_nails">ammo_nails</a> = parm5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_rockets">ammo_rockets</a> = parm6;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ammo_cells">ammo_cells</a> = parm7;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_weapon">weapon</a> = <a href="qc-glob.htm#parm8">parm8</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_armortype">armortype</a> = <a href="qc-glob.htm#parm9">parm9</a> * 0.01;
+};
+
+<i>/*
+============
+FindIntermission
+
+Returns the entity to view from
+============
+*/</i>
+
+<a href="qc-types.htm#entity">entity</a>() <b>FindIntermission</b><a name="FindIntermission">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> spot;
+	<b>local</b>	<a href="qc-types.htm#float">float</a> cyc;
+
+<i>// look for info_intermission first</i>
+	spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"info_intermission"</b>);
+	<b>if</b> (spot)
+	{	<i>// pick a random one</i>
+		cyc = <a href="qc-built.htm#random">random</a>() * 4;
+		<b>while</b> (cyc &gt; 1)
+		{
+			spot = <a href="qc-built.htm#find">find</a> (spot, classname, <b>"info_intermission"</b>);
+			<b>if</b> (!spot)
+				spot = <a href="qc-built.htm#find">find</a> (spot, classname, <b>"info_intermission"</b>);
+			cyc = cyc - 1;
+		}
+		return spot;
+	}
+
+<i>// then look for the start position</i>
+	spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"info_player_start"</b>);
+	<b>if</b> (spot)
+		return spot;
+	
+<i>// testinfo_player_start is only found in regioned levels</i>
+	spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"testplayerstart"</b>);
+	<b>if</b> (spot)
+		return spot;
+	
+	<a href="qc-built.htm#objerror">objerror</a> (<b>"FindIntermission: no spot"</b>);
+};
+
+
+<a href="qc-types.htm#string">string</a> <b><a name="nextmap">nextmap</a></b>;
+<a href="qc-types.htm#void">void</a>() <b>GotoNextMap</b><a name="GotoNextMap">=</a>
+{
+	<b>if</b> (<a href="qc-built.htm#cvar">cvar</a>(<b>"samelevel"</b>))	<i>// if samelevel is set, stay on same level</i>
+		<a href="qc-built.htm#changelevel">changelevel</a> (<a href="qc-glob.htm#mapname">mapname</a>);
+	<b>else</b>
+		<a href="qc-built.htm#changelevel">changelevel</a> (<a href="client.htm#nextmap">nextmap</a>);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ExitIntermission</b><a name="ExitIntermission">=</a>
+{
+<i>// skip any text in deathmatch</i>
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="client.htm#GotoNextMap">GotoNextMap</a> ();
+		<b>return</b>;
+	}
+	
+	<a href="client.htm#intermission_exittime">intermission_exittime</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	<a href="client.htm#intermission_running">intermission_running</a> = <a href="client.htm#intermission_running">intermission_running</a> + 1;
+
+<i>//</i>
+<i>// run some text if at the end of an episode</i>
+<i>//</i>
+	<b>if</b> (<a href="client.htm#intermission_running">intermission_running</a> == 2)
+	{
+		<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/e1m7.bsp"</b>)
+		{
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 2);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+			<b>if</b> (!<a href="qc-built.htm#cvar">cvar</a>(<b>"registered"</b>))
+			{
+				<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+				<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"As the corpse of the monstrous entity\nChthon sinks back into the lava whence\nit rose, you grip the Rune of Earth\nMagic tightly. Now that you have\nconquered the Dimension of the Doomed,\nrealm of Earth Magic, you are ready to\ncomplete your task in the other three\nhaunted lands of Quake. Or are you? If\nyou don't register Quake, you'll never\nknow what awaits you in the Realm of\nBlack Magic, the Netherworld, and the\nElder World!"</b>);
+			}
+			<b>else</b>
+			{
+				<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+				<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"As the corpse of the monstrous entity\nChthon sinks back into the lava whence\nit rose, you grip the Rune of Earth\nMagic tightly. Now that you have\nconquered the Dimension of the Doomed,\nrealm of Earth Magic, you are ready to\ncomplete your task. A Rune of magic\npower lies at the end of each haunted\nland of Quake. Go forth, seek the\ntotality of the four Runes!"</b>);
+			}
+			<b>return</b>;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/e2m6.bsp"</b>)
+		{
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 2);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+			<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"The Rune of Black Magic throbs evilly in\nyour hand and whispers dark thoughts\ninto your brain. You learn the inmost\nlore of the Hell-Mother; Shub-Niggurath!\nYou now know that she is behind all the\nterrible plotting which has led to so\nmuch death and horror. But she is not\ninviolate! Armed with this Rune, you\nrealize that once all four Runes are\ncombined, the gate to Shub-Niggurath's\nPit will open, and you can face the\nWitch-Goddess herself in her frightful\notherworld cathedral."</b>);
+			<b>return</b>;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/e3m6.bsp"</b>)
+		{
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 2);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+			<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"The charred viscera of diabolic horrors\nbubble viscously as you seize the Rune\nof Hell Magic. Its heat scorches your\nhand, and its terrible secrets blight\nyour mind. Gathering the shreds of your\ncourage, you shake the devil's shackles\nfrom your soul, and become ever more\nhard and determined to destroy the\nhideous creatures whose mere existence\nthreatens the souls and psyches of all\nthe population of Earth."</b>);
+			<b>return</b>;
+		}
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_model">model</a> == <b>"maps/e4m7.bsp"</b>)
+		{
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 2);
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+			<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"Despite the awful might of the Elder\nWorld, you have achieved the Rune of\nElder Magic, capstone of all types of\narcane wisdom. Beyond good and evil,\nbeyond life and death, the Rune\npulsates, heavy with import. Patient and\npotent, the Elder Being Shub-Niggurath\nweaves her dire plans to clear off all\nlife from the Earth, and bring her own\nfoul offspring to our world! For all the\ndwellers in these nightmare dimensions\nare her descendants! Once all Runes of\nmagic power are united, the energy\nbehind them will blast open the Gateway\nto Shub-Niggurath, and you can travel\nthere to foil the Hell-Mother's plots\nin person."</b>);
+			<b>return</b>;
+		}
+
+		<a href="client.htm#GotoNextMap">GotoNextMap</a>();
+	}
+	
+	<b>if</b> (<a href="client.htm#intermission_running">intermission_running</a> == 3)
+	{
+		<b>if</b> (!<a href="qc-built.htm#cvar">cvar</a>(<b>"registered"</b>))
+		{	<i>// shareware episode has been completed, go to sell screen</i>
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_SELLSCREEN">SVC_SELLSCREEN</a>);
+			<b>return</b>;
+		}
+		
+		<b>if</b> ( (<a href="qc-glob.htm#serverflags">serverflags</a>&amp;15) == 15)
+		{
+			<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_FINALE">SVC_FINALE</a>);
+			<a href="qc-net.htm#WriteString">WriteString</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <b>"Now, you have all four Runes. You sense\ntremendous invisible forces moving to\nunseal ancient barriers. Shub-Niggurath\nhad hoped to use the Runes Herself to\nclear off the Earth, but now instead,\nyou will use them to enter her home and\nconfront her as an avatar of avenging\nEarth-life. If you defeat her, you will\nbe remembered forever as the savior of\nthe planet. If she conquers, it will be\nas if you had never been born."</b>);
+			<b>return</b>;
+		}
+		
+	}
+
+	<a href="client.htm#GotoNextMap">GotoNextMap</a>();
+};
+
+<i>/*
+============
+IntermissionThink
+
+When the player presses attack or jump, change to the next level
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>IntermissionThink</b><a name="IntermissionThink">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="client.htm#intermission_exittime">intermission_exittime</a>)
+		<b>return</b>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a> &amp;&amp; !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button1">button1</a> &amp;&amp; !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a>)
+		<b>return</b>;
+	
+	<a href="client.htm#ExitIntermission">ExitIntermission</a> ();
+};
+
+<a href="qc-types.htm#void">void</a>() <b>execute_changelevel</b><a name="execute_changelevel">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	pos;
+
+	<a href="client.htm#intermission_running">intermission_running</a> = 1;
+	
+<i>// enforce a wait time before allowing changelevel</i>
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+		<a href="client.htm#intermission_exittime">intermission_exittime</a> = <a href="qc-glob.htm#time">time</a> + 5;
+	<b>else</b>
+		<a href="client.htm#intermission_exittime">intermission_exittime</a> = <a href="qc-glob.htm#time">time</a> + 2;
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_CDTRACK">SVC_CDTRACK</a>);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, 3);
+	
+	pos = <a href="client.htm#FindIntermission">FindIntermission</a> ();
+
+	<a href="qc-glob.htm#other">other</a> = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"player"</b>);
+	<b>while</b> (<a href="qc-glob.htm#other">other</a> != <a href="qc-glob.htm#world">world</a>)
+	{
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 0';
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a> = pos.<a href="qc-enty.htm#dot_mangle">mangle</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_fixangle">fixangle</a> = <a href="defs.htm#TRUE">TRUE</a>;		<i>// turn this way immediately</i>
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.5;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+		<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = 0;
+		<a href="qc-built.htm#setorigin">setorigin</a> (<a href="qc-glob.htm#other">other</a>, pos.<a href="qc-enty.htm#dot_origin">origin</a>);
+		<a href="qc-glob.htm#other">other</a> = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#other">other</a>, classname, <b>"player"</b>);
+	}	
+
+	<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_INTERMISSION">SVC_INTERMISSION</a>);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>changelevel_touch</b><a name="changelevel_touch">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	pos;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-built.htm#cvar">cvar</a>(<b>"noexit"</b>))
+	{
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, 50000);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" exited the level\n"</b>);
+	
+	<a href="client.htm#nextmap">nextmap</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_map">map</a>;
+
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+
+	<b>if</b> ( (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 1) &amp;&amp; (<a href="qc-glob.htm#deathmatch">deathmatch</a> == 0) )
+	{	<i>// NO_INTERMISSION</i>
+		<a href="client.htm#GotoNextMap">GotoNextMap</a>();
+		<b>return</b>;
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+
+<i>// we can't move people right now, because touch functions are called</i>
+<i>// in the middle of C movement code, so set a think time to do it</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="client.htm#execute_changelevel">execute_changelevel</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+};
+
+<i>/*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
+When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>trigger_changelevel</b><a name="trigger_changelevel">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_map">map</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"chagnelevel trigger doesn't have map"</b>);
+	
+	<a href="subs.htm#InitTrigger">InitTrigger</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="client.htm#changelevel_touch">changelevel_touch</a>;
+};
+
+
+<i>/*
+=============================================================================
+
+				PLAYER GAME EDGE FUNCTIONS
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#set_suicide_frame">set_suicide_frame</a>;
+
+<i>// called by ClientKill and DeadThink</i>
+<a href="qc-types.htm#void">void</a>() <b>respawn</b><a name="respawn">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#coop">coop</a>)
+	{
+		<i>// make a copy of the dead body for appearances sake</i>
+		<a href="world.htm#CopyToBodyQue">CopyToBodyQue</a> (<a href="qc-glob.htm#self">self</a>);
+		<i>// get the spawn parms as they were at level start</i>
+		<a href="qc-built.htm#setspawnparms">setspawnparms</a> (<a href="qc-glob.htm#self">self</a>);
+		<i>// respawn		</i>
+		<a href="client.htm#PutClientInServer">PutClientInServer</a> ();
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<i>// make a copy of the dead body for appearances sake</i>
+		<a href="world.htm#CopyToBodyQue">CopyToBodyQue</a> (<a href="qc-glob.htm#self">self</a>);
+		<i>// set default spawn parms</i>
+		<a href="client.htm#SetNewParms">SetNewParms</a> ();
+		<i>// respawn		</i>
+		<a href="client.htm#PutClientInServer">PutClientInServer</a> ();
+	}
+	<b>else</b>
+	{	<i>// restart the entire server</i>
+		<a href="qc-built.htm#localcmd">localcmd</a> (<b>"restart\n"</b>);
+	}
+};
+
+
+<i>/*
+============
+ClientKill
+
+Player entered the suicide command
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_ClientKill">ClientKill</a></b><a name="ClientKill">=</a>
+{
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" suicides\n"</b>);
+	<a href="player.htm#set_suicide_frame">set_suicide_frame</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = modelindex_player;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frags">frags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frags">frags</a> - 2;	<i>// extra penalty</i>
+	<a href="client.htm#respawn">respawn</a> ();
+};
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#vector">vector</a> v) <b>CheckSpawnPoint</b><a name="CheckSpawnPoint">=</a>
+{
+	return FALSE;
+};
+
+<i>/*
+============
+SelectSpawnPoint
+
+Returns the entity to spawn at
+============
+*/</i>
+
+<a href="qc-types.htm#entity">entity</a>() <b>SelectSpawnPoint</b><a name="SelectSpawnPoint">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> spot;
+	
+<i>// testinfo_player_start is only found in regioned levels</i>
+	spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"testplayerstart"</b>);
+	<b>if</b> (spot)
+		return spot;
+		
+<i>// choose a info_player_deathmatch point</i>
+	<b>if</b> (<a href="qc-glob.htm#coop">coop</a>)
+	{
+		<a href="world.htm#lastspawn">lastspawn</a> = <a href="qc-built.htm#find">find</a>(<a href="world.htm#lastspawn">lastspawn</a>, classname, <b>"info_player_coop"</b>);
+		<b>if</b> (<a href="world.htm#lastspawn">lastspawn</a> == <a href="qc-glob.htm#world">world</a>)
+			<a href="world.htm#lastspawn">lastspawn</a> = <a href="qc-built.htm#find">find</a> (<a href="world.htm#lastspawn">lastspawn</a>, classname, <b>"info_player_start"</b>);
+		<b>if</b> (<a href="world.htm#lastspawn">lastspawn</a> != <a href="qc-glob.htm#world">world</a>)
+			return lastspawn;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="world.htm#lastspawn">lastspawn</a> = <a href="qc-built.htm#find">find</a>(<a href="world.htm#lastspawn">lastspawn</a>, classname, <b>"info_player_deathmatch"</b>);
+		<b>if</b> (<a href="world.htm#lastspawn">lastspawn</a> == <a href="qc-glob.htm#world">world</a>)
+			<a href="world.htm#lastspawn">lastspawn</a> = <a href="qc-built.htm#find">find</a> (<a href="world.htm#lastspawn">lastspawn</a>, classname, <b>"info_player_deathmatch"</b>);
+		<b>if</b> (<a href="world.htm#lastspawn">lastspawn</a> != <a href="qc-glob.htm#world">world</a>)
+			return lastspawn;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#serverflags">serverflags</a>)
+	{	<i>// return with a rune to start</i>
+		spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"info_player_start2"</b>);
+		<b>if</b> (spot)
+			return spot;
+	}
+	
+	spot = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, classname, <b>"info_player_start"</b>);
+	<b>if</b> (!spot)
+		<a href="qc-built.htm#error">error</a> (<b>"PutClientInServer: no info_player_start on level"</b>);
+	
+	return spot;
+};
+
+<i>/*
+===========
+PutClientInServer
+
+called each time a player is spawned
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#DecodeLevelParms">DecodeLevelParms</a>;
+<a href="qc-types.htm#void">void</a>() <a href="player.htm#PlayerDie">PlayerDie</a>;
+
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_PutClientInServer">PutClientInServer</a></b><a name="PutClientInServer">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> spot;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"player"</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 100;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_WALK">MOVETYPE_WALK</a>;
+	<a href="qc-glob.htm#self">self</a>.show_hostile = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_max_health">max_health</a> = 100;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="defs.htm#FL_CLIENT">FL_CLIENT</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> = <a href="qc-glob.htm#time">time</a> + 12;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 2;   		<i>// initial water damage</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> = 0;
+
+	<a href="client.htm#DecodeLevelParms">DecodeLevelParms</a> ();
+	
+	<a href="weapons.htm#W_SetCurrentAmmo">W_SetCurrentAmmo</a> ();
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="player.htm#player_pain">player_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="player.htm#PlayerDie">PlayerDie</a>;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_NO">DEAD_NO</a>;
+<i>// paustime is set by teleporters to keep the player from moving a while</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 0;
+	
+	spot = <a href="client.htm#SelectSpawnPoint">SelectSpawnPoint</a> ();
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> = spot.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 1';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = spot.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_fixangle">fixangle</a> = <a href="defs.htm#TRUE">TRUE</a>;		<i>// turn this way immediately</i>
+
+<i>// oh, this is a hack!</i>
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/eyes.mdl"</b>);
+	modelindex_eyes = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/player.mdl"</b>);
+	modelindex_player = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a>;
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, <a href="defs.htm#VEC_HULL_MIN">VEC_HULL_MIN</a>, <a href="defs.htm#VEC_HULL_MAX">VEC_HULL_MAX</a>);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 22';
+
+	<a href="player.htm#player_stand1">player_stand1</a> ();
+	
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a> || <a href="qc-glob.htm#coop">coop</a>)
+	{
+		<a href="qc-built.htm#makevectors">makevectors</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+		<a href="triggers.htm#spawn_tfog">spawn_tfog</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-built.htm#v_forward">v_forward</a>*20);
+	}
+
+	<a href="triggers.htm#spawn_tdeath">spawn_tdeath</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="qc-glob.htm#self">self</a>);
+};
+
+
+<i>/*
+=============================================================================
+
+				QUAKED FUNCTIONS
+
+=============================================================================
+*/</i>
+
+
+
+<i>/*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
+The normal starting point for a level.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_player_start</b><a name="info_player_start">=</a>
+{
+};
+
+
+<i>/*QUAKED info_player_start2 (1 0 0) (-16 -16 -24) (16 16 24)
+Only used on start map for the return point from an episode.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_player_start2</b><a name="info_player_start2">=</a>
+{
+};
+
+
+<i>/*
+saved out by quaked in region mode
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>testplayerstart</b><a name="testplayerstart">=</a>
+{
+};
+
+<i>/*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
+potential spawning position for deathmatch games
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_player_deathmatch</b><a name="info_player_deathmatch">=</a>
+{
+};
+
+<i>/*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
+potential spawning position for coop games
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>info_player_coop</b><a name="info_player_coop">=</a>
+{
+};
+
+<i>/*
+===============================================================================
+
+RULES
+
+===============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> c) <b>PrintClientScore</b><a name="PrintClientScore">=</a>
+{
+	<b>if</b> (c.<a href="qc-enty.htm#dot_frags">frags</a> &gt; -10 &amp;&amp; c.<a href="qc-enty.htm#dot_frags">frags</a> &lt; 0)
+		<a href="qc-built.htm#bprint">bprint</a> (<b>" "</b>);
+	<b>else</b> <b>if</b> (c.<a href="qc-enty.htm#dot_frags">frags</a> &gt;= 0)
+	{
+		<b>if</b> (c.<a href="qc-enty.htm#dot_frags">frags</a> &lt; 100)
+			<a href="qc-built.htm#bprint">bprint</a> (<b>" "</b>);
+		<b>if</b> (c.<a href="qc-enty.htm#dot_frags">frags</a> &lt; 10)
+			<a href="qc-built.htm#bprint">bprint</a> (<b>" "</b>);
+	}
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-built.htm#ftos">ftos</a>(c.<a href="qc-enty.htm#dot_frags">frags</a>));
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" "</b>);
+	<a href="qc-built.htm#bprint">bprint</a> (c.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#bprint">bprint</a> (<b>"\n"</b>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>DumpScore</b><a name="DumpScore">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	e, sort, walk;
+
+	<b>if</b> (<a href="qc-glob.htm#world">world</a>.<a href="qc-enty.htm#dot_chain">chain</a>)
+		<a href="qc-built.htm#error">error</a> (<b>"DumpScore: world.chain is set"</b>);
+
+<i>// build a sorted lis</i>
+	e = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#world">world</a>, classname, <b>"player"</b>);
+	sort = <a href="qc-glob.htm#world">world</a>;
+	<b>while</b> (e)
+	{
+		<b>if</b> (!sort)
+		{
+			sort = e;
+			e.<a href="qc-enty.htm#dot_chain">chain</a> = <a href="qc-glob.htm#world">world</a>;
+		}
+		<b>else</b>
+		{
+			<b>if</b> (e.<a href="qc-enty.htm#dot_frags">frags</a> &gt; sort.<a href="qc-enty.htm#dot_frags">frags</a>)
+			{
+				e.<a href="qc-enty.htm#dot_chain">chain</a> = sort;
+				sort = e;
+			}
+			<b>else</b>
+			{
+				walk = sort;
+				<b>do</b>
+				{
+					<b>if</b> (!walk.<a href="qc-enty.htm#dot_chain">chain</a>)
+					{
+						e.<a href="qc-enty.htm#dot_chain">chain</a> = <a href="qc-glob.htm#world">world</a>;
+						walk.<a href="qc-enty.htm#dot_chain">chain</a> = e;
+					}
+					<b>else</b> <b>if</b> (walk.<a href="qc-enty.htm#dot_chain">chain</a>.<a href="qc-enty.htm#dot_frags">frags</a> &lt; e.<a href="qc-enty.htm#dot_frags">frags</a>)
+					{
+						e.<a href="qc-enty.htm#dot_chain">chain</a> = walk.<a href="qc-enty.htm#dot_chain">chain</a>;
+						walk.<a href="qc-enty.htm#dot_chain">chain</a> = e;
+					}
+					<b>else</b>
+						walk = walk.<a href="qc-enty.htm#dot_chain">chain</a>;
+				} <b>while</b> (walk.<a href="qc-enty.htm#dot_chain">chain</a> != e);
+			}
+		}
+		
+		e = <a href="qc-built.htm#find">find</a>(e, classname, <b>"player"</b>);
+	}
+
+<i>// print the list</i>
+	
+	<a href="qc-built.htm#bprint">bprint</a> (<b>"\n"</b>);	
+	<b>while</b> (sort)
+	{
+		<a href="client.htm#PrintClientScore">PrintClientScore</a> (sort);
+		sort = sort.<a href="qc-enty.htm#dot_chain">chain</a>;
+	}
+	<a href="qc-built.htm#bprint">bprint</a> (<b>"\n"</b>);
+};
+
+<i>/*
+go to the next level for deathmatch
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>NextLevel</b><a name="NextLevel">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> o;
+
+<i>// find a trigger changelevel</i>
+	o = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#world">world</a>, classname, <b>"trigger_changelevel"</b>);
+	<b>if</b> (!o || <a href="qc-glob.htm#mapname">mapname</a> == <b>"start"</b>)
+	{	<i>// go back to same map if no trigger_changelevel</i>
+		o = <a href="qc-built.htm#spawn">spawn</a>();
+		o.<a href="qc-enty.htm#dot_map">map</a> = <a href="qc-glob.htm#mapname">mapname</a>;
+	}
+
+	<a href="client.htm#nextmap">nextmap</a> = o.<a href="qc-enty.htm#dot_map">map</a>;
+	
+	<b>if</b> (o.<a href="qc-enty.htm#dot_nextthink">nextthink</a> &lt; <a href="qc-glob.htm#time">time</a>)
+	{
+		o.<a href="qc-enty.htm#dot_think">think</a> = <a href="client.htm#execute_changelevel">execute_changelevel</a>;
+		o.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	}
+};
+
+<i>/*
+============
+CheckRules
+
+Exit deathmatch games upon conditions
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>CheckRules</b><a name="CheckRules">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>		timelimit;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>		fraglimit;
+	
+	<b>if</b> (<a href="defs.htm#gameover">gameover</a>)	<i>// someone else quit the game already</i>
+		<b>return</b>;
+		
+	timelimit = <a href="qc-built.htm#cvar">cvar</a>(<b>"timelimit"</b>) * 60;
+	fraglimit = <a href="qc-built.htm#cvar">cvar</a>(<b>"fraglimit"</b>);
+	
+	<b>if</b> (timelimit &amp;&amp; <a href="qc-glob.htm#time">time</a> &gt;= timelimit)
+	{
+<a href="client.htm#NextLevel">NextLevel</a> ();
+<i>/*
+		gameover = TRUE;
+		bprint ("\n\n\n==============================\n");
+		bprint ("game exited after ");
+		bprint (ftos(timelimit/60));
+		bprint (" minutes\n");
+		DumpScore ();
+		localcmd ("killserver\n");
+*/</i>
+
+		<b>return</b>;
+	}
+	
+	<b>if</b> (fraglimit &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frags">frags</a> &gt;= fraglimit)
+	{
+<a href="client.htm#NextLevel">NextLevel</a> ();
+<i>/*
+		gameover = TRUE;
+		bprint ("\n\n\n==============================\n");
+		bprint ("game exited after ");
+		bprint (ftos(self.frags));
+		bprint (" frags\n");
+		DumpScore ();
+		localcmd ("killserver\n");
+*/</i>
+
+		<b>return</b>;
+	}	
+};
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>PlayerDeathThink</b><a name="PlayerDeathThink">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	old_self;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		forward;
+
+	<b>if</b> ((<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>))
+	{
+		forward = <a href="qc-built.htm#vlen">vlen</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+		forward = forward - 20;
+		<b>if</b> (forward &lt;= 0)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+		<b>else</b>	
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = forward * <a href="qc-built.htm#normalize">normalize</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+	}
+
+<i>// wait for all buttons released</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> == <a href="qc-defs.htm#DEAD_DEAD">DEAD_DEAD</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button1">button1</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+			<b>return</b>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> = <a href="qc-defs.htm#DEAD_RESPAWNABLE">DEAD_RESPAWNABLE</a>;
+		<b>return</b>;
+	}
+
+<i>// wait for any button down</i>
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a> &amp;&amp; !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button1">button1</a> &amp;&amp; !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a>)
+		<b>return</b>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button0">button0</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button1">button1</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a> = 0;
+	<a href="client.htm#respawn">respawn</a>();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>PlayerJump</b><a name="PlayerJump">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> start, end;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_WATERJUMP">FL_WATERJUMP</a>)
+		<b>return</b>;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> &gt;= 2)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_WATER">CONTENT_WATER</a>)
+			<a href="qc-glob.htm#self">self</a>.velocity_z = 100;
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_SLIME">CONTENT_SLIME</a>)
+			<a href="qc-glob.htm#self">self</a>.velocity_z = 80;
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.velocity_z = 50;
+
+<i>// play swiming sound</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_swim_flag">swim_flag</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_swim_flag">swim_flag</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"misc/water1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			<b>else</b>
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"misc/water2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		}
+
+		<b>return</b>;
+	}
+
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>))
+		<b>return</b>;
+
+	<b>if</b> ( !(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_JUMPRELEASED">FL_JUMPRELEASED</a>) )
+		<b>return</b>;		<i>// don't pogo stick</i>
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_JUMPRELEASED">FL_JUMPRELEASED</a>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>;	<i>// don't stairwalk</i>
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a> = 0;
+<i>// player jumping sound</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/plyrjmp8.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.velocity_z = <a href="qc-glob.htm#self">self</a>.velocity_z + 270;
+};
+
+
+<i>/*
+===========
+WaterMove
+
+============
+*/</i>
+
+.<a href="qc-types.htm#dot_float">float</a>	dmgtime;
+
+<a href="qc-types.htm#void">void</a>() <b>WaterMove</b><a name="WaterMove">=</a>
+{
+<i>//dprint (ftos(self.waterlevel));</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> == <a href="qc-defs.htm#MOVETYPE_NOCLIP">MOVETYPE_NOCLIP</a>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; 0)
+		<b>return</b>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> != 3)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/gasp2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> &lt; <a href="qc-glob.htm#time">time</a> + 9)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/gasp1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> = <a href="qc-glob.htm#time">time</a> + 12;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 2;
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+	{	<i>// drown!</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> + 2;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> &gt; 15)
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a> = 10;
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#world">world</a>, <a href="qc-glob.htm#world">world</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_dmg">dmg</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+		}
+	}
+	
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_INWATER">FL_INWATER</a>)
+		{	
+			<i>// play leave water sound</i>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"misc/outwater.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_INWATER">FL_INWATER</a>;
+		}
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_LAVA">CONTENT_LAVA</a>)
+	{	<i>// do damage</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.dmgtime &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+				<a href="qc-glob.htm#self">self</a>.dmgtime = <a href="qc-glob.htm#time">time</a> + 1;
+			<b>else</b>
+				<a href="qc-glob.htm#self">self</a>.dmgtime = <a href="qc-glob.htm#time">time</a> + 0.2;
+
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#world">world</a>, <a href="qc-glob.htm#world">world</a>, 10*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a>);
+		}
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_SLIME">CONTENT_SLIME</a>)
+	{	<i>// do damage</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.dmgtime &lt; <a href="qc-glob.htm#time">time</a> &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.dmgtime = <a href="qc-glob.htm#time">time</a> + 1;
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#world">world</a>, <a href="qc-glob.htm#world">world</a>, 4*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a>);
+		}
+	}
+	
+	<b>if</b> ( !(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_INWATER">FL_INWATER</a>) )
+	{	
+
+<i>// player enter water sound</i>
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_LAVA">CONTENT_LAVA</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/inlava.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_WATER">CONTENT_WATER</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/inh2o.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_SLIME">CONTENT_SLIME</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/slimbrn2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> + <a href="defs.htm#FL_INWATER">FL_INWATER</a>;
+		<a href="qc-glob.htm#self">self</a>.dmgtime = 0;
+	}
+	
+	<b>if</b> (! (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_WATERJUMP">FL_WATERJUMP</a>) )
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> - 0.8*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a>*<a href="qc-glob.htm#frametime">frametime</a>*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>CheckWaterJump</b><a name="CheckWaterJump">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a> start, end;
+
+<i>// check for a jump-out-of-water</i>
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	start = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	start_z = start_z + 8; 
+	v_forward_z = 0;
+	<a href="qc-built.htm#normalize">normalize</a>(<a href="qc-built.htm#v_forward">v_forward</a>);
+	end = start + <a href="qc-built.htm#v_forward">v_forward</a>*24;
+	<a href="qc-built.htm#traceline">traceline</a> (start, end, <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> &lt; 1)
+	{	<i>// solid at waist</i>
+		start_z = start_z + <a href="qc-glob.htm#self">self</a>.maxs_z - 8;
+		end = start + <a href="qc-built.htm#v_forward">v_forward</a>*24;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> = <a href="qc-built.htm#trace_plane_normal">trace_plane_normal</a> * -50;
+		<a href="qc-built.htm#traceline">traceline</a> (start, end, <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+		<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		{	<i>// open at eye level</i>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_WATERJUMP">FL_WATERJUMP</a>;
+			<a href="qc-glob.htm#self">self</a>.velocity_z = 225;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_JUMPRELEASED">FL_JUMPRELEASED</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_teleport_time">teleport_time</a> = <a href="qc-glob.htm#time">time</a> + 2;	<i>// safety net</i>
+			<b>return</b>;
+		}
+	}
+};
+
+
+<i>/*
+================
+PlayerPreThink
+
+Called every frame before physics are run
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_PlayerPreThink">PlayerPreThink</a></b><a name="PlayerPreThink">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	mspeed, aspeed;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	r;
+
+	<b>if</b> (<a href="client.htm#intermission_running">intermission_running</a>)
+	{
+		<a href="client.htm#IntermissionThink">IntermissionThink</a> ();	<i>// otherwise a button could be missed between</i>
+		<b>return</b>;					<i>// the think tics</i>
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> == '0 0 0')
+		<b>return</b>;		<i>// intermission or finale</i>
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a>);		<i>// is this still used</i>
+
+	<a href="client.htm#CheckRules">CheckRules</a> ();
+	<a href="client.htm#WaterMove">WaterMove</a> ();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> == 2)
+		<a href="client.htm#CheckWaterJump">CheckWaterJump</a> ();
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> &gt;= <a href="qc-defs.htm#DEAD_DEAD">DEAD_DEAD</a>)
+	{
+		<a href="client.htm#PlayerDeathThink">PlayerDeathThink</a> ();
+		<b>return</b>;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a> == <a href="qc-defs.htm#DEAD_DYING">DEAD_DYING</a>)
+		<b>return</b>;	<i>// dying, so do nothing</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_button2">button2</a>)
+	{
+		<a href="client.htm#PlayerJump">PlayerJump</a> ();
+	}
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_JUMPRELEASED">FL_JUMPRELEASED</a>;
+
+<i>// teleporters can force a non-moving pause time	</i>
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+};
+	
+<i>/*
+================
+CheckPowerups
+
+Check for turning off powerups
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>CheckPowerups</b><a name="CheckPowerups">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+
+<i>// invisibility</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a>)
+	{
+<i>// sound and screen flash when items starts to run out</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_sound">invisible_sound</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"items/inv3.wav"</b>, 0.5, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_sound">invisible_sound</a> = <a href="qc-glob.htm#time">time</a> + ((<a href="qc-built.htm#random">random</a>() * 3) + 1);
+		}
+
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> &lt; <a href="qc-glob.htm#time">time</a> + 3)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> == 1)
+			{
+				<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"Ring of Shadows magic is fading\n"</b>);
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"items/inv2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			}
+			
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			{
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+			}
+		}
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{	<i>// just stopped</i>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a>;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_finished">invisible_finished</a> = 0;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invisible_time">invisible_time</a> = 0;
+		}
+		
+	<i>// use the eyes</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frame">frame</a> = 0;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = modelindex_eyes;
+	}
+	<b>else</b>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = modelindex_player;	<i>// don't use eyes</i>
+
+<i>// invincibility</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a>)
+	{
+<i>// sound and screen flash when items starts to run out</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> &lt; <a href="qc-glob.htm#time">time</a> + 3)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> == 1)
+			{
+				<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"Protection is almost burned out\n"</b>);
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"items/protect2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			}
+			
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			{
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+			}
+		}
+		
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{	<i>// just stopped</i>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - <a href="qc-defs.htm#IT_INVULNERABILITY">IT_INVULNERABILITY</a>;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_time">invincible_time</a> = 0;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> = 0;
+		}
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_DIMLIGHT">EF_DIMLIGHT</a>;
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> &amp; <a href="qc-defs.htm#EF_DIMLIGHT">EF_DIMLIGHT</a>);
+	}
+
+<i>// super damage</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a>)
+	{
+
+<i>// sound and screen flash when items starts to run out</i>
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> &lt; <a href="qc-glob.htm#time">time</a> + 3)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> == 1)
+			{
+				<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"Quad Damage is wearing off\n"</b>);
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"items/damage2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			}	  
+			
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			{
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+			}
+		}
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{	<i>// just stopped</i>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - <a href="qc-defs.htm#IT_QUAD">IT_QUAD</a>;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> = 0;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_time">super_time</a> = 0;
+		}
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_DIMLIGHT">EF_DIMLIGHT</a>;
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_effects">effects</a> &amp; <a href="qc-defs.htm#EF_DIMLIGHT">EF_DIMLIGHT</a>);
+	}	
+
+<i>// suit	</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_air_finished">air_finished</a> = <a href="qc-glob.htm#time">time</a> + 12;		<i>// don't drown</i>
+
+<i>// sound and screen flash when items starts to run out</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> &lt; <a href="qc-glob.htm#time">time</a> + 3)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> == 1)
+			{
+				<a href="qc-built.htm#sprint">sprint</a> (<a href="qc-glob.htm#self">self</a>, <b>"Air supply in Biosuit expiring\n"</b>);
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+				<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_AUTO">CHAN_AUTO</a>, <b>"items/suit2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+			}
+			
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> &lt; <a href="qc-glob.htm#time">time</a>)
+			{
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> = <a href="qc-glob.htm#time">time</a> + 1;
+				<a href="qc-built.htm#stuffcmd">stuffcmd</a> (<a href="qc-glob.htm#self">self</a>, <b>"bf\n"</b>);
+			}
+		}
+
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{	<i>// just stopped</i>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_items">items</a> - <a href="qc-defs.htm#IT_SUIT">IT_SUIT</a>;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_rad_time">rad_time</a> = 0;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_radsuit_finished">radsuit_finished</a> = 0;
+		}
+	}	
+
+};
+
+
+<i>/*
+================
+PlayerPostThink
+
+Called every frame after physics are run
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_PlayerPostThink">PlayerPostThink</a></b><a name="PlayerPostThink">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	mspeed, aspeed;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	r;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> == '0 0 0')
+		<b>return</b>;		<i>// intermission or finale</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deadflag">deadflag</a>)
+		<b>return</b>;
+		
+<i>// do weapon stuff</i>
+
+	<a href="weapons.htm#W_WeaponFrame">W_WeaponFrame</a> ();
+
+<i>// check to see if player landed and play landing sound	</i>
+	<b>if</b> ((<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_jump_flag">jump_flag</a> &lt; -300) &amp;&amp; (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>) &amp;&amp; (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 0))
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_watertype">watertype</a> == <a href="qc-defs.htm#CONTENT_WATER">CONTENT_WATER</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/h2ojump.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_jump_flag">jump_flag</a> &lt; -650)
+		{
+			<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#world">world</a>, <a href="qc-glob.htm#world">world</a>, 5); 
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/land2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_deathtype">deathtype</a> = <b>"falling"</b>;
+		}
+		<b>else</b>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/land.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_jump_flag">jump_flag</a> = 0;
+	}
+
+	<b>if</b> (!(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>))
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_jump_flag">jump_flag</a> = <a href="qc-glob.htm#self">self</a>.velocity_z;
+
+	<a href="client.htm#CheckPowerups">CheckPowerups</a> ();
+};
+
+
+<i>/*
+===========
+ClientConnect
+
+called when a player connects to a server
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_ClientConnect">ClientConnect</a></b><a name="ClientConnect">=</a>
+{
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" entered the game\n"</b>);
+	
+<i>// a client connecting during an intermission can cause problems</i>
+	<b>if</b> (<a href="client.htm#intermission_running">intermission_running</a>)
+		<a href="client.htm#ExitIntermission">ExitIntermission</a> ();
+};
+
+
+<i>/*
+===========
+ClientDisconnect
+
+called when a player disconnects from a server
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b><a href="qc-glob.htm#f_ClientDisconnect">ClientDisconnect</a></b><a name="ClientDisconnect">=</a>
+{
+	<b>if</b> (<a href="defs.htm#gameover">gameover</a>)
+		<b>return</b>;
+	<i>// if the level end trigger has been activated, just return</i>
+	<i>// since they aren't *really* leaving</i>
+
+	<i>// let everyone else know</i>
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" left the game with "</b>);
+	<a href="qc-built.htm#bprint">bprint</a> (<a href="qc-built.htm#ftos">ftos</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_frags">frags</a>));
+	<a href="qc-built.htm#bprint">bprint</a> (<b>" frags\n"</b>);
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"player/tornoff2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NONE">ATTN_NONE</a>);
+	<a href="player.htm#set_suicide_frame">set_suicide_frame</a> ();
+};
+
+<i>/*
+===========
+ClientObituary
+
+called when a player dies
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> attacker) <b>ClientObituary</b><a name="ClientObituary">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a> rnum;
+	<b>local</b>	<a href="qc-types.htm#string">string</a> deathstring, deathstring2;
+	rnum = <a href="qc-built.htm#random">random</a>();
+
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+	{
+		<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"teledeath"</b>)
+		{
+			<a href="qc-built.htm#bprint">bprint</a> (targ.<a href="qc-enty.htm#dot_netname">netname</a>);
+			<a href="qc-built.htm#bprint">bprint</a> (<b>" was telefragged by "</b>);
+			<a href="qc-built.htm#bprint">bprint</a> (attacker.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_netname">netname</a>);
+			<a href="qc-built.htm#bprint">bprint</a> (<b>"\n"</b>);
+
+			attacker.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_frags">frags</a> = attacker.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_frags">frags</a> + 1;
+			<b>return</b>;
+		}
+
+		<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"teledeath2"</b>)
+		{
+			<a href="qc-built.htm#bprint">bprint</a> (<b>"Satan's power deflects "</b>);
+			<a href="qc-built.htm#bprint">bprint</a> (targ.<a href="qc-enty.htm#dot_netname">netname</a>);
+			<a href="qc-built.htm#bprint">bprint</a> (<b>"'s telefrag\n"</b>);
+
+			targ.<a href="qc-enty.htm#dot_frags">frags</a> = targ.<a href="qc-enty.htm#dot_frags">frags</a> - 1;
+			<b>return</b>;
+		}
+
+		<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+		{
+			<b>if</b> (targ == attacker)
+			{
+				<i>// killed self</i>
+				attacker.<a href="qc-enty.htm#dot_frags">frags</a> = attacker.<a href="qc-enty.htm#dot_frags">frags</a> - 1;
+				<a href="qc-built.htm#bprint">bprint</a> (targ.<a href="qc-enty.htm#dot_netname">netname</a>);
+				
+				<b>if</b> (targ.<a href="qc-enty.htm#dot_weapon">weapon</a> == 64 &amp;&amp; targ.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> &gt; 1)
+				{
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" discharges into the water.\n"</b>);
+					<b>return</b>;
+				}
+				<b>if</b> (targ.<a href="qc-enty.htm#dot_weapon">weapon</a> == 16)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" tries to put the pin back in\n"</b>);
+				<b>else</b> <b>if</b> (rnum)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" becomes bored with life\n"</b>);
+				<b>else</b>
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" checks if his weapon is loaded\n"</b>);
+				<b>return</b>;
+			}
+			<b>else</b>
+			{
+				attacker.<a href="qc-enty.htm#dot_frags">frags</a> = attacker.<a href="qc-enty.htm#dot_frags">frags</a> + 1;
+
+				rnum = attacker.<a href="qc-enty.htm#dot_weapon">weapon</a>;
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_AXE">IT_AXE</a>)
+				{
+					deathstring = <b>" was ax-murdered by "</b>;
+					deathstring2 = <b>"\n"</b>;
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_SHOTGUN">IT_SHOTGUN</a>)
+				{
+					deathstring = <b>" chewed on "</b>;
+					deathstring2 = <b>"'s boomstick\n"</b>;
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_SUPER_SHOTGUN">IT_SUPER_SHOTGUN</a>)
+				{
+					deathstring = <b>" ate 2 loads of "</b>;
+					deathstring2 = <b>"'s buckshot\n"</b>;
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_NAILGUN">IT_NAILGUN</a>)
+				{
+					deathstring = <b>" was nailed by "</b>;
+					deathstring2 = <b>"\n"</b>;
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_SUPER_NAILGUN">IT_SUPER_NAILGUN</a>)
+				{
+					deathstring = <b>" was punctured by "</b>;
+					deathstring2 = <b>"\n"</b>;
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_GRENADE_LAUNCHER">IT_GRENADE_LAUNCHER</a>)
+				{
+					deathstring = <b>" eats "</b>;
+					deathstring2 = <b>"'s pineapple\n"</b>;
+					<b>if</b> (targ.<a href="qc-enty.htm#dot_health">health</a> &lt; -40)
+					{
+						deathstring = <b>" was gibbed by "</b>;
+						deathstring2 = <b>"'s grenade\n"</b>;
+					}
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_ROCKET_LAUNCHER">IT_ROCKET_LAUNCHER</a>)
+				{
+					deathstring = <b>" rides "</b>;
+					deathstring2 = <b>"'s rocket\n"</b>;
+					<b>if</b> (targ.<a href="qc-enty.htm#dot_health">health</a> &lt; -40)
+					{
+						deathstring = <b>" was gibbed by "</b>;
+						deathstring2 = <b>"'s rocket\n"</b> ;
+					}
+				}
+				<b>if</b> (rnum == <a href="qc-defs.htm#IT_LIGHTNING">IT_LIGHTNING</a>)
+				{
+					deathstring = <b>" accepts "</b>;
+					<b>if</b> (attacker.<a href="qc-enty.htm#dot_waterlevel">waterlevel</a> &gt; 1)
+						deathstring2 = <b>"'s discharge\n"</b>;
+					<b>else</b>
+						deathstring2 = <b>"'s shaft\n"</b>;
+				}
+				<a href="qc-built.htm#bprint">bprint</a> (targ.<a href="qc-enty.htm#dot_netname">netname</a>);
+				<a href="qc-built.htm#bprint">bprint</a> (deathstring);
+				<a href="qc-built.htm#bprint">bprint</a> (attacker.<a href="qc-enty.htm#dot_netname">netname</a>);
+				<a href="qc-built.htm#bprint">bprint</a> (deathstring2);
+			}
+			<b>return</b>;
+		}
+		<b>else</b>
+		{
+			targ.<a href="qc-enty.htm#dot_frags">frags</a> = targ.<a href="qc-enty.htm#dot_frags">frags</a> - 1;		<i>// killed self</i>
+			rnum = targ.<a href="qc-enty.htm#dot_watertype">watertype</a>;
+
+			<a href="qc-built.htm#bprint">bprint</a> (targ.<a href="qc-enty.htm#dot_netname">netname</a>);
+			<b>if</b> (rnum == -3)
+			{
+				<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" sleeps with the fishes\n"</b>);
+				<b>else</b>
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" sucks it down\n"</b>);
+				<b>return</b>;
+			}
+			<b>else</b> <b>if</b> (rnum == -4)
+			{
+				<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" gulped a load of slime\n"</b>);
+				<b>else</b>
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" can't exist on slime alone\n"</b>);
+				<b>return</b>;
+			}
+			<b>else</b> <b>if</b> (rnum == -5)
+			{
+				<b>if</b> (targ.<a href="qc-enty.htm#dot_health">health</a> &lt; -15)
+				{
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" burst into flames\n"</b>);
+					<b>return</b>;
+				}
+				<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" turned into hot slag\n"</b>);
+				<b>else</b>
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" visits the Volcano God\n"</b>);
+				<b>return</b>;
+			}
+
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>)
+			{
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_army"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was shot by a Grunt\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_demon1"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was eviscerated by a Fiend\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_dog"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was mauled by a Rottweiler\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_dragon"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was fried by a Dragon\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_enforcer"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was blasted by an Enforcer\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_fish"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was fed to the Rotfish\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_hell_knight"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was slain by a Death Knight\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_knight"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was slashed by a Knight\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_ogre"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was destroyed by an Ogre\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_oldone"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" became one with Shub-Niggurath\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shalrath"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was exploded by a Vore\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was smashed by a Shambler\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_tarbaby"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was slimed by a Spawn\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_vomit"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was vomited on by a Vomitus\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_wizard"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" was scragged by a Scrag\n"</b>);
+				<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_zombie"</b>)
+					<a href="qc-built.htm#bprint">bprint</a> (<b>" joins the Zombies\n"</b>);
+
+				<b>return</b>;
+			}
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"explo_box"</b>)
+			{
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" blew up\n"</b>);
+				<b>return</b>;
+			}
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_solid">solid</a> == <a href="qc-defs.htm#SOLID_BSP">SOLID_BSP</a> &amp;&amp; attacker != <a href="qc-glob.htm#world">world</a>)
+			{	
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" was squished\n"</b>);
+				<b>return</b>;
+			}
+			<b>if</b> (targ.<a href="qc-enty.htm#dot_deathtype">deathtype</a> == <b>"falling"</b>)
+			{
+				targ.<a href="qc-enty.htm#dot_deathtype">deathtype</a> = <b>""</b>;
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" fell to his death\n"</b>);
+				<b>return</b>;
+			}
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"trap_shooter" || attacker.classname == "trap_spikeshooter"</b>)
+			{
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" was spiked\n"</b>);
+				<b>return</b>;
+			}
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"fireball"</b>)
+			{
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" ate a lavaball\n"</b>);
+				<b>return</b>;
+			}
+			<b>if</b> (attacker.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"trigger_changelevel"</b>)
+			{
+				<a href="qc-built.htm#bprint">bprint</a> (<b>" tried to leave\n"</b>);
+				<b>return</b>;
+			}
+
+			<a href="qc-built.htm#bprint">bprint</a> (<b>" died\n"</b>);
+		}
+	}
+};
+
+</pre></body></html>

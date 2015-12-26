@@ -1,0 +1,526 @@
+<html><head><title>zombie.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+ZOMBIE
+
+==============================================================================
+*/</i>
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/zombie</b>
+
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>skin</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand9 stand10 stand11 stand12 stand13 stand14 stand15</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10 walk11</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk12 walk13 walk14 walk15 walk16 walk17 walk18 walk19</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 run11 run12</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>run13 run14 run15 run16 run17 run18</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>atta1 atta2 atta3 atta4 atta5 atta6 atta7 atta8 atta9 atta10 atta11</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>atta12 atta13</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attb1 attb2 attb3 attb4 attb5 attb6 attb7 attb8 attb9 attb10 attb11</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attb12 attb13 attb14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attc1 attc2 attc3 attc4 attc5 attc6 attc7 attc8 attc9 attc10 attc11</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attc12</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paina1 paina2 paina3 paina4 paina5 paina6 paina7 paina8 paina9 paina10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paina11 paina12</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3 painb4 painb5 painb6 painb7 painb8 painb9 painb10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb11 painb12 painb13 painb14 painb15 painb16 painb17 painb18 painb19</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb20 painb21 painb22 painb23 painb24 painb25 painb26 painb27 painb28</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8 painc9 painc10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painc11 painc12 painc13 painc14 painc15 painc16 painc17 painc18</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind1 paind2 paind3 paind4 paind5 paind6 paind7 paind8 paind9 paind10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paind11 paind12 paind13</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine1 paine2 paine3 paine4 paine5 paine6 paine7 paine8 paine9 paine10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine11 paine12 paine13 paine14 paine15 paine16 paine17 paine18 paine19</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine20 paine21 paine22 paine23 paine24 paine25 paine26 paine27 paine28</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>paine29 paine30</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>cruc_1 cruc_2 cruc_3 cruc_4 cruc_5 cruc_6</b>
+
+<a href="qc-types.htm#float">float</a> <b><a name="SPAWN_CRUCIFIED">SPAWN_CRUCIFIED</a></b> = 1;
+
+<i>//=============================================================================</i>
+
+.<a href="qc-types.htm#dot_float">float</a> inpain;
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand1</b><a name="zombie_stand1">=</a>[	$stand1,		zombie_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand2</b><a name="zombie_stand2">=</a>[	$stand2,		zombie_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand3</b><a name="zombie_stand3">=</a>[	$stand3,		zombie_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand4</b><a name="zombie_stand4">=</a>[	$stand4,		zombie_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand5</b><a name="zombie_stand5">=</a>[	$stand5,		zombie_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand6</b><a name="zombie_stand6">=</a>[	$stand6,		zombie_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand7</b><a name="zombie_stand7">=</a>[	$stand7,		zombie_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand8</b><a name="zombie_stand8">=</a>[	$stand8,		zombie_stand9	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand9</b><a name="zombie_stand9">=</a>[	$stand9,		zombie_stand10	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand10</b><a name="zombie_stand10">=</a>[	$stand10,		zombie_stand11	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand11</b><a name="zombie_stand11">=</a>[	$stand11,		zombie_stand12	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand12</b><a name="zombie_stand12">=</a>[	$stand12,		zombie_stand13	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand13</b><a name="zombie_stand13">=</a>[	$stand13,		zombie_stand14	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand14</b><a name="zombie_stand14">=</a>[	$stand14,		zombie_stand15	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_stand15</b><a name="zombie_stand15">=</a>[	$stand15,		<a href="zombie.htm#zombie_stand1">zombie_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc1</b><a name="zombie_cruc1">=</a>	[	$cruc_1,		zombie_cruc2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.1)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/idle_w2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_STATIC">ATTN_STATIC</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc2</b><a name="zombie_cruc2">=</a>	[	$cruc_2,		zombie_cruc3	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>()*0.1;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc3</b><a name="zombie_cruc3">=</a>	[	$cruc_3,		zombie_cruc4	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>()*0.1;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc4</b><a name="zombie_cruc4">=</a>	[	$cruc_4,		zombie_cruc5	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>()*0.1;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc5</b><a name="zombie_cruc5">=</a>	[	$cruc_5,		zombie_cruc6	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>()*0.1;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_cruc6</b><a name="zombie_cruc6">=</a>	[	$cruc_6,		<a href="zombie.htm#zombie_cruc1">zombie_cruc1</a>	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1 + <a href="qc-built.htm#random">random</a>()*0.1;};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk1</b><a name="zombie_walk1">=</a>[	$walk1,		zombie_walk2	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk2</b><a name="zombie_walk2">=</a>[	$walk2,		zombie_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk3</b><a name="zombie_walk3">=</a>[	$walk3,		zombie_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk4</b><a name="zombie_walk4">=</a>[	$walk4,		zombie_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk5</b><a name="zombie_walk5">=</a>[	$walk5,		zombie_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk6</b><a name="zombie_walk6">=</a>[	$walk6,		zombie_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk7</b><a name="zombie_walk7">=</a>[	$walk7,		zombie_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk8</b><a name="zombie_walk8">=</a>[	$walk8,		zombie_walk9	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk9</b><a name="zombie_walk9">=</a>[	$walk9,		zombie_walk10	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk10</b><a name="zombie_walk10">=</a>[	$walk10,	zombie_walk11	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk11</b><a name="zombie_walk11">=</a>[	$walk11,	zombie_walk12	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk12</b><a name="zombie_walk12">=</a>[	$walk12,	zombie_walk13	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk13</b><a name="zombie_walk13">=</a>[	$walk13,	zombie_walk14	] {<a href="ai.htm#ai_walk">ai_walk</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk14</b><a name="zombie_walk14">=</a>[	$walk14,	zombie_walk15	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk15</b><a name="zombie_walk15">=</a>[	$walk15,	zombie_walk16	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk16</b><a name="zombie_walk16">=</a>[	$walk16,	zombie_walk17	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk17</b><a name="zombie_walk17">=</a>[	$walk17,	zombie_walk18	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk18</b><a name="zombie_walk18">=</a>[	$walk18,	zombie_walk19	] {<a href="ai.htm#ai_walk">ai_walk</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_walk19</b><a name="zombie_walk19">=</a>[	$walk19,	<a href="zombie.htm#zombie_walk1">zombie_walk1</a>	] {
+<a href="ai.htm#ai_walk">ai_walk</a>(0);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_run1</b><a name="zombie_run1">=</a>[	$run1,		zombie_run2	] {<a href="ai.htm#ai_run">ai_run</a>(1);<a href="qc-glob.htm#self">self</a>.inpain = 0;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run2</b><a name="zombie_run2">=</a>[	$run2,		zombie_run3	] {<a href="ai.htm#ai_run">ai_run</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run3</b><a name="zombie_run3">=</a>[	$run3,		zombie_run4	] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run4</b><a name="zombie_run4">=</a>[	$run4,		zombie_run5	] {<a href="ai.htm#ai_run">ai_run</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run5</b><a name="zombie_run5">=</a>[	$run5,		zombie_run6	] {<a href="ai.htm#ai_run">ai_run</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run6</b><a name="zombie_run6">=</a>[	$run6,		zombie_run7	] {<a href="ai.htm#ai_run">ai_run</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run7</b><a name="zombie_run7">=</a>[	$run7,		zombie_run8	] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run8</b><a name="zombie_run8">=</a>[	$run8,		zombie_run9	] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run9</b><a name="zombie_run9">=</a>[	$run9,		zombie_run10	] {<a href="ai.htm#ai_run">ai_run</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run10</b><a name="zombie_run10">=</a>[	$run10,		zombie_run11	] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run11</b><a name="zombie_run11">=</a>[	$run11,		zombie_run12	] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run12</b><a name="zombie_run12">=</a>[	$run12,		zombie_run13	] {<a href="ai.htm#ai_run">ai_run</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run13</b><a name="zombie_run13">=</a>[	$run13,		zombie_run14	] {<a href="ai.htm#ai_run">ai_run</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run14</b><a name="zombie_run14">=</a>[	$run14,		zombie_run15	] {<a href="ai.htm#ai_run">ai_run</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run15</b><a name="zombie_run15">=</a>[	$run15,		zombie_run16	] {<a href="ai.htm#ai_run">ai_run</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run16</b><a name="zombie_run16">=</a>[	$run16,		zombie_run17	] {<a href="ai.htm#ai_run">ai_run</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run17</b><a name="zombie_run17">=</a>[	$run17,		zombie_run18	] {<a href="ai.htm#ai_run">ai_run</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_run18</b><a name="zombie_run18">=</a>[	$run18,		<a href="zombie.htm#zombie_run1">zombie_run1</a>	] {
+<a href="ai.htm#ai_run">ai_run</a>(8);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.8)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_idle1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+};
+
+<i>/*
+=============================================================================
+
+ATTACKS
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>ZombieGrenadeTouch</b><a name="ZombieGrenadeTouch">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#other">other</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>)
+		<b>return</b>;		<i>// don't explode on owner</i>
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+	{
+		<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#other">other</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>, 10 );
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"zombie/z_hit.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"zombie/z_miss.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);	<i>// bounce sound</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+};
+
+<i>/*
+================
+ZombieFireGrenade
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> st) <b>ZombieFireGrenade</b><a name="ZombieFireGrenade">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a> missile, mpuff;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	org;
+
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"zombie/z_shot1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_BOUNCE">MOVETYPE_BOUNCE</a>;
+	missile.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_BBOX">SOLID_BBOX</a>;
+
+<i>// calc org</i>
+	org = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + st_x * <a href="qc-built.htm#v_forward">v_forward</a> + st_y * <a href="qc-built.htm#v_right">v_right</a> + (st_z - 24) * <a href="qc-built.htm#v_up">v_up</a>;
+	
+<i>// set missile speed	</i>
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = <a href="qc-built.htm#normalize">normalize</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - org);
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = missile.<a href="qc-enty.htm#dot_velocity">velocity</a> * 600;
+	missile.velocity_z = 200;
+
+	missile.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '3000 1000 2000';
+
+	missile.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="zombie.htm#ZombieGrenadeTouch">ZombieGrenadeTouch</a>;
+	
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 2.5;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (missile, <b>"progs/zom_gib.mdl"</b>);
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, org);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta1</b><a name="zombie_atta1">=</a>[	$atta1,		zombie_atta2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta2</b><a name="zombie_atta2">=</a>[	$atta2,		zombie_atta3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta3</b><a name="zombie_atta3">=</a>[	$atta3,		zombie_atta4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta4</b><a name="zombie_atta4">=</a>[	$atta4,		zombie_atta5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta5</b><a name="zombie_atta5">=</a>[	$atta5,		zombie_atta6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta6</b><a name="zombie_atta6">=</a>[	$atta6,		zombie_atta7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta7</b><a name="zombie_atta7">=</a>[	$atta7,		zombie_atta8	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta8</b><a name="zombie_atta8">=</a>[	$atta8,		zombie_atta9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta9</b><a name="zombie_atta9">=</a>[	$atta9,		zombie_atta10	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta10</b><a name="zombie_atta10">=</a>[	$atta10,	zombie_atta11	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta11</b><a name="zombie_atta11">=</a>[	$atta11,	zombie_atta12	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta12</b><a name="zombie_atta12">=</a>[	$atta12,	zombie_atta13	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_atta13</b><a name="zombie_atta13">=</a>[	$atta13,	<a href="zombie.htm#zombie_run1">zombie_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="zombie.htm#ZombieFireGrenade">ZombieFireGrenade</a>('-10 -22 30');};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb1</b><a name="zombie_attb1">=</a>[	$attb1,		zombie_attb2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb2</b><a name="zombie_attb2">=</a>[	$attb2,		zombie_attb3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb3</b><a name="zombie_attb3">=</a>[	$attb3,		zombie_attb4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb4</b><a name="zombie_attb4">=</a>[	$attb4,		zombie_attb5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb5</b><a name="zombie_attb5">=</a>[	$attb5,		zombie_attb6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb6</b><a name="zombie_attb6">=</a>[	$attb6,		zombie_attb7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb7</b><a name="zombie_attb7">=</a>[	$attb7,		zombie_attb8	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb8</b><a name="zombie_attb8">=</a>[	$attb8,		zombie_attb9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb9</b><a name="zombie_attb9">=</a>[	$attb9,		zombie_attb10	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb10</b><a name="zombie_attb10">=</a>[	$attb10,	zombie_attb11	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb11</b><a name="zombie_attb11">=</a>[	$attb11,	zombie_attb12	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb12</b><a name="zombie_attb12">=</a>[	$attb12,	zombie_attb13	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb13</b><a name="zombie_attb13">=</a>[	$attb13,	zombie_attb14	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attb14</b><a name="zombie_attb14">=</a>[	$attb13,	<a href="zombie.htm#zombie_run1">zombie_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="zombie.htm#ZombieFireGrenade">ZombieFireGrenade</a>('-10 -24 29');};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc1</b><a name="zombie_attc1">=</a>[	$attc1,		zombie_attc2	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc2</b><a name="zombie_attc2">=</a>[	$attc2,		zombie_attc3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc3</b><a name="zombie_attc3">=</a>[	$attc3,		zombie_attc4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc4</b><a name="zombie_attc4">=</a>[	$attc4,		zombie_attc5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc5</b><a name="zombie_attc5">=</a>[	$attc5,		zombie_attc6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc6</b><a name="zombie_attc6">=</a>[	$attc6,		zombie_attc7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc7</b><a name="zombie_attc7">=</a>[	$attc7,		zombie_attc8	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc8</b><a name="zombie_attc8">=</a>[	$attc8,		zombie_attc9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc9</b><a name="zombie_attc9">=</a>[	$attc9,		zombie_attc10	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc10</b><a name="zombie_attc10">=</a>[	$attc10,	zombie_attc11	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc11</b><a name="zombie_attc11">=</a>[	$attc11,	zombie_attc12	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>zombie_attc12</b><a name="zombie_attc12">=</a>[	$attc12,	<a href="zombie.htm#zombie_run1">zombie_run1</a>		] {<a href="fight.htm#ai_face">ai_face</a>();<a href="zombie.htm#ZombieFireGrenade">ZombieFireGrenade</a>('-12 -19 29');};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_missile</b><a name="zombie_missile">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	r;
+	
+	r = <a href="qc-built.htm#random">random</a>();
+	
+	<b>if</b> (r &lt; 0.3)
+		<a href="zombie.htm#zombie_atta1">zombie_atta1</a> ();
+	<b>else</b> <b>if</b> (r &lt; 0.6)
+		<a href="zombie.htm#zombie_attb1">zombie_attb1</a> ();
+	<b>else</b>
+		<a href="zombie.htm#zombie_attc1">zombie_attc1</a> ();
+};
+
+
+<i>/*
+=============================================================================
+
+PAIN
+
+=============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina1</b><a name="zombie_paina1">=</a>[	$paina1,	zombie_paina2	] {<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_pain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina2</b><a name="zombie_paina2">=</a>[	$paina2,	zombie_paina3	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina3</b><a name="zombie_paina3">=</a>[	$paina3,	zombie_paina4	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina4</b><a name="zombie_paina4">=</a>[	$paina4,	zombie_paina5	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina5</b><a name="zombie_paina5">=</a>[	$paina5,	zombie_paina6	] {<a href="ai.htm#ai_pain">ai_pain</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina6</b><a name="zombie_paina6">=</a>[	$paina6,	zombie_paina7	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina7</b><a name="zombie_paina7">=</a>[	$paina7,	zombie_paina8	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina8</b><a name="zombie_paina8">=</a>[	$paina8,	zombie_paina9	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina9</b><a name="zombie_paina9">=</a>[	$paina9,	zombie_paina10	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina10</b><a name="zombie_paina10">=</a>[	$paina10,	zombie_paina11	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina11</b><a name="zombie_paina11">=</a>[	$paina11,	zombie_paina12	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paina12</b><a name="zombie_paina12">=</a>[	$paina12,	<a href="zombie.htm#zombie_run1">zombie_run1</a>		] {};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb1</b><a name="zombie_painb1">=</a>[	$painb1,	zombie_painb2	] {<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_pain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb2</b><a name="zombie_painb2">=</a>[	$painb2,	zombie_painb3	] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb3</b><a name="zombie_painb3">=</a>[	$painb3,	zombie_painb4	] {<a href="ai.htm#ai_pain">ai_pain</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb4</b><a name="zombie_painb4">=</a>[	$painb4,	zombie_painb5	] {<a href="ai.htm#ai_pain">ai_pain</a>(6);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb5</b><a name="zombie_painb5">=</a>[	$painb5,	zombie_painb6	] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb6</b><a name="zombie_painb6">=</a>[	$painb6,	zombie_painb7	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb7</b><a name="zombie_painb7">=</a>[	$painb7,	zombie_painb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb8</b><a name="zombie_painb8">=</a>[	$painb8,	zombie_painb9	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb9</b><a name="zombie_painb9">=</a>[	$painb9,	zombie_painb10	] {<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"zombie/z_fall.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb10</b><a name="zombie_painb10">=</a>[	$painb10,	zombie_painb11	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb11</b><a name="zombie_painb11">=</a>[	$painb11,	zombie_painb12	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb12</b><a name="zombie_painb12">=</a>[	$painb12,	zombie_painb13	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb13</b><a name="zombie_painb13">=</a>[	$painb13,	zombie_painb14	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb14</b><a name="zombie_painb14">=</a>[	$painb14,	zombie_painb15	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb15</b><a name="zombie_painb15">=</a>[	$painb15,	zombie_painb16	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb16</b><a name="zombie_painb16">=</a>[	$painb16,	zombie_painb17	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb17</b><a name="zombie_painb17">=</a>[	$painb17,	zombie_painb18	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb18</b><a name="zombie_painb18">=</a>[	$painb18,	zombie_painb19	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb19</b><a name="zombie_painb19">=</a>[	$painb19,	zombie_painb20	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb20</b><a name="zombie_painb20">=</a>[	$painb20,	zombie_painb21	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb21</b><a name="zombie_painb21">=</a>[	$painb21,	zombie_painb22	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb22</b><a name="zombie_painb22">=</a>[	$painb22,	zombie_painb23	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb23</b><a name="zombie_painb23">=</a>[	$painb23,	zombie_painb24	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb24</b><a name="zombie_painb24">=</a>[	$painb24,	zombie_painb25	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb25</b><a name="zombie_painb25">=</a>[	$painb25,	zombie_painb26	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb26</b><a name="zombie_painb26">=</a>[	$painb26,	zombie_painb27	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb27</b><a name="zombie_painb27">=</a>[	$painb27,	zombie_painb28	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painb28</b><a name="zombie_painb28">=</a>[	$painb28,	<a href="zombie.htm#zombie_run1">zombie_run1</a>		] {};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc1</b><a name="zombie_painc1">=</a>[	$painc1,	zombie_painc2	] {<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_pain1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc2</b><a name="zombie_painc2">=</a>[	$painc2,	zombie_painc3	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc3</b><a name="zombie_painc3">=</a>[	$painc3,	zombie_painc4	] {<a href="ai.htm#ai_pain">ai_pain</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc4</b><a name="zombie_painc4">=</a>[	$painc4,	zombie_painc5	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc5</b><a name="zombie_painc5">=</a>[	$painc5,	zombie_painc6	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc6</b><a name="zombie_painc6">=</a>[	$painc6,	zombie_painc7	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc7</b><a name="zombie_painc7">=</a>[	$painc7,	zombie_painc8	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc8</b><a name="zombie_painc8">=</a>[	$painc8,	zombie_painc9	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc9</b><a name="zombie_painc9">=</a>[	$painc9,	zombie_painc10	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc10</b><a name="zombie_painc10">=</a>[	$painc10,	zombie_painc11	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc11</b><a name="zombie_painc11">=</a>[	$painc11,	zombie_painc12	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc12</b><a name="zombie_painc12">=</a>[	$painc12,	zombie_painc13	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc13</b><a name="zombie_painc13">=</a>[	$painc13,	zombie_painc14	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc14</b><a name="zombie_painc14">=</a>[	$painc14,	zombie_painc15	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc15</b><a name="zombie_painc15">=</a>[	$painc15,	zombie_painc16	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc16</b><a name="zombie_painc16">=</a>[	$painc16,	zombie_painc17	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc17</b><a name="zombie_painc17">=</a>[	$painc17,	zombie_painc18	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_painc18</b><a name="zombie_painc18">=</a>[	$painc18,	<a href="zombie.htm#zombie_run1">zombie_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind1</b><a name="zombie_paind1">=</a>[	$paind1,	zombie_paind2	] {<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_pain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind2</b><a name="zombie_paind2">=</a>[	$paind2,	zombie_paind3	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind3</b><a name="zombie_paind3">=</a>[	$paind3,	zombie_paind4	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind4</b><a name="zombie_paind4">=</a>[	$paind4,	zombie_paind5	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind5</b><a name="zombie_paind5">=</a>[	$paind5,	zombie_paind6	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind6</b><a name="zombie_paind6">=</a>[	$paind6,	zombie_paind7	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind7</b><a name="zombie_paind7">=</a>[	$paind7,	zombie_paind8	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind8</b><a name="zombie_paind8">=</a>[	$paind8,	zombie_paind9	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind9</b><a name="zombie_paind9">=</a>[	$paind9,	zombie_paind10	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind10</b><a name="zombie_paind10">=</a>[	$paind10,	zombie_paind11	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind11</b><a name="zombie_paind11">=</a>[	$paind11,	zombie_paind12	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind12</b><a name="zombie_paind12">=</a>[	$paind12,	zombie_paind13	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paind13</b><a name="zombie_paind13">=</a>[	$paind13,	<a href="zombie.htm#zombie_run1">zombie_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine1</b><a name="zombie_paine1">=</a>[	$paine1,	zombie_paine2	] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_pain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 60;
+};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine2</b><a name="zombie_paine2">=</a>[	$paine2,	zombie_paine3	] {<a href="ai.htm#ai_pain">ai_pain</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine3</b><a name="zombie_paine3">=</a>[	$paine3,	zombie_paine4	] {<a href="ai.htm#ai_pain">ai_pain</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine4</b><a name="zombie_paine4">=</a>[	$paine4,	zombie_paine5	] {<a href="ai.htm#ai_pain">ai_pain</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine5</b><a name="zombie_paine5">=</a>[	$paine5,	zombie_paine6	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine6</b><a name="zombie_paine6">=</a>[	$paine6,	zombie_paine7	] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine7</b><a name="zombie_paine7">=</a>[	$paine7,	zombie_paine8	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine8</b><a name="zombie_paine8">=</a>[	$paine8,	zombie_paine9	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine9</b><a name="zombie_paine9">=</a>[	$paine9,	zombie_paine10	] {<a href="ai.htm#ai_pain">ai_pain</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine10</b><a name="zombie_paine10">=</a>[	$paine10,	zombie_paine11	] {
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_BODY">CHAN_BODY</a>, <b>"zombie/z_fall.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine11</b><a name="zombie_paine11">=</a>[	$paine11,	zombie_paine12	] {<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + 5;<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 60;};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine12</b><a name="zombie_paine12">=</a>[	$paine12,	zombie_paine13	]{
+<i>// see if ok to stand up</i>
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 60;
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+<b>if</b> (!<a href="qc-built.htm#walkmove">walkmove</a> (0, 0))
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="zombie.htm#zombie_paine11">zombie_paine11</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;
+	<b>return</b>;
+}
+};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine13</b><a name="zombie_paine13">=</a>[	$paine13,	zombie_paine14	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine14</b><a name="zombie_paine14">=</a>[	$paine14,	zombie_paine15	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine15</b><a name="zombie_paine15">=</a>[	$paine15,	zombie_paine16	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine16</b><a name="zombie_paine16">=</a>[	$paine16,	zombie_paine17	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine17</b><a name="zombie_paine17">=</a>[	$paine17,	zombie_paine18	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine18</b><a name="zombie_paine18">=</a>[	$paine18,	zombie_paine19	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine19</b><a name="zombie_paine19">=</a>[	$paine19,	zombie_paine20	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine20</b><a name="zombie_paine20">=</a>[	$paine20,	zombie_paine21	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine21</b><a name="zombie_paine21">=</a>[	$paine21,	zombie_paine22	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine22</b><a name="zombie_paine22">=</a>[	$paine22,	zombie_paine23	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine23</b><a name="zombie_paine23">=</a>[	$paine23,	zombie_paine24	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine24</b><a name="zombie_paine24">=</a>[	$paine24,	zombie_paine25	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine25</b><a name="zombie_paine25">=</a>[	$paine25,	zombie_paine26	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine26</b><a name="zombie_paine26">=</a>[	$paine26,	zombie_paine27	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine27</b><a name="zombie_paine27">=</a>[	$paine27,	zombie_paine28	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine28</b><a name="zombie_paine28">=</a>[	$paine28,	zombie_paine29	] {<a href="ai.htm#ai_pain">ai_pain</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine29</b><a name="zombie_paine29">=</a>[	$paine29,	zombie_paine30	] {};
+<a href="qc-types.htm#void">void</a>() <b>zombie_paine30</b><a name="zombie_paine30">=</a>[	$paine30,	<a href="zombie.htm#zombie_run1">zombie_run1</a>		] {};
+
+<a href="qc-types.htm#void">void</a>() <b>zombie_die</b><a name="zombie_die">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_gib.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_zombie.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+	<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+};
+
+<i>/*
+=================
+zombie_pain
+
+Zombies can only be killed (gibbed) by doing 60 hit points of damage
+in a single frame (rockets, grenades, quad shotgun, quad nailgun).
+
+A hit of 25 points or more (super shotgun, quad nailgun) will allways put it
+down to the ground.
+
+A hit of from 10 to 40 points in one frame will cause it to go down if it
+has been twice in two seconds, otherwise it goes into one of the four
+fast pain frames.
+
+A hit of less than 10 points of damage (winged by a shotgun) will be ignored.
+
+FIXME: don't use pain_finished because of nightmare hack
+=================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> take) <b>zombie_pain</b><a name="zombie_pain">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> r;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 60;		<i>// allways reset health</i>
+
+	<b>if</b> (take &lt; 9)
+		<b>return</b>;				<i>// totally ignore</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.inpain == 2)
+		<b>return</b>;			<i>// down on ground, so don't reset any counters</i>
+
+<i>// go down immediately if a big enough hit</i>
+	<b>if</b> (take &gt;= 25)
+	{
+		<a href="qc-glob.htm#self">self</a>.inpain = 2;
+		<a href="zombie.htm#zombie_paine1">zombie_paine1</a> ();
+		<b>return</b>;
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.inpain)
+	{
+<i>// if hit again in next gre seconds while not in pain frames, definately drop</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 3;
+		<b>return</b>;			<i>// currently going through an animation, don't change</i>
+	}
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+	{
+<i>// hit again, so drop down</i>
+		<a href="qc-glob.htm#self">self</a>.inpain = 2;
+		<a href="zombie.htm#zombie_paine1">zombie_paine1</a> ();
+		<b>return</b>;
+	}
+
+<i>// gp into one of the fast pain animations	</i>
+	<a href="qc-glob.htm#self">self</a>.inpain = 1;
+
+	r = <a href="qc-built.htm#random">random</a>();
+	<b>if</b> (r &lt; 0.25)
+		<a href="zombie.htm#zombie_paina1">zombie_paina1</a> ();
+	<b>else</b> <b>if</b> (r &lt;  0.5)
+		<a href="zombie.htm#zombie_painb1">zombie_painb1</a> ();
+	<b>else</b> <b>if</b> (r &lt;  0.75)
+		<a href="zombie.htm#zombie_painc1">zombie_painc1</a> ();
+	<b>else</b>
+		<a href="zombie.htm#zombie_paind1">zombie_paind1</a> ();
+};
+
+<i>//============================================================================</i>
+
+<i>/*QUAKED monster_zombie (1 0 0) (-16 -16 -24) (16 16 32) Crucified ambush
+
+If crucified, stick the bounding box 12 pixels back into a wall to look right.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_zombie</b><a name="monster_zombie">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/zombie.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_zombie.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/zom_gib.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_idle.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_idle1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_shot1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_gib.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_pain.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_pain1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_fall.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_miss.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/z_hit.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"zombie/idle_w2.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/zombie.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 60;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="zombie.htm#zombie_stand1">zombie_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="zombie.htm#zombie_walk1">zombie_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="zombie.htm#zombie_run1">zombie_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="zombie.htm#zombie_pain">zombie_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="zombie.htm#zombie_die">zombie_die</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="zombie.htm#zombie_missile">zombie_missile</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; <a href="zombie.htm#SPAWN_CRUCIFIED">SPAWN_CRUCIFIED</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+		<a href="zombie.htm#zombie_cruc1">zombie_cruc1</a> ();
+	}
+	<b>else</b>
+		<a href="monsters.htm#walkmonster_start">walkmonster_start</a>();
+};
+
+</pre></body></html>

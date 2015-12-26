@@ -1,0 +1,277 @@
+<html><head><title>knight.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+KNIGHT
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/knight</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>base</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>badass3</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>runb1 runb2 runb3 runb4 runb5 runb6 runb7 runb8</b>
+
+<i>//frame runc1 runc2 runc3 runc4 runc5 runc6</i>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>runattack1 runattack2 runattack3 runattack4 runattack5</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>runattack6 runattack7 runattack8 runattack9 runattack10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>runattack11</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb1 painb2 painb3 painb4 painb5 painb6 painb7 painb8 painb9</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>painb10 painb11</b>
+
+<i>//frame attack1 attack2 attack3 attack4 attack5 attack6 attack7</i>
+<i>//frame attack8 attack9 attack10 attack11</i>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attackb1 attackb1 attackb2 attackb3 attackb4 attackb5</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>attackb6 attackb7 attackb8 attackb9 attackb10</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>walk10 walk11 walk12 walk13 walk14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>kneel1 kneel2 kneel3 kneel4 kneel5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>standing2 standing3 standing4 standing5</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death9 death10</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb1 deathb2 deathb3 deathb4 deathb5 deathb6 deathb7 deathb8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>deathb9 deathb10 deathb11</b>
+
+<a href="qc-types.htm#void">void</a>() <b>knight_stand1</b><a name="knight_stand1">=</a>[	$stand1,	knight_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand2</b><a name="knight_stand2">=</a>[	$stand2,	knight_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand3</b><a name="knight_stand3">=</a>[	$stand3,	knight_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand4</b><a name="knight_stand4">=</a>[	$stand4,	knight_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand5</b><a name="knight_stand5">=</a>[	$stand5,	knight_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand6</b><a name="knight_stand6">=</a>[	$stand6,	knight_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand7</b><a name="knight_stand7">=</a>[	$stand7,	knight_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand8</b><a name="knight_stand8">=</a>[	$stand8,	knight_stand9	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_stand9</b><a name="knight_stand9">=</a>[	$stand9,	<a href="knight.htm#knight_stand1">knight_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>knight_walk1</b><a name="knight_walk1">=</a>[	$walk1,		knight_walk2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"knight/idle.wav"</b>, 1,  <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk2</b><a name="knight_walk2">=</a>[	$walk2,		knight_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk3</b><a name="knight_walk3">=</a>[	$walk3,		knight_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk4</b><a name="knight_walk4">=</a>[	$walk4,		knight_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk5</b><a name="knight_walk5">=</a>[	$walk5,		knight_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk6</b><a name="knight_walk6">=</a>[	$walk6,		knight_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk7</b><a name="knight_walk7">=</a>[	$walk7,		knight_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk8</b><a name="knight_walk8">=</a>[	$walk8,		knight_walk9	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk9</b><a name="knight_walk9">=</a>[	$walk9,		knight_walk10	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk10</b><a name="knight_walk10">=</a>[	$walk10,	knight_walk11	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk11</b><a name="knight_walk11">=</a>[	$walk11,	knight_walk12	] {<a href="ai.htm#ai_walk">ai_walk</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk12</b><a name="knight_walk12">=</a>[	$walk12,	knight_walk13	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk13</b><a name="knight_walk13">=</a>[	$walk13,	knight_walk14	] {<a href="ai.htm#ai_walk">ai_walk</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>knight_walk14</b><a name="knight_walk14">=</a>[	$walk14,	<a href="knight.htm#knight_walk1">knight_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(3);};
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_run1</b><a name="knight_run1">=</a>[	$runb1,		knight_run2	] {
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.2)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"knight/idle.wav"</b>, 1,  <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run2</b><a name="knight_run2">=</a>[	$runb2,		knight_run3	] {<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run3</b><a name="knight_run3">=</a>[	$runb3,		knight_run4	] {<a href="ai.htm#ai_run">ai_run</a>(13);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run4</b><a name="knight_run4">=</a>[	$runb4,		knight_run5	] {<a href="ai.htm#ai_run">ai_run</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run5</b><a name="knight_run5">=</a>[	$runb5,		knight_run6	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run6</b><a name="knight_run6">=</a>[	$runb6,		knight_run7	] {<a href="ai.htm#ai_run">ai_run</a>(20);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run7</b><a name="knight_run7">=</a>[	$runb7,		knight_run8	] {<a href="ai.htm#ai_run">ai_run</a>(14);};
+<a href="qc-types.htm#void">void</a>() <b>knight_run8</b><a name="knight_run8">=</a>[	$runb8,		<a href="knight.htm#knight_run1">knight_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(6);};
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk1</b><a name="knight_runatk1">=</a>[	$runattack1,		knight_runatk2	]
+{
+<b>if</b> (<a href="qc-built.htm#random">random</a>() &gt; 0.5)
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"knight/sword2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<b>else</b>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"knight/sword1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="fight.htm#ai_charge">ai_charge</a>(20);
+};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk2</b><a name="knight_runatk2">=</a>[	$runattack2,	knight_runatk3	] {<a href="fight.htm#ai_charge_side">ai_charge_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk3</b><a name="knight_runatk3">=</a>[	$runattack3,	knight_runatk4	] {<a href="fight.htm#ai_charge_side">ai_charge_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk4</b><a name="knight_runatk4">=</a>[	$runattack4,	knight_runatk5	] {<a href="fight.htm#ai_charge_side">ai_charge_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk5</b><a name="knight_runatk5">=</a>[	$runattack5,	knight_runatk6	] {<a href="fight.htm#ai_melee_side">ai_melee_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk6</b><a name="knight_runatk6">=</a>[	$runattack6,	knight_runatk7	] {<a href="fight.htm#ai_melee_side">ai_melee_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk7</b><a name="knight_runatk7">=</a>[	$runattack7,	knight_runatk8	] {<a href="fight.htm#ai_melee_side">ai_melee_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk8</b><a name="knight_runatk8">=</a>[	$runattack8,	knight_runatk9	] {<a href="fight.htm#ai_melee_side">ai_melee_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk9</b><a name="knight_runatk9">=</a>[	$runattack9,	knight_runatk10	] {<a href="fight.htm#ai_melee_side">ai_melee_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk10</b><a name="knight_runatk10">=</a>[	$runattack10,	knight_runatk11	] {<a href="fight.htm#ai_charge_side">ai_charge_side</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_runatk11</b><a name="knight_runatk11">=</a>[	$runattack11,	<a href="knight.htm#knight_run1">knight_run1</a>	] {<a href="fight.htm#ai_charge">ai_charge</a>(10);};
+
+<a href="qc-types.htm#void">void</a>() <b>knight_atk1</b><a name="knight_atk1">=</a>[	$attackb1,		knight_atk2	]
+{
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"knight/sword1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk2</b><a name="knight_atk2">=</a>[	$attackb2,		knight_atk3	] {<a href="fight.htm#ai_charge">ai_charge</a>(7);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk3</b><a name="knight_atk3">=</a>[	$attackb3,		knight_atk4	] {<a href="fight.htm#ai_charge">ai_charge</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk4</b><a name="knight_atk4">=</a>[	$attackb4,		knight_atk5	] {<a href="fight.htm#ai_charge">ai_charge</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk5</b><a name="knight_atk5">=</a>[	$attackb5,		knight_atk6	] {<a href="fight.htm#ai_charge">ai_charge</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk6</b><a name="knight_atk6">=</a>[	$attackb6,		knight_atk7	] {<a href="fight.htm#ai_charge">ai_charge</a>(4); <a href="fight.htm#ai_melee">ai_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk7</b><a name="knight_atk7">=</a>[	$attackb7,		knight_atk8	] {<a href="fight.htm#ai_charge">ai_charge</a>(1); <a href="fight.htm#ai_melee">ai_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk8</b><a name="knight_atk8">=</a>[	$attackb8,		knight_atk9	] {<a href="fight.htm#ai_charge">ai_charge</a>(3);
+<a href="fight.htm#ai_melee">ai_melee</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk9</b><a name="knight_atk9">=</a>[	$attackb9,		knight_atk10] {<a href="fight.htm#ai_charge">ai_charge</a>(1);};
+<a href="qc-types.htm#void">void</a>() <b>knight_atk10</b><a name="knight_atk10">=</a>[	$attackb10,		<a href="knight.htm#knight_run1">knight_run1</a>	] {<a href="fight.htm#ai_charge">ai_charge</a>(5);};
+
+<i>//void()	knight_atk9	=[	$attack9,		knight_atk10	] {};</i>
+<i>//void()	knight_atk10	=[	$attack10,		knight_atk11	] {};</i>
+<i>//void()	knight_atk11	=[	$attack11,		knight_run1	] {};</i>
+
+<i>//===========================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>knight_pain1</b><a name="knight_pain1">=</a>[	$pain1,		knight_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_pain2</b><a name="knight_pain2">=</a>[	$pain2,		knight_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_pain3</b><a name="knight_pain3">=</a>[	$pain3,		<a href="knight.htm#knight_run1">knight_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>knight_painb1</b><a name="knight_painb1">=</a>[	$painb1,	knight_painb2	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb2</b><a name="knight_painb2">=</a>[	$painb2,	knight_painb3	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(3);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb3</b><a name="knight_painb3">=</a>[	$painb3,	knight_painb4	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb4</b><a name="knight_painb4">=</a>[	$painb4,	knight_painb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb5</b><a name="knight_painb5">=</a>[	$painb5,	knight_painb6	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb6</b><a name="knight_painb6">=</a>[	$painb6,	knight_painb7	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(4);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb7</b><a name="knight_painb7">=</a>[	$painb7,	knight_painb8	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(2);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb8</b><a name="knight_painb8">=</a>[	$painb8,	knight_painb9	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb9</b><a name="knight_painb9">=</a>[	$painb9,	knight_painb10	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(5);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb10</b><a name="knight_painb10">=</a>[	$painb10,	knight_painb11	] {<a href="ai.htm#ai_painforward">ai_painforward</a>(0);};
+<a href="qc-types.htm#void">void</a>() <b>knight_painb11</b><a name="knight_painb11">=</a>[	$painb11,	<a href="knight.htm#knight_run1">knight_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>knight_pain</b><a name="knight_pain">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a> r;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		<b>return</b>;
+
+	r = <a href="qc-built.htm#random">random</a>();
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"knight/khurt.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (r &lt; 0.85)
+	{
+		<a href="knight.htm#knight_pain1">knight_pain1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+	<b>else</b>
+	{
+		<a href="knight.htm#knight_painb1">knight_painb1</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	}
+	
+};
+
+<i>//===========================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>knight_bow1</b><a name="knight_bow1">=</a>[	$kneel1,		knight_bow2	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow2</b><a name="knight_bow2">=</a>[	$kneel2,		knight_bow3	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow3</b><a name="knight_bow3">=</a>[	$kneel3,		knight_bow4	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow4</b><a name="knight_bow4">=</a>[	$kneel4,		knight_bow5	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>knight_bow5</b><a name="knight_bow5">=</a>[	$kneel5,		<a href="knight.htm#knight_bow5">knight_bow5</a>	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>knight_bow6</b><a name="knight_bow6">=</a>[	$kneel4,		knight_bow7	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow7</b><a name="knight_bow7">=</a>[	$kneel3,		knight_bow8	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow8</b><a name="knight_bow8">=</a>[	$kneel2,		knight_bow9	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow9</b><a name="knight_bow9">=</a>[	$kneel1,		knight_bow10	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+<a href="qc-types.htm#void">void</a>() <b>knight_bow10</b><a name="knight_bow10">=</a>[	$walk1,		<a href="knight.htm#knight_walk1">knight_walk1</a>	] {<a href="ai.htm#ai_turn">ai_turn</a>();};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_die1</b><a name="knight_die1">=</a>[	$death1,	knight_die2	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die2</b><a name="knight_die2">=</a>[	$death2,	knight_die3	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die3</b><a name="knight_die3">=</a>[	$death3,	knight_die4	] 
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;};
+<a href="qc-types.htm#void">void</a>() <b>knight_die4</b><a name="knight_die4">=</a>[	$death4,	knight_die5	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die5</b><a name="knight_die5">=</a>[	$death5,	knight_die6	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die6</b><a name="knight_die6">=</a>[	$death6,	knight_die7	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die7</b><a name="knight_die7">=</a>[	$death7,	knight_die8	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die8</b><a name="knight_die8">=</a>[	$death8,	knight_die9	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die9</b><a name="knight_die9">=</a>[	$death9,	knight_die10] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_die10</b><a name="knight_die10">=</a>[	$death10,	<a href="knight.htm#knight_die10">knight_die10</a>] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb1</b><a name="knight_dieb1">=</a>[	$deathb1,	knight_dieb2	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb2</b><a name="knight_dieb2">=</a>[	$deathb2,	knight_dieb3	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb3</b><a name="knight_dieb3">=</a>[	$deathb3,	knight_dieb4	] 	
+{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb4</b><a name="knight_dieb4">=</a>[	$deathb4,	knight_dieb5	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb5</b><a name="knight_dieb5">=</a>[	$deathb5,	knight_dieb6	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb6</b><a name="knight_dieb6">=</a>[	$deathb6,	knight_dieb7	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb7</b><a name="knight_dieb7">=</a>[	$deathb7,	knight_dieb8	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb8</b><a name="knight_dieb8">=</a>[	$deathb8,	knight_dieb9	] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb9</b><a name="knight_dieb9">=</a>[	$deathb9,	knight_dieb10] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb10</b><a name="knight_dieb10">=</a> [	$deathb10,	knight_dieb11] {};
+<a href="qc-types.htm#void">void</a>() <b>knight_dieb11</b><a name="knight_dieb11">=</a> [	$deathb11,	<a href="knight.htm#knight_dieb11">knight_dieb11</a>] {};
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_die</b><a name="knight_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -40)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_knight.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib1.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib3.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+<i>// regular death</i>
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"knight/kdeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.5)
+		<a href="knight.htm#knight_die1">knight_die1</a> ();
+	<b>else</b>
+		<a href="knight.htm#knight_dieb1">knight_dieb1</a> ();
+};
+
+
+<i>/*QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_knight</b><a name="monster_knight">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/knight.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_knight.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/kdeath.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/khurt.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/ksight.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/sword1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/sword2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"knight/idle.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/knight.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 75;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="knight.htm#knight_stand1">knight_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="knight.htm#knight_walk1">knight_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="knight.htm#knight_run1">knight_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> = <a href="knight.htm#knight_atk1">knight_atk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="knight.htm#knight_pain">knight_pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="knight.htm#knight_die">knight_die</a>;
+	
+	<a href="monsters.htm#walkmonster_start">walkmonster_start</a> ();
+};
+
+</pre></body></html>

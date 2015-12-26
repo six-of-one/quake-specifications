@@ -1,0 +1,422 @@
+<html><head><title>fight.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<i>/*
+
+A monster is in fight mode if it thinks it can effectively attack its
+enemy.
+
+When it decides it can't attack, it goes into hunt mode.
+
+*/</i>
+
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> v) <a href="qc-built.htm#anglemod">anglemod</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="knight.htm#knight_atk1">knight_atk1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="knight.htm#knight_runatk1">knight_runatk1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="ogre.htm#ogre_smash1">ogre_smash1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="ogre.htm#ogre_swing1">ogre_swing1</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="shambler.htm#sham_smash1">sham_smash1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="shambler.htm#sham_swingr1">sham_swingr1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="shambler.htm#sham_swingl1">sham_swingl1</a>;
+
+<a href="qc-types.htm#float">float</a>() <a href="demon.htm#DemonCheckAttack">DemonCheckAttack</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> side) <a href="demon.htm#Demon_Melee">Demon_Melee</a>;
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> dest) <a href="ai.htm#ChooseTurn">ChooseTurn</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="fight.htm#ai_face">ai_face</a>;
+
+
+<a href="qc-types.htm#float">float</a>	enemy_vis, enemy_infront, enemy_range;
+<a href="qc-types.htm#float">float</a> <b><a name="enemy_yaw">enemy_yaw</a></b>;
+
+
+<a href="qc-types.htm#void">void</a>() <b>knight_attack</b><a name="knight_attack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>		len;
+	
+<i>// decide if now is a good swing time</i>
+	len = <a href="qc-built.htm#vlen">vlen</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a>+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>));
+	
+	<b>if</b> (len&lt;80)
+		<a href="knight.htm#knight_atk1">knight_atk1</a> ();
+	<b>else</b>
+		<a href="knight.htm#knight_runatk1">knight_runatk1</a> ();
+};
+
+<i>//=============================================================================</i>
+
+<i>/*
+===========
+CheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>CheckAttack</b><a name="CheckAttack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;	
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		chance;
+
+	targ = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+<i>// see if any entities are in the way of the shot</i>
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != targ)
+		return FALSE;		<i>// don't have a clear shot</i>
+			
+	<b>if</b> (<a href="qc-built.htm#trace_inopen">trace_inopen</a> &amp;&amp; <a href="qc-built.htm#trace_inwater">trace_inwater</a>)
+		return FALSE;			<i>// sight line crossed contents</i>
+
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{	<i>// melee attack</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a>)
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_knight"</b>)
+				<a href="fight.htm#knight_attack">knight_attack</a> ();
+			<b>else</b>
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> ();
+			return TRUE;
+		}
+	}
+	
+<i>// missile attack</i>
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a>)
+		return FALSE;
+		
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+		
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+		return FALSE;
+		
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{
+		chance = 0.9;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = 0;
+	}
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_NEAR">RANGE_NEAR</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a>)
+			chance = 0.2;
+		<b>else</b>
+			chance = 0.4;
+	}
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a>)
+			chance = 0.05;
+		<b>else</b>
+			chance = 0.1;
+	}
+	<b>else</b>
+		chance = 0;
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a> () &lt; chance)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> ();
+		<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a> (2*<a href="qc-built.htm#random">random</a>());
+		return TRUE;
+	}
+
+	return FALSE;
+};
+
+
+<i>/*
+=============
+ai_face
+
+Stay facing the enemy
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_face</b><a name="ai_face">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+};
+
+<i>/*
+=============
+ai_charge
+
+The monster is in a melee attack, so get as close as possible to .enemy
+=============
+*/</i>
+
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> targ) <a href="ai.htm#visible">visible</a>;
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ) <a href="ai.htm#infront">infront</a>;
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ) <a href="ai.htm#range">range</a>;
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> d) <b>ai_charge</b><a name="ai_charge">=</a>
+{
+	<a href="fight.htm#ai_face">ai_face</a> ();	
+	<a href="qc-built.htm#movetogoal">movetogoal</a> (d);		<i>// done in C code...</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>ai_charge_side</b><a name="ai_charge_side">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dtemp;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	heading;
+	
+<i>// aim to the left of the enemy for a flyby</i>
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	dtemp = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - 30*<a href="qc-built.htm#v_right">v_right</a>;
+	heading = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(dtemp - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	
+	<a href="qc-built.htm#walkmove">walkmove</a>(heading, 20);
+};
+
+
+<i>/*
+=============
+ai_melee
+
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_melee</b><a name="ai_melee">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+	<b>local</b> <a href="qc-types.htm#float">float</a> 	ldmg;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;		<i>// removed before stroke</i>
+		
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 60)
+		<b>return</b>;
+		
+	ldmg = (<a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>()) * 3;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>ai_melee_side</b><a name="ai_melee_side">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	delta;
+	<b>local</b> <a href="qc-types.htm#float">float</a> 	ldmg;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;		<i>// removed before stroke</i>
+		
+	<a href="fight.htm#ai_charge_side">ai_charge_side</a>();
+	
+	delta = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(delta) &gt; 60)
+		<b>return</b>;
+	<b>if</b> (!<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		<b>return</b>;
+	ldmg = (<a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>() + <a href="qc-built.htm#random">random</a>()) * 3;
+	<a href="combat.htm#T_Damage">T_Damage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>, ldmg);
+};
+
+
+<i>//=============================================================================</i>
+
+<i>/*
+===========
+SoldierCheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>SoldierCheckAttack</b><a name="SoldierCheckAttack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;	
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		chance;
+
+	targ = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+<i>// see if any entities are in the way of the shot</i>
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<b>if</b> (<a href="qc-built.htm#trace_inopen">trace_inopen</a> &amp;&amp; <a href="qc-built.htm#trace_inwater">trace_inwater</a>)
+		return FALSE;			<i>// sight line crossed contents</i>
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != targ)
+		return FALSE;	<i>// don't have a clear shot</i>
+			
+	
+<i>// missile attack</i>
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+		
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+		return FALSE;
+		
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+		chance = 0.9;
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_NEAR">RANGE_NEAR</a>)
+		chance = 0.4;
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+		chance = 0.05;
+	<b>else</b>
+		chance = 0;
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a> () &lt; chance)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> ();
+		<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a> (1 + <a href="qc-built.htm#random">random</a>());
+		<b>if</b> (<a href="qc-built.htm#random">random</a>() &lt; 0.3)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lefty">lefty</a> = !<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lefty">lefty</a>;
+
+		return TRUE;
+	}
+
+	return FALSE;
+};
+<i>//=============================================================================</i>
+
+<i>/*
+===========
+ShamCheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>ShamCheckAttack</b><a name="ShamCheckAttack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;	
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		chance;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		<a href="fight.htm#enemy_yaw">enemy_yaw</a>;
+
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{
+		<b>if</b> (<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+			return TRUE;
+		}
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+	
+	<b>if</b> (!enemy_vis)
+		return FALSE;
+		
+	targ = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+<i>// see if any entities are in the way of the shot</i>
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+
+	<b>if</b> (<a href="qc-built.htm#vlen">vlen</a>(spot1 - spot2) &gt; 600)
+		return FALSE;
+
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<b>if</b> (<a href="qc-built.htm#trace_inopen">trace_inopen</a> &amp;&amp; <a href="qc-built.htm#trace_inwater">trace_inwater</a>)
+		return FALSE;			<i>// sight line crossed contents</i>
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != targ)
+	{
+		return FALSE;	<i>// don't have a clear shot</i>
+	}
+			
+<i>// missile attack</i>
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+		return FALSE;
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>;
+	<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a> (2 + 2*<a href="qc-built.htm#random">random</a>());
+	return TRUE;
+};
+
+<i>//============================================================================</i>
+
+<i>/*
+===========
+OgreCheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>OgreCheckAttack</b><a name="OgreCheckAttack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;	
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		chance;
+
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+	{
+		<b>if</b> (<a href="combat.htm#CanDamage">CanDamage</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>, <a href="qc-glob.htm#self">self</a>))
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MELEE">AS_MELEE</a>;
+			return TRUE;
+		}
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+	
+	<b>if</b> (!enemy_vis)
+		return FALSE;
+		
+	targ = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+<i>// see if any entities are in the way of the shot</i>
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<b>if</b> (<a href="qc-built.htm#trace_inopen">trace_inopen</a> &amp;&amp; <a href="qc-built.htm#trace_inwater">trace_inwater</a>)
+		return FALSE;			<i>// sight line crossed contents</i>
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != targ)
+	{
+		return FALSE;	<i>// don't have a clear shot</i>
+	}
+			
+<i>// missile attack</i>
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+		
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+		return FALSE;
+		
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_NEAR">RANGE_NEAR</a>)
+		chance = 0.10;
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+		chance = 0.05;
+	<b>else</b>
+		chance = 0;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>;
+	<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a> (1 + 2*<a href="qc-built.htm#random">random</a>());
+	return TRUE;
+};
+
+
+</pre></body></html>

@@ -1,0 +1,422 @@
+<html><head><title>wizard.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/*
+==============================================================================
+
+WIZARD
+
+==============================================================================
+*/</i>
+
+
+<b>$</b><a href="qc-mdl.htm#s_cd">cd</a> <b>/raid/quake/id1/models/a_wizard</b>
+<b>$</b><a href="qc-mdl.htm#s_origin">origin</a> <b>0 0 24</b>
+<b>$</b><a href="qc-mdl.htm#s_base">base</a> <b>wizbase	</b>
+<b>$</b><a href="qc-mdl.htm#s_skin">skin</a> <b>wizbase</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>hover1 hover2 hover3 hover4 hover5 hover6 hover7 hover8</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>hover9 hover10 hover11 hover12 hover13 hover14 hover15</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>fly1 fly2 fly3 fly4 fly5 fly6 fly7 fly8 fly9 fly10</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>fly11 fly12 fly13 fly14</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>magatt1 magatt2 magatt3 magatt4 magatt5 magatt6 magatt7</b>
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>magatt8 magatt9 magatt10 magatt11 magatt12 magatt13</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>pain1 pain2 pain3 pain4</b>
+
+<b>$</b><a href="qc-mdl.htm#s_frame">frame</a> <b>death1 death2 death3 death4 death5 death6 death7 death8</b>
+
+<i>/*
+==============================================================================
+
+WIZARD
+
+If the player moves behind cover before the missile is launched, launch it
+at the last visible spot with no velocity leading, in hopes that the player
+will duck back out and catch it.
+==============================================================================
+*/</i>
+
+
+<i>/*
+=============
+LaunchMissile
+
+Sets the given entities velocity and angles so that it will hit self.enemy
+if self.enemy maintains it's current velocity
+0.1 is moderately accurate, 0.0 is totally accurate
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> missile, <a href="qc-types.htm#float">float</a> mspeed, <a href="qc-types.htm#float">float</a> accuracy) <b>LaunchMissile</b><a name="LaunchMissile">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	vec, move;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	fly;
+
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+		
+<i>// set missile speed</i>
+	vec = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_mins">mins</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_size">size</a> * 0.7 - missile.<a href="qc-enty.htm#dot_origin">origin</a>;
+
+<i>// calc aproximate time for missile to reach vec</i>
+	fly = <a href="qc-built.htm#vlen">vlen</a> (vec) / mspeed;
+	
+<i>// get the entities xy velocity</i>
+	move = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_velocity">velocity</a>;
+	move_z = 0;
+
+<i>// project the target forward in time</i>
+	vec = vec + move * fly;
+	
+	vec = <a href="qc-built.htm#normalize">normalize</a>(vec);
+	vec = vec + accuracy*<a href="qc-built.htm#v_up">v_up</a>*(<a href="qc-built.htm#random">random</a>()- 0.5) + accuracy*<a href="qc-built.htm#v_right">v_right</a>*(<a href="qc-built.htm#random">random</a>()- 0.5);
+	
+	missile.<a href="qc-enty.htm#dot_velocity">velocity</a> = vec * mspeed;
+
+	missile.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+	missile.angles_y = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(missile.<a href="qc-enty.htm#dot_velocity">velocity</a>);
+
+<i>// set missile duration</i>
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 5;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_Remove">SUB_Remove</a>;	
+};
+
+
+<a href="qc-types.htm#void">void</a>() <a href="wizard.htm#wiz_run1">wiz_run1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="wizard.htm#wiz_side1">wiz_side1</a>;
+
+<i>/*
+=================
+WizardCheckAttack
+=================
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>WizardCheckAttack</b><a name="WizardCheckAttack">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;	
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	targ;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		chance;
+
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &lt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a>)
+		return FALSE;
+	<b>if</b> (!enemy_vis)
+		return FALSE;
+
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> != <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+			<a href="wizard.htm#wiz_run1">wiz_run1</a> ();
+		}
+		return FALSE;
+	}
+		
+	targ = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	
+<i>// see if any entities are in the way of the shot</i>
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#FALSE">FALSE</a>, <a href="qc-glob.htm#self">self</a>);
+
+	<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> != targ)
+	{	<i>// don't have a clear shot, so move to a side</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> != <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+			<a href="wizard.htm#wiz_run1">wiz_run1</a> ();
+		}
+		return FALSE;
+	}
+			
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MELEE">RANGE_MELEE</a>)
+		chance = 0.9;
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_NEAR">RANGE_NEAR</a>)
+		chance = 0.6;
+	<b>else</b> <b>if</b> (enemy_range == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+		chance = 0.2;
+	<b>else</b>
+		chance = 0;
+
+	<b>if</b> (<a href="qc-built.htm#random">random</a> () &lt; chance)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>;
+		return TRUE;
+	}
+
+	<b>if</b> (enemy_range == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> != <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+			<a href="wizard.htm#wiz_run1">wiz_run1</a> ();
+		}
+	}
+	<b>else</b>
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> != <a href="defs.htm#AS_SLIDING">AS_SLIDING</a>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_SLIDING">AS_SLIDING</a>;
+			<a href="wizard.htm#wiz_side1">wiz_side1</a> ();
+		}
+	}
+	
+	return FALSE;
+};
+
+<i>/*
+=================
+WizardAttackFinished
+=================
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>WizardAttackFinished</b><a name="WizardAttackFinished">=</a>
+{
+	<b>if</b> (enemy_range &gt;= <a href="defs.htm#RANGE_MID">RANGE_MID</a> || !enemy_vis)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="wizard.htm#wiz_run1">wiz_run1</a>;
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_SLIDING">AS_SLIDING</a>;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="wizard.htm#wiz_side1">wiz_side1</a>;
+	}
+};
+
+<i>/*
+==============================================================================
+
+FAST ATTACKS
+
+==============================================================================
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>() <b>Wiz_FastFire</b><a name="Wiz_FastFire">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>		vec;
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>		dst;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 0)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_effects">effects</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>.<a href="qc-enty.htm#dot_effects">effects</a> | <a href="qc-defs.htm#EF_MUZZLEFLASH">EF_MUZZLEFLASH</a>;
+
+		<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_angles">angles</a>);	
+		dst = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - 13*<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a>;
+	
+		vec = <a href="qc-built.htm#normalize">normalize</a>(dst - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"wizard/wattack.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="weapons.htm#launch_spike">launch_spike</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>, vec);
+		<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = vec*600;
+		<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_owner">owner</a>;
+		<a href="defs.htm#newmis">newmis</a>.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"wizspike"</b>;
+		<a href="qc-built.htm#setmodel">setmodel</a> (<a href="defs.htm#newmis">newmis</a>, <b>"progs/w_spike.mdl"</b>);
+		<a href="qc-built.htm#setsize">setsize</a> (<a href="defs.htm#newmis">newmis</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>, <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a>);		
+	}
+
+	<a href="qc-built.htm#remove">remove</a> (<a href="qc-glob.htm#self">self</a>);
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>Wiz_StartFast</b><a name="Wiz_StartFast">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	missile;
+	
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_WEAPON">CHAN_WEAPON</a>, <b>"wizard/wattack.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_v_angle">v_angle</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>;
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.6;
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 30' + <a href="qc-built.htm#v_forward">v_forward</a>*14 + <a href="qc-built.htm#v_right">v_right</a>*14);
+	missile.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.8;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="wizard.htm#Wiz_FastFire">Wiz_FastFire</a>;
+	missile.<a href="qc-enty.htm#dot_movedir">movedir</a> = <a href="qc-built.htm#v_right">v_right</a>;
+
+	missile = <a href="qc-built.htm#spawn">spawn</a> ();
+	missile.<a href="qc-enty.htm#dot_owner">owner</a> = <a href="qc-glob.htm#self">self</a>;
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 1;
+	<a href="qc-built.htm#setsize">setsize</a> (missile, '0 0 0', '0 0 0');		
+	<a href="qc-built.htm#setorigin">setorigin</a> (missile, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + '0 0 30' + <a href="qc-built.htm#v_forward">v_forward</a>*14 + <a href="qc-built.htm#v_right">v_right</a>* -14);
+	missile.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	missile.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.3;
+	missile.<a href="qc-enty.htm#dot_think">think</a> = <a href="wizard.htm#Wiz_FastFire">Wiz_FastFire</a>;
+	missile.<a href="qc-enty.htm#dot_movedir">movedir</a> = <a href="defs.htm#VEC_ORIGIN">VEC_ORIGIN</a> - <a href="qc-built.htm#v_right">v_right</a>;
+};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>Wiz_idlesound</b><a name="Wiz_idlesound">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a> wr;
+	wr = <a href="qc-built.htm#random">random</a>() * 5;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waitmin">waitmin</a> &lt; <a href="qc-glob.htm#time">time</a>)
+	{
+	 	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_waitmin">waitmin</a> = <a href="qc-glob.htm#time">time</a> + 2;
+	 	<b>if</b> (wr &gt; 4.5) 
+	 		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"wizard/widle1.wav"</b>, 1,  <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+	 	<b>if</b> (wr &lt; 1.5)
+	 		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"wizard/widle2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);
+	}
+	<b>return</b>;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand1</b><a name="wiz_stand1">=</a>[	$hover1,		wiz_stand2	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand2</b><a name="wiz_stand2">=</a>[	$hover2,		wiz_stand3	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand3</b><a name="wiz_stand3">=</a>[	$hover3,		wiz_stand4	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand4</b><a name="wiz_stand4">=</a>[	$hover4,		wiz_stand5	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand5</b><a name="wiz_stand5">=</a>[	$hover5,		wiz_stand6	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand6</b><a name="wiz_stand6">=</a>[	$hover6,		wiz_stand7	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand7</b><a name="wiz_stand7">=</a>[	$hover7,		wiz_stand8	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_stand8</b><a name="wiz_stand8">=</a>[	$hover8,		<a href="wizard.htm#wiz_stand1">wiz_stand1</a>	] {<a href="ai.htm#ai_stand">ai_stand</a>();};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk1</b><a name="wiz_walk1">=</a>[	$hover1,		wiz_walk2	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);
+<a href="wizard.htm#Wiz_idlesound">Wiz_idlesound</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk2</b><a name="wiz_walk2">=</a>[	$hover2,		wiz_walk3	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk3</b><a name="wiz_walk3">=</a>[	$hover3,		wiz_walk4	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk4</b><a name="wiz_walk4">=</a>[	$hover4,		wiz_walk5	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk5</b><a name="wiz_walk5">=</a>[	$hover5,		wiz_walk6	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk6</b><a name="wiz_walk6">=</a>[	$hover6,		wiz_walk7	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk7</b><a name="wiz_walk7">=</a>[	$hover7,		wiz_walk8	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_walk8</b><a name="wiz_walk8">=</a>[	$hover8,		<a href="wizard.htm#wiz_walk1">wiz_walk1</a>	] {<a href="ai.htm#ai_walk">ai_walk</a>(8);};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_side1</b><a name="wiz_side1">=</a>[	$hover1,		wiz_side2	] {<a href="ai.htm#ai_run">ai_run</a>(8);
+<a href="wizard.htm#Wiz_idlesound">Wiz_idlesound</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side2</b><a name="wiz_side2">=</a>[	$hover2,		wiz_side3	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side3</b><a name="wiz_side3">=</a>[	$hover3,		wiz_side4	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side4</b><a name="wiz_side4">=</a>[	$hover4,		wiz_side5	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side5</b><a name="wiz_side5">=</a>[	$hover5,		wiz_side6	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side6</b><a name="wiz_side6">=</a>[	$hover6,		wiz_side7	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side7</b><a name="wiz_side7">=</a>[	$hover7,		wiz_side8	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_side8</b><a name="wiz_side8">=</a>[	$hover8,		<a href="wizard.htm#wiz_side1">wiz_side1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(8);};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_run1</b><a name="wiz_run1">=</a>[	$fly1,		wiz_run2	] {<a href="ai.htm#ai_run">ai_run</a>(16);
+<a href="wizard.htm#Wiz_idlesound">Wiz_idlesound</a>();
+};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run2</b><a name="wiz_run2">=</a>[	$fly2,		wiz_run3	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run3</b><a name="wiz_run3">=</a>[	$fly3,		wiz_run4	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run4</b><a name="wiz_run4">=</a>[	$fly4,		wiz_run5	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run5</b><a name="wiz_run5">=</a>[	$fly5,		wiz_run6	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run6</b><a name="wiz_run6">=</a>[	$fly6,		wiz_run7	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run7</b><a name="wiz_run7">=</a>[	$fly7,		wiz_run8	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run8</b><a name="wiz_run8">=</a>[	$fly8,		wiz_run9	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run9</b><a name="wiz_run9">=</a>[	$fly9,		wiz_run10	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run10</b><a name="wiz_run10">=</a>[	$fly10,		wiz_run11	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run11</b><a name="wiz_run11">=</a>[	$fly11,		wiz_run12	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run12</b><a name="wiz_run12">=</a>[	$fly12,		wiz_run13	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run13</b><a name="wiz_run13">=</a>[	$fly13,		wiz_run14	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+<a href="qc-types.htm#void">void</a>() <b>wiz_run14</b><a name="wiz_run14">=</a>[	$fly14,		<a href="wizard.htm#wiz_run1">wiz_run1</a>	] {<a href="ai.htm#ai_run">ai_run</a>(16);};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast1</b><a name="wiz_fast1">=</a>[	$magatt1,		wiz_fast2	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="wizard.htm#Wiz_StartFast">Wiz_StartFast</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast2</b><a name="wiz_fast2">=</a>[	$magatt2,		wiz_fast3	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast3</b><a name="wiz_fast3">=</a>[	$magatt3,		wiz_fast4	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast4</b><a name="wiz_fast4">=</a>[	$magatt4,		wiz_fast5	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast5</b><a name="wiz_fast5">=</a>[	$magatt5,		wiz_fast6	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast6</b><a name="wiz_fast6">=</a>[	$magatt6,		wiz_fast7	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast7</b><a name="wiz_fast7">=</a>[	$magatt5,		wiz_fast8	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast8</b><a name="wiz_fast8">=</a>[	$magatt4,		wiz_fast9	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast9</b><a name="wiz_fast9">=</a>[	$magatt3,		wiz_fast10	] {<a href="fight.htm#ai_face">ai_face</a>();};
+<a href="qc-types.htm#void">void</a>() <b>wiz_fast10</b><a name="wiz_fast10">=</a>[	$magatt2,		<a href="wizard.htm#wiz_run1">wiz_run1</a>	] {<a href="fight.htm#ai_face">ai_face</a>();<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a>(2);<a href="wizard.htm#WizardAttackFinished">WizardAttackFinished</a> ();};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_pain1</b><a name="wiz_pain1">=</a>[	$pain1,		wiz_pain2	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_pain2</b><a name="wiz_pain2">=</a>[	$pain2,		wiz_pain3	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_pain3</b><a name="wiz_pain3">=</a>[	$pain3,		wiz_pain4	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_pain4</b><a name="wiz_pain4">=</a>[	$pain4,		<a href="wizard.htm#wiz_run1">wiz_run1</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_death1</b><a name="wiz_death1">=</a>[	$death1,		wiz_death2	] {
+
+<a href="qc-glob.htm#self">self</a>.velocity_x = -200 + 400*<a href="qc-built.htm#random">random</a>();
+<a href="qc-glob.htm#self">self</a>.velocity_y = -200 + 400*<a href="qc-built.htm#random">random</a>();
+<a href="qc-glob.htm#self">self</a>.velocity_z = 100 + 100*<a href="qc-built.htm#random">random</a>();
+<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_ONGROUND">FL_ONGROUND</a>);
+<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"wizard/wdeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death2</b><a name="wiz_death2">=</a>[	$death2,		wiz_death3	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death3</b><a name="wiz_death3">=</a>[	$death3,		wiz_death4	]{<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_NOT">SOLID_NOT</a>;};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death4</b><a name="wiz_death4">=</a>[	$death4,		wiz_death5	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death5</b><a name="wiz_death5">=</a>[	$death5,		wiz_death6	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death6</b><a name="wiz_death6">=</a>[	$death6,		wiz_death7	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death7</b><a name="wiz_death7">=</a>[	$death7,		wiz_death8	] {};
+<a href="qc-types.htm#void">void</a>() <b>wiz_death8</b><a name="wiz_death8">=</a>[	$death8,		<a href="wizard.htm#wiz_death8">wiz_death8</a>	] {};
+
+<a href="qc-types.htm#void">void</a>() <b>wiz_die</b><a name="wiz_die">=</a>
+{
+<i>// check for gib</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -40)
+	{
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"player/udeath.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<a href="player.htm#ThrowHead">ThrowHead</a> (<b>"progs/h_wizard.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<a href="player.htm#ThrowGib">ThrowGib</a> (<b>"progs/gib2.mdl"</b>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a>);
+		<b>return</b>;
+	}
+
+	<a href="wizard.htm#wiz_death1">wiz_death1</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>Wiz_Pain</b><a name="Wiz_Pain">=</a>
+{
+	<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"wizard/wpain.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>if</b> (<a href="qc-built.htm#random">random</a>()*70 &gt; damage)
+		<b>return</b>;		<i>// didn't flinch</i>
+
+	<a href="wizard.htm#wiz_pain1">wiz_pain1</a> ();
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>Wiz_Missile</b><a name="Wiz_Missile">=</a>
+{
+	<a href="wizard.htm#wiz_fast1">wiz_fast1</a>();
+};
+
+<i>/*QUAKED monster_wizard (1 0 0) (-16 -16 -24) (16 16 40) Ambush
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_wizard</b><a name="monster_wizard">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/wizard.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/h_wizard.mdl"</b>);
+	<a href="qc-built.htm#precache_model">precache_model</a> (<b>"progs/w_spike.mdl"</b>);
+
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/hit.wav"</b>);		<i>// used by c code</i>
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/wattack.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/wdeath.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/widle1.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/widle2.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/wpain.wav"</b>);
+	<a href="qc-built.htm#precache_sound">precache_sound</a> (<b>"wizard/wsight.wav"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_SLIDEBOX">SOLID_SLIDEBOX</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_STEP">MOVETYPE_STEP</a>;
+
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <b>"progs/wizard.mdl"</b>);
+
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-16 -16 -24', '16 16 40');
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = 80;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> = <a href="wizard.htm#wiz_stand1">wiz_stand1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> = <a href="wizard.htm#wiz_walk1">wiz_walk1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a> = <a href="wizard.htm#wiz_run1">wiz_run1</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> = <a href="wizard.htm#Wiz_Missile">Wiz_Missile</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> = <a href="wizard.htm#Wiz_Pain">Wiz_Pain</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> = <a href="wizard.htm#wiz_die">wiz_die</a>;
+		
+	<a href="monsters.htm#flymonster_start">flymonster_start</a> ();
+};
+
+</pre></body></html>

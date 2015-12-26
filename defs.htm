@@ -1,0 +1,701 @@
+<html><head><title>defs.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<i>/*
+==============================================================================
+
+			SOURCE FOR GLOBALVARS_T C STRUCTURE
+
+==============================================================================
+*/</i>
+
+
+<i>//</i>
+<i>// system globals</i>
+<i>//</i>
+<a href="qc-types.htm#entity">entity</a> <b><a href="qc-glob.htm#self">self</a></b>;
+<a href="qc-types.htm#entity">entity</a> <b><a href="qc-glob.htm#other">other</a></b>;
+<a href="qc-types.htm#entity">entity</a> <b><a href="qc-glob.htm#world">world</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#time">time</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#frametime">frametime</a></b>;
+
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#force_retouch">force_retouch</a></b>;		<i>// force all entities to touch triggers</i>
+								<i>// next frame.  this is needed because</i>
+								<i>// non-moving things don't normally scan</i>
+								<i>// for triggers, and when a trigger is</i>
+								<i>// created (like a teleport trigger), it</i>
+								<i>// needs to catch everything.</i>
+								<i>// decremented each frame, so set to 2</i>
+								<i>// to guarantee everything is touched</i>
+<a href="qc-types.htm#string">string</a> <b><a href="qc-glob.htm#mapname">mapname</a></b>;
+
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#deathmatch">deathmatch</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#coop">coop</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#teamplay">teamplay</a></b>;
+
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#serverflags">serverflags</a></b>;		<i>// propagated from level to level, used to</i>
+								<i>// keep track of completed episodes</i>
+
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#total_secrets">total_secrets</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#total_monsters">total_monsters</a></b>;
+
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#found_secrets">found_secrets</a></b>;		<i>// number of secrets found</i>
+<a href="qc-types.htm#float">float</a> <b><a href="qc-glob.htm#killed_monsters">killed_monsters</a></b>;	<i>// number of monsters killed</i>
+
+
+<i>// spawnparms are used to encode information about clients across server</i>
+<i>// level changes</i>
+<a href="qc-types.htm#float">float</a>		<a href="qc-glob.htm#parm1">parm1</a>, <a href="qc-glob.htm#parm2">parm2</a>, <a href="qc-glob.htm#parm3">parm3</a>, parm4, parm5, parm6, parm7, <a href="qc-glob.htm#parm8">parm8</a>, <a href="qc-glob.htm#parm9">parm9</a>, parm10, parm11, parm12, parm13, parm14, parm15, parm16;
+
+<i>//</i>
+<i>// global variables set by built in functions</i>
+<i>//	</i>
+<a href="qc-types.htm#vector">vector</a>		<a href="qc-built.htm#v_forward">v_forward</a>, <a href="qc-built.htm#v_up">v_up</a>, <a href="qc-built.htm#v_right">v_right</a>;	<i>// set by makevectors()</i>
+	
+<i>// set by traceline / tracebox</i>
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_allsolid">trace_allsolid</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_startsolid">trace_startsolid</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_fraction">trace_fraction</a></b>;
+<a href="qc-types.htm#vector">vector</a> <b><a href="qc-built.htm#trace_endpos">trace_endpos</a></b>;
+<a href="qc-types.htm#vector">vector</a> <b><a href="qc-built.htm#trace_plane_normal">trace_plane_normal</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_plane_dist">trace_plane_dist</a></b>;
+<a href="qc-types.htm#entity">entity</a> <b><a href="qc-built.htm#trace_ent">trace_ent</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_inopen">trace_inopen</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a href="qc-built.htm#trace_inwater">trace_inwater</a></b>;
+
+<a href="qc-types.htm#entity">entity</a> <b><a href="qc-net.htm#msg_entity">msg_entity</a></b>;				<i>// destination of single entity writes</i>
+
+<i>//</i>
+<i>// required prog functions</i>
+<i>//</i>
+<a href="qc-types.htm#void">void</a>() <a href="world.htm#main">main</a>;						<i>// only for testing</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="world.htm#StartFrame">StartFrame</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#PlayerPreThink">PlayerPreThink</a>;
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#PlayerPostThink">PlayerPostThink</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#ClientKill">ClientKill</a>;
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#ClientConnect">ClientConnect</a>;
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#PutClientInServer">PutClientInServer</a>;		<i>// call after setting the parm1... parms</i>
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#ClientDisconnect">ClientDisconnect</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#SetNewParms">SetNewParms</a>;			<i>// called when a client first connects to</i>
+									<i>// a server. sets parms so they can be</i>
+									<i>// saved off for restarts</i>
+
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#SetChangeParms">SetChangeParms</a>;			<i>// call to set parms for self so they can</i>
+									<i>// be saved for a level transition</i>
+
+
+<i>//================================================</i>
+<a href="qc-types.htm#void">void</a> <b><a name="end_sys_globals">end_sys_globals</a></b>;		<i>// flag for structure dumping</i>
+<i>//================================================</i>
+
+<i>/*
+==============================================================================
+
+			SOURCE FOR ENTVARS_T C STRUCTURE
+
+==============================================================================
+*/</i>
+
+
+<i>//</i>
+<i>// system fields (*** = do not set in prog code, maintained by C code)</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		modelindex;		<i>// *** model index in the precached list</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		absmin, absmax;	<i>// *** origin + mins / maxs</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		ltime;			<i>// local time for entity</i>
+.<a href="qc-types.htm#dot_float">float</a>		movetype;
+.<a href="qc-types.htm#dot_float">float</a>		solid;
+
+.<a href="qc-types.htm#dot_vector">vector</a>		origin;			<i>// ***</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		oldorigin;		<i>// ***</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		velocity;
+.<a href="qc-types.htm#dot_vector">vector</a>		angles;
+.<a href="qc-types.htm#dot_vector">vector</a>		avelocity;
+
+.<a href="qc-types.htm#dot_vector">vector</a>		punchangle;		<i>// temp angle adjust from damage or recoil</i>
+
+.<a href="qc-types.htm#dot_string">string</a>		classname;		<i>// spawn function</i>
+.<a href="qc-types.htm#dot_string">string</a>		model;
+.<a href="qc-types.htm#dot_float">float</a>		frame;
+.<a href="qc-types.htm#dot_float">float</a>		skin;
+.<a href="qc-types.htm#dot_float">float</a>		effects;
+
+.<a href="qc-types.htm#dot_vector">vector</a>		mins, maxs;		<i>// bounding box extents reletive to origin</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		size;			<i>// maxs - mins</i>
+
+.void()		touch;
+.void()		use;
+.void()		think;
+.void()		blocked;		<i>// for doors or plats, called when can't push other</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		nextthink;
+.<a href="qc-types.htm#dot_entity">entity</a>		groundentity;
+
+<i>// stats</i>
+.<a href="qc-types.htm#dot_float">float</a>		health;
+.<a href="qc-types.htm#dot_float">float</a>		frags;
+.<a href="qc-types.htm#dot_float">float</a>		weapon;			<i>// one of the IT_SHOTGUN, etc flags</i>
+.<a href="qc-types.htm#dot_string">string</a>		weaponmodel;
+.<a href="qc-types.htm#dot_float">float</a>		weaponframe;
+.<a href="qc-types.htm#dot_float">float</a>		currentammo;
+.<a href="qc-types.htm#dot_float">float</a>		ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
+
+.<a href="qc-types.htm#dot_float">float</a>		items;			<i>// bit flags</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		takedamage;
+.<a href="qc-types.htm#dot_entity">entity</a>		chain;
+.<a href="qc-types.htm#dot_float">float</a>		deadflag;
+
+.<a href="qc-types.htm#dot_vector">vector</a>		view_ofs;			<i>// add to origin to get eye point</i>
+
+
+.<a href="qc-types.htm#dot_float">float</a>		button0;		<i>// fire</i>
+.<a href="qc-types.htm#dot_float">float</a>		button1;		<i>// use</i>
+.<a href="qc-types.htm#dot_float">float</a>		button2;		<i>// jump</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		impulse;		<i>// weapon changes</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		fixangle;
+.<a href="qc-types.htm#dot_vector">vector</a>		v_angle;		<i>// view / targeting angle for players</i>
+.<a href="qc-types.htm#dot_float">float</a>		idealpitch;		<i>// calculated pitch angle for lookup up slopes</i>
+
+
+.<a href="qc-types.htm#dot_string">string</a>		netname;
+
+.<a href="qc-types.htm#dot_entity">entity</a> 	enemy;
+
+.<a href="qc-types.htm#dot_float">float</a>		flags;
+
+.<a href="qc-types.htm#dot_float">float</a>		colormap;
+.<a href="qc-types.htm#dot_float">float</a>		team;
+
+.<a href="qc-types.htm#dot_float">float</a>		max_health;		<i>// players maximum health is stored here</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		teleport_time;	<i>// don't back up</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		armortype;		<i>// save this fraction of incoming damage</i>
+.<a href="qc-types.htm#dot_float">float</a>		armorvalue;
+
+.<a href="qc-types.htm#dot_float">float</a>		waterlevel;		<i>// 0 = not in, 1 = feet, 2 = wast, 3 = eyes</i>
+.<a href="qc-types.htm#dot_float">float</a>		watertype;		<i>// a contents value</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		ideal_yaw;
+.<a href="qc-types.htm#dot_float">float</a>		yaw_speed;
+
+.<a href="qc-types.htm#dot_entity">entity</a>		aiment;
+
+.<a href="qc-types.htm#dot_entity">entity</a> 	goalentity;		<i>// a movetarget or an enemy</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		spawnflags;
+
+.<a href="qc-types.htm#dot_string">string</a>		target;
+.<a href="qc-types.htm#dot_string">string</a>		targetname;
+
+<i>// damage is accumulated through a frame. and sent as one single</i>
+<i>// message, so the super shotgun doesn't generate huge messages</i>
+.<a href="qc-types.htm#dot_float">float</a>		dmg_take;
+.<a href="qc-types.htm#dot_float">float</a>		dmg_save;
+.<a href="qc-types.htm#dot_entity">entity</a>		dmg_inflictor;
+
+.<a href="qc-types.htm#dot_entity">entity</a>		owner;		<i>// who launched a missile</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		movedir;	<i>// mostly for doors, but also used for waterjump</i>
+
+.<a href="qc-types.htm#dot_string">string</a>		message;		<i>// trigger messages</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		sounds;		<i>// either a cd track number or sound number</i>
+
+.<a href="qc-types.htm#dot_string">string</a>		noise, noise1, noise2, noise3;	<i>// contains names of wavs to play</i>
+
+<i>//================================================</i>
+<a href="qc-types.htm#void">void</a> <b><a name="end_sys_fields">end_sys_fields</a></b>;			<i>// flag for structure dumping</i>
+<i>//================================================</i>
+
+<i>/*
+==============================================================================
+
+				VARS NOT REFERENCED BY C CODE
+
+==============================================================================
+*/</i>
+
+
+
+<i>//</i>
+<i>// constants</i>
+<i>//</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="FALSE">FALSE</a></b> = 0;
+<a href="qc-types.htm#float">float</a> <b><a name="TRUE">TRUE</a></b> = 1;
+
+<i>// edict.flags</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_FLY">FL_FLY</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="FL_SWIM">FL_SWIM</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="FL_CLIENT">FL_CLIENT</a></b> = 8;	<i>// set for all client edicts</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_INWATER">FL_INWATER</a></b> = 16;	<i>// for enter / leave water splash</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_MONSTER">FL_MONSTER</a></b> = 32;
+<a href="qc-types.htm#float">float</a> <b><a name="FL_GODMODE">FL_GODMODE</a></b> = 64;	<i>// player cheat</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_NOTARGET">FL_NOTARGET</a></b> = 128;	<i>// player cheat</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_ITEM">FL_ITEM</a></b> = 256;	<i>// extra wide size for bonus items</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_ONGROUND">FL_ONGROUND</a></b> = 512;	<i>// standing on something</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_PARTIALGROUND">FL_PARTIALGROUND</a></b> = 1024;	<i>// not all corners are valid</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_WATERJUMP">FL_WATERJUMP</a></b> = 2048;	<i>// player jumping out of water</i>
+<a href="qc-types.htm#float">float</a> <b><a name="FL_JUMPRELEASED">FL_JUMPRELEASED</a></b> = 4096;	<i>// for jump debouncing</i>
+
+<i>// edict.movetype values</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_NONE</b> = 0;	<i>// never moves</i>
+<i>//float	MOVETYPE_ANGLENOCLIP	= 1;</i>
+<i>//float	MOVETYPE_ANGLECLIP		= 2;</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_WALK</b> = 3;	<i>// players only</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_STEP</b> = 4;	<i>// discrete, not real time unless fall</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_FLY</b> = 5;
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_TOSS</b> = 6;	<i>// gravity</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_PUSH</b> = 7;	<i>// no clip to world, push and crush</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_NOCLIP</b> = 8;
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_FLYMISSILE</b> = 9;	<i>// fly with extra size against monsters</i>
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_BOUNCE</b> = 10;
+<a href="qc-types.htm#float">float</a> <b>MOVETYPE_BOUNCEMISSILE</b> = 11;	<i>// bounce with extra size</i>
+
+<i>// edict.solid values</i>
+<a href="qc-types.htm#float">float</a> <b>SOLID_NOT</b> = 0;	<i>// no interaction with other objects</i>
+<a href="qc-types.htm#float">float</a> <b>SOLID_TRIGGER</b> = 1;	<i>// touch on edge, but not blocking</i>
+<a href="qc-types.htm#float">float</a> <b>SOLID_BBOX</b> = 2;	<i>// touch on edge, block</i>
+<a href="qc-types.htm#float">float</a> <b>SOLID_SLIDEBOX</b> = 3;	<i>// touch on edge, but not an onground</i>
+<a href="qc-types.htm#float">float</a> <b>SOLID_BSP</b> = 4;	<i>// bsp clip, touch on edge, block</i>
+
+<i>// range values</i>
+<a href="qc-types.htm#float">float</a> <b><a name="RANGE_MELEE">RANGE_MELEE</a></b> = 0;
+<a href="qc-types.htm#float">float</a> <b><a name="RANGE_NEAR">RANGE_NEAR</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="RANGE_MID">RANGE_MID</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="RANGE_FAR">RANGE_FAR</a></b> = 3;
+
+<i>// deadflag values</i>
+
+<a href="qc-types.htm#float">float</a> <b>DEAD_NO</b> = 0;
+<a href="qc-types.htm#float">float</a> <b>DEAD_DYING</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>DEAD_DEAD</b> = 2;
+<a href="qc-types.htm#float">float</a> <b>DEAD_RESPAWNABLE</b> = 3;
+
+<i>// takedamage values</i>
+
+<a href="qc-types.htm#float">float</a> <b>DAMAGE_NO</b> = 0;
+<a href="qc-types.htm#float">float</a> <b>DAMAGE_YES</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>DAMAGE_AIM</b> = 2;
+
+<i>// items</i>
+<a href="qc-types.htm#float">float</a> <b>IT_AXE</b> = 4096;
+<a href="qc-types.htm#float">float</a> <b>IT_SHOTGUN</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>IT_SUPER_SHOTGUN</b> = 2;
+<a href="qc-types.htm#float">float</a> <b>IT_NAILGUN</b> = 4;
+<a href="qc-types.htm#float">float</a> <b>IT_SUPER_NAILGUN</b> = 8;
+<a href="qc-types.htm#float">float</a> <b>IT_GRENADE_LAUNCHER</b> = 16;
+<a href="qc-types.htm#float">float</a> <b>IT_ROCKET_LAUNCHER</b> = 32;
+<a href="qc-types.htm#float">float</a> <b>IT_LIGHTNING</b> = 64;
+<a href="qc-types.htm#float">float</a> <b>IT_EXTRA_WEAPON</b> = 128;
+
+<a href="qc-types.htm#float">float</a> <b>IT_SHELLS</b> = 256;
+<a href="qc-types.htm#float">float</a> <b>IT_NAILS</b> = 512;
+<a href="qc-types.htm#float">float</a> <b>IT_ROCKETS</b> = 1024;
+<a href="qc-types.htm#float">float</a> <b>IT_CELLS</b> = 2048;
+
+<a href="qc-types.htm#float">float</a> <b>IT_ARMOR1</b> = 8192;
+<a href="qc-types.htm#float">float</a> <b>IT_ARMOR2</b> = 16384;
+<a href="qc-types.htm#float">float</a> <b>IT_ARMOR3</b> = 32768;
+<a href="qc-types.htm#float">float</a> <b>IT_SUPERHEALTH</b> = 65536;
+
+<a href="qc-types.htm#float">float</a> <b>IT_KEY1</b> = 131072;
+<a href="qc-types.htm#float">float</a> <b>IT_KEY2</b> = 262144;
+
+<a href="qc-types.htm#float">float</a> <b>IT_INVISIBILITY</b> = 524288;
+<a href="qc-types.htm#float">float</a> <b>IT_INVULNERABILITY</b> = 1048576;
+<a href="qc-types.htm#float">float</a> <b>IT_SUIT</b> = 2097152;
+<a href="qc-types.htm#float">float</a> <b>IT_QUAD</b> = 4194304;
+
+<i>// point content values</i>
+
+<a href="qc-types.htm#float">float</a> <b>CONTENT_EMPTY</b> = -1;
+<a href="qc-types.htm#float">float</a> <b>CONTENT_SOLID</b> = -2;
+<a href="qc-types.htm#float">float</a> <b>CONTENT_WATER</b> = -3;
+<a href="qc-types.htm#float">float</a> <b>CONTENT_SLIME</b> = -4;
+<a href="qc-types.htm#float">float</a> <b>CONTENT_LAVA</b> = -5;
+<a href="qc-types.htm#float">float</a> <b>CONTENT_SKY</b> = -6;
+
+<a href="qc-types.htm#float">float</a> <b><a name="STATE_TOP">STATE_TOP</a></b> = 0;
+<a href="qc-types.htm#float">float</a> <b><a name="STATE_BOTTOM">STATE_BOTTOM</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="STATE_UP">STATE_UP</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="STATE_DOWN">STATE_DOWN</a></b> = 3;
+
+<a href="qc-types.htm#vector">vector</a> <b><a name="VEC_ORIGIN">VEC_ORIGIN</a></b> = '0 0 0';
+<a href="qc-types.htm#vector">vector</a> <b><a name="VEC_HULL_MIN">VEC_HULL_MIN</a></b> = '-16 -16 -24';
+<a href="qc-types.htm#vector">vector</a> <b><a name="VEC_HULL_MAX">VEC_HULL_MAX</a></b> = '16 16 32';
+
+<a href="qc-types.htm#vector">vector</a> <b><a name="VEC_HULL2_MIN">VEC_HULL2_MIN</a></b> = '-32 -32 -24';
+<a href="qc-types.htm#vector">vector</a> <b><a name="VEC_HULL2_MAX">VEC_HULL2_MAX</a></b> = '32 32 64';
+
+<i>// protocol bytes</i>
+<a href="qc-types.htm#float">float</a> <b>SVC_TEMPENTITY</b> = 23;
+<a href="qc-types.htm#float">float</a> <b>SVC_KILLEDMONSTER</b> = 27;
+<a href="qc-types.htm#float">float</a> <b>SVC_FOUNDSECRET</b> = 28;
+<a href="qc-types.htm#float">float</a> <b>SVC_INTERMISSION</b> = 30;
+<a href="qc-types.htm#float">float</a> <b>SVC_FINALE</b> = 31;
+<a href="qc-types.htm#float">float</a> <b>SVC_CDTRACK</b> = 32;
+<a href="qc-types.htm#float">float</a> <b>SVC_SELLSCREEN</b> = 33;
+
+
+<a href="qc-types.htm#float">float</a> <b><a name="TE_SPIKE">TE_SPIKE</a></b> = 0;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_SUPERSPIKE">TE_SUPERSPIKE</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_GUNSHOT">TE_GUNSHOT</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_EXPLOSION">TE_EXPLOSION</a></b> = 3;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_TAREXPLOSION">TE_TAREXPLOSION</a></b> = 4;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_LIGHTNING1">TE_LIGHTNING1</a></b> = 5;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_LIGHTNING2">TE_LIGHTNING2</a></b> = 6;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_WIZSPIKE">TE_WIZSPIKE</a></b> = 7;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_KNIGHTSPIKE">TE_KNIGHTSPIKE</a></b> = 8;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_LIGHTNING3">TE_LIGHTNING3</a></b> = 9;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_LAVASPLASH">TE_LAVASPLASH</a></b> = 10;
+<a href="qc-types.htm#float">float</a> <b><a name="TE_TELEPORT">TE_TELEPORT</a></b> = 11;
+
+<i>// sound channels</i>
+<i>// channel 0 never willingly overrides</i>
+<i>// other channels (1-7) allways override a playing sound on that channel</i>
+<a href="qc-types.htm#float">float</a> <b>CHAN_AUTO</b> = 0;
+<a href="qc-types.htm#float">float</a> <b>CHAN_WEAPON</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>CHAN_VOICE</b> = 2;
+<a href="qc-types.htm#float">float</a> <b>CHAN_ITEM</b> = 3;
+<a href="qc-types.htm#float">float</a> <b>CHAN_BODY</b> = 4;
+
+<a href="qc-types.htm#float">float</a> <b>ATTN_NONE</b> = 0;
+<a href="qc-types.htm#float">float</a> <b>ATTN_NORM</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>ATTN_IDLE</b> = 2;
+<a href="qc-types.htm#float">float</a> <b>ATTN_STATIC</b> = 3;
+
+<i>// update types</i>
+
+<a href="qc-types.htm#float">float</a> <b><a name="UPDATE_GENERAL">UPDATE_GENERAL</a></b> = 0;
+<a href="qc-types.htm#float">float</a> <b><a name="UPDATE_STATIC">UPDATE_STATIC</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="UPDATE_BINARY">UPDATE_BINARY</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="UPDATE_TEMP">UPDATE_TEMP</a></b> = 3;
+
+<i>// entity effects</i>
+
+<a href="qc-types.htm#float">float</a> <b>EF_BRIGHTFIELD</b> = 1;
+<a href="qc-types.htm#float">float</a> <b>EF_MUZZLEFLASH</b> = 2;
+<a href="qc-types.htm#float">float</a> <b>EF_BRIGHTLIGHT</b> = 4;
+<a href="qc-types.htm#float">float</a> <b>EF_DIMLIGHT</b> = 8;
+
+
+<i>// messages</i>
+<a href="qc-types.htm#float">float</a> <b>MSG_BROADCAST</b> = 0;		<i>// unreliable to all</i>
+<a href="qc-types.htm#float">float</a> <b>MSG_ONE</b> = 1;		<i>// reliable to one (msg_entity)</i>
+<a href="qc-types.htm#float">float</a> <b>MSG_ALL</b> = 2;		<i>// reliable to all</i>
+<a href="qc-types.htm#float">float</a> <b>MSG_INIT</b> = 3;		<i>// write to the init string</i>
+
+<i>//================================================</i>
+
+<i>//</i>
+<i>// globals</i>
+<i>//</i>
+<a href="qc-types.htm#float">float</a> <b><a name="movedist">movedist</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a name="gameover">gameover</a></b>;		<i>// set when a rule exits</i>
+
+<a href="qc-types.htm#string">string</a> <b><a name="string_null">string_null</a></b>;	<i>// null string, nothing should be held here</i>
+<a href="qc-types.htm#float">float</a> <b><a name="empty_float">empty_float</a></b>;
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="newmis">newmis</a></b>;			<i>// launch_spike sets this after spawning it</i>
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="activator">activator</a></b>;		<i>// the entity that activated a trigger or brush</i>
+
+<a href="qc-types.htm#entity">entity</a> <b><a name="damage_attacker">damage_attacker</a></b>;	<i>// set by T_Damage</i>
+<a href="qc-types.htm#float">float</a> <b><a name="framecount">framecount</a></b>;
+
+<a href="qc-types.htm#float">float</a> <b><a name="skill">skill</a></b>;
+
+<i>//================================================</i>
+
+<i>//</i>
+<i>// world fields (FIXME: make globals)</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_string">string</a>		wad;
+.<a href="qc-types.htm#dot_string">string</a> 	map;
+.<a href="qc-types.htm#dot_float">float</a>		worldtype;	<i>// 0=medieval 1=metal 2=base</i>
+
+<i>//================================================</i>
+
+.<a href="qc-types.htm#dot_string">string</a>		killtarget;
+
+<i>//</i>
+<i>// quakeed fields</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		light_lev;		<i>// not used by game, but parsed by light util</i>
+.<a href="qc-types.htm#dot_float">float</a>		style;
+
+
+<i>//</i>
+<i>// monster ai</i>
+<i>//</i>
+.void()		th_stand;
+.void()		th_walk;
+.void()		th_run;
+.void()		th_missile;
+.void()		th_melee;
+.void(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <a href=".htm#th_pain">th_pain</a>;
+.void()		th_die;
+
+.<a href="qc-types.htm#dot_entity">entity</a>		oldenemy;		<i>// mad at this player before taking damage</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		speed;
+
+.<a href="qc-types.htm#dot_float">float</a>	lefty;
+
+.<a href="qc-types.htm#dot_float">float</a>	search_time;
+.<a href="qc-types.htm#dot_float">float</a>	attack_state;
+
+<a href="qc-types.htm#float">float</a> <b><a name="AS_STRAIGHT">AS_STRAIGHT</a></b> = 1;
+<a href="qc-types.htm#float">float</a> <b><a name="AS_SLIDING">AS_SLIDING</a></b> = 2;
+<a href="qc-types.htm#float">float</a> <b><a name="AS_MELEE">AS_MELEE</a></b> = 3;
+<a href="qc-types.htm#float">float</a> <b><a name="AS_MISSILE">AS_MISSILE</a></b> = 4;
+
+<i>//</i>
+<i>// player only fields</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		walkframe;
+
+.<a href="qc-types.htm#dot_float">float</a> 		attack_finished;
+.<a href="qc-types.htm#dot_float">float</a>		pain_finished;
+
+.<a href="qc-types.htm#dot_float">float</a>		invincible_finished;
+.<a href="qc-types.htm#dot_float">float</a>		invisible_finished;
+.<a href="qc-types.htm#dot_float">float</a>		super_damage_finished;
+.<a href="qc-types.htm#dot_float">float</a>		radsuit_finished;
+
+.<a href="qc-types.htm#dot_float">float</a>		invincible_time, invincible_sound;
+.<a href="qc-types.htm#dot_float">float</a>		invisible_time, invisible_sound;
+.<a href="qc-types.htm#dot_float">float</a>		super_time, super_sound;
+.<a href="qc-types.htm#dot_float">float</a>		rad_time;
+.<a href="qc-types.htm#dot_float">float</a>		fly_sound;
+
+.<a href="qc-types.htm#dot_float">float</a>		axhitme;
+
+.<a href="qc-types.htm#dot_float">float</a>		show_hostile;	<i>// set to time+0.2 whenever a client fires a</i>
+							<i>// weapon or takes damage.  Used to alert</i>
+							<i>// monsters that otherwise would let the player go</i>
+.<a href="qc-types.htm#dot_float">float</a>		jump_flag;		<i>// player jump flag</i>
+.<a href="qc-types.htm#dot_float">float</a>		swim_flag;		<i>// player swimming sound flag</i>
+.<a href="qc-types.htm#dot_float">float</a>		air_finished;	<i>// when time > air_finished, start drowning</i>
+.<a href="qc-types.htm#dot_float">float</a>		bubble_count;	<i>// keeps track of the number of bubbles</i>
+.<a href="qc-types.htm#dot_string">string</a>		deathtype;		<i>// keeps track of how the player died</i>
+
+<i>//</i>
+<i>// object stuff</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_string">string</a>		mdl;
+.<a href="qc-types.htm#dot_vector">vector</a>		mangle;			<i>// angle at start</i>
+
+.<a href="qc-types.htm#dot_vector">vector</a>		oldorigin;		<i>// only used by secret door</i>
+
+.<a href="qc-types.htm#dot_float">float</a>		t_length, t_width;
+
+
+<i>//</i>
+<i>// doors, etc</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_vector">vector</a>		dest, dest1, dest2;
+.<a href="qc-types.htm#dot_float">float</a>		wait;			<i>// time from firing to restarting</i>
+.<a href="qc-types.htm#dot_float">float</a>		delay;			<i>// time from activation to firing</i>
+.<a href="qc-types.htm#dot_entity">entity</a>		trigger_field;	<i>// door's trigger entity</i>
+.<a href="qc-types.htm#dot_string">string</a>		noise4;
+
+<i>//</i>
+<i>// monsters</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a> 		pausetime;
+.<a href="qc-types.htm#dot_entity">entity</a> 	movetarget;
+
+
+<i>//</i>
+<i>// doors</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		aflag;
+.<a href="qc-types.htm#dot_float">float</a>		dmg;			<i>// damage done by door when hit</i>
+	
+<i>//</i>
+<i>// misc</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		cnt; 			<i>// misc flag</i>
+	
+<i>//</i>
+<i>// subs</i>
+<i>//</i>
+.void()		think1;
+.<a href="qc-types.htm#dot_vector">vector</a>		finaldest, finalangle;
+
+<i>//</i>
+<i>// triggers</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		count;			<i>// for counting triggers</i>
+
+
+<i>//</i>
+<i>// plats / doors / buttons</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		lip;
+.<a href="qc-types.htm#dot_float">float</a>		state;
+.<a href="qc-types.htm#dot_vector">vector</a>		pos1, pos2;		<i>// top and bottom positions</i>
+.<a href="qc-types.htm#dot_float">float</a>		height;
+
+<i>//</i>
+<i>// sounds</i>
+<i>//</i>
+.<a href="qc-types.htm#dot_float">float</a>		waitmin, waitmax;
+.<a href="qc-types.htm#dot_float">float</a>		distance;
+.<a href="qc-types.htm#dot_float">float</a>		volume;
+
+
+
+
+<i>//===========================================================================</i>
+	
+
+<i>//</i>
+<i>// builtin functions</i>
+<i>//</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> ang) <b>makevectors</b><a name="makevectors">=</a> #1;		<i>// sets v_forward, etc globals</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#vector">vector</a> o) <b>setorigin</b> = #<b>2</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#string">string</a> m) <b>setmodel</b> = #<b>3</b>;		<i>// set movetype and solid first</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#vector">vector</a> min, <a href="qc-types.htm#vector">vector</a> max) <b>setsize</b> = #<b>4</b>;
+<i>// #5 was removed</i>
+<a href="qc-types.htm#void">void</a>() <b>break</b> = #<b>6</b>;
+<a href="qc-types.htm#float">float</a>() <b>random</b> = #<b>7</b>;		<i>// returns 0 - 1</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#float">float</a> chan, <a href="qc-types.htm#string">string</a> samp, <a href="qc-types.htm#float">float</a> vol, <a href="qc-types.htm#float">float</a> atten) <b>sound</b> = #<b>8</b>;
+<a href="qc-types.htm#vector">vector</a>(<a href="qc-types.htm#vector">vector</a> v) <b>normalize</b> = #<b>9</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> e) <b>error</b> = #<b>10</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> e) <b>objerror</b> = #<b>11</b>;
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#vector">vector</a> v) <b>vlen</b> = #<b>12</b>;
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#vector">vector</a> v) <b>vectoyaw</b> = #<b>13</b>;
+<a href="qc-types.htm#entity">entity</a>() <b>spawn</b> = #<b>14</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e) <b>remove</b> = #<b>15</b>;
+
+<i>// sets trace_* globals</i>
+<i>// nomonsters can be:</i>
+<i>// An entity will also be ignored for testing if forent == test,</i>
+<i>// forent->owner == test, or test->owner == forent</i>
+<i>// a forent of world is ignored</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> v1, <a href="qc-types.htm#vector">vector</a> v2, <a href="qc-types.htm#float">float</a> nomonsters, <a href="qc-types.htm#entity">entity</a> forent) <b>raceline</b> = #<b>16</b>;	
+
+<a href="qc-types.htm#entity">entity</a>() <b>checkclient</b> = #<b>17</b>;	<i>// returns a client to look for</i>
+<a href="qc-types.htm#entity">entity</a>(<a href="qc-types.htm#entity">entity</a> start, .<a href="qc-types.htm#dot_string">string</a> fld, <a href="qc-types.htm#string">string</a> match) <b>find</b> = #<b>18</b>;
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_sound</b> = #<b>19</b>;
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_model</b> = #<b>20</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> client, <a href="qc-types.htm#string">string</a> s) <b>stuffcmd</b> = #<b>21</b>;
+<a href="qc-types.htm#entity">entity</a>(<a href="qc-types.htm#vector">vector</a> org, <a href="qc-types.htm#float">float</a> rad) <b>findradius</b> = #<b>22</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> s) <b>bprint</b> = #<b>23</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> client, <a href="qc-types.htm#string">string</a> s) <b>sprint</b> = #<b>24</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> s) <b>dprint</b> = #<b>25</b>;
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#float">float</a> f) <b>ftos</b> = #<b>26</b>;
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#vector">vector</a> v) <b>vtos</b> = #<b>27</b>;
+<a href="qc-types.htm#void">void</a>() <b>coredump</b> = #<b>28</b>;		<i>// prints all edicts</i>
+<a href="qc-types.htm#void">void</a>() <b>raceon</b> = #<b>29</b>;		<i>// turns statment trace on</i>
+<a href="qc-types.htm#void">void</a>() <b>raceoff</b> = #<b>30</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e) <b>eprint</b> = #<b>31</b>;		<i>// prints an entire edict</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> yaw, <a href="qc-types.htm#float">float</a> dist) <b>walkmove</b> = #<b>32</b>;	<i>// returns TRUE or FALSE</i>
+<i>// #33 was removed</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> yaw, <a href="qc-types.htm#float">float</a> dist) <b>droptofloor</b> = #<b>34</b>;	<i>// TRUE if landed on floor</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> style, <a href="qc-types.htm#string">string</a> value) <b>lightstyle</b> = #<b>35</b>;
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> v) <b>rint</b> = #<b>36</b>;		<i>// round to nearest int</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> v) <b>floor</b> = #<b>37</b>;		<i>// largest integer <= v</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> v) <b>ceil</b> = #<b>38</b>;		<i>// smallest integer >= v</i>
+<i>// #39 was removed</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> e) <b>checkbottom</b> = #<b>40</b>;		<i>// true if self is on ground</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#vector">vector</a> v) <b>pointcontents</b> = #<b>41</b>;		<i>// returns a CONTENT_*</i>
+<i>// #42 was removed</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> f) <b>fabs</b> = #<b>43</b>;
+<a href="qc-types.htm#vector">vector</a>(<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#float">float</a> speed) <b>aim</b> = #<b>44</b>;		<i>// returns the shooting vector</i>
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#string">string</a> s) <b>cvar</b> = #<b>45</b>;						<i>// return cvar.value</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> s) <b>localcmd</b> = #<b>46</b>;					<i>// put string into local que</i>
+<a href="qc-types.htm#entity">entity</a>(<a href="qc-types.htm#entity">entity</a> e) <b>nextent</b> = #<b>47</b>;					<i>// for looping through all ents</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> o, <a href="qc-types.htm#vector">vector</a> d, <a href="qc-types.htm#float">float</a> color, <a href="qc-types.htm#float">float</a> count) <b>particle</b> = #<b>48</b>;<i>// start a particle effect</i>
+<a href="qc-types.htm#void">void</a>() <b>ChangeYaw</b> = #<b>49</b>;						<i>// turn towards self.ideal_yaw</i>
+											<i>// at self.yaw_speed</i>
+<i>// #50 was removed</i>
+<a href="qc-types.htm#vector">vector</a>(<a href="qc-types.htm#vector">vector</a> v) <b>vectoangles</b> = #<b>51</b>;
+
+<i>//</i>
+<i>// direct client message generation</i>
+<i>//</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteByte</b> = #<b>52</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteChar</b> = #<b>53</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteShort</b> = #<b>54</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteLong</b> = #<b>55</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteCoord</b> = #<b>56</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#float">float</a> f) <b>WriteAngle</b> = #<b>57</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#string">string</a> s) <b>WriteString</b> = #<b>58</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> to, <a href="qc-types.htm#entity">entity</a> s) <b>WriteEntity</b> = #<b>59</b>;
+
+<i>//</i>
+<i>// broadcast client message generation</i>
+<i>//</i>
+
+<i>// void(float f) bWriteByte		= #59;</i>
+<i>// void(float f) bWriteChar		= #60;</i>
+<i>// void(float f) bWriteShort		= #61;</i>
+<i>// void(float f) bWriteLong		= #62;</i>
+<i>// void(float f) bWriteCoord		= #63;</i>
+<i>// void(float f) bWriteAngle		= #64;</i>
+<i>// void(string s) bWriteString	= #65;</i>
+<i>// void(entity e) bWriteEntity = #66;</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> step) <b>movetogoal</b> = #<b>67</b>;
+
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_file</b> = #<b>68</b>;	<i>// no effect except for -copy</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e) <b>makestatic</b> = #<b>69</b>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> s) <b>changelevel</b> = #<b>70</b>;
+
+<i>//#71 was removed</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#string">string</a> var, <a href="qc-types.htm#string">string</a> val) <b>cvar_set</b> = #<b>72</b>;	<i>// sets cvar.value</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> client, <a href="qc-types.htm#string">string</a> s) <b>centerprint</b> = #<b>73</b>;	<i>// sprint, but in middle</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> pos, <a href="qc-types.htm#string">string</a> samp, <a href="qc-types.htm#float">float</a> vol, <a href="qc-types.htm#float">float</a> atten) <b>ambientsound</b> = #<b>74</b>;
+
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_model2</b> = #<b>75</b>;		<i>// registered version only</i>
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_sound2</b> = #<b>76</b>;		<i>// registered version only</i>
+<a href="qc-types.htm#string">string</a>(<a href="qc-types.htm#string">string</a> s) <b>precache_file2</b> = #<b>77</b>;		<i>// registered version only</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> e) <b>setspawnparms</b> = #<b>78</b>;		<i>// set parm1... to the</i>
+												<i>// values at level start</i>
+												<i>// for coop respawn</i>
+
+<i>//============================================================================</i>
+
+<i>//</i>
+<i>// subs.qc</i>
+<i>//</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> tdest, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> ent, <a href="qc-types.htm#vector">vector</a> tdest, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <a href="subs.htm#SUB_CalcMoveEnt">SUB_CalcMoveEnt</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> destangle, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <a href="subs.htm#SUB_CalcAngleMove">SUB_CalcAngleMove</a>;
+<a href="qc-types.htm#void">void</a>() <a href="subs.htm#SUB_CalcMoveDone">SUB_CalcMoveDone</a>;
+<a href="qc-types.htm#void">void</a>() <a href="subs.htm#SUB_CalcAngleMoveDone">SUB_CalcAngleMoveDone</a>;
+<a href="qc-types.htm#void">void</a>() <a href="subs.htm#SUB_Null">SUB_Null</a>;
+<a href="qc-types.htm#void">void</a>() <a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a>;
+<a href="qc-types.htm#void">void</a>() <a href="subs.htm#SUB_Remove">SUB_Remove</a>;
+
+<i>//</i>
+<i>//	combat.qc</i>
+<i>//</i>
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> inflictor, <a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <a href="combat.htm#T_Damage">T_Damage</a>;
+
+
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> e, <a href="qc-types.htm#float">float</a> healamount, <a href="qc-types.htm#float">float</a> ignore) <a href="items.htm#T_Heal">T_Heal</a>; <i>// health function</i>
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> inflictor) <a href="combat.htm#CanDamage">CanDamage</a>;
+
+
+
+</pre></body></html>

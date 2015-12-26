@@ -1,0 +1,329 @@
+<html><head><title>subs.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_Null</b><a name="SUB_Null">=</a> {};
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_Remove</b><a name="SUB_Remove">=</a> {<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);};
+
+
+<i>/*
+QuakeEd only writes a single float for angles (bad idea), so up and down are
+just constant angles.
+*/</i>
+
+<a href="qc-types.htm#vector">vector</a>() <b>SetMovedir</b><a name="SetMovedir">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> == '0 -1 0')
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> = '0 0 1';
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> == '0 -2 0')
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> = '0 0 -1';
+	<b>else</b>
+	{
+		<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movedir">movedir</a> = <a href="qc-built.htm#v_forward">v_forward</a>;
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = '0 0 0';
+};
+
+<i>/*
+================
+InitTrigger
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>InitTrigger</b><a name="InitTrigger">=</a>
+{
+<i>// trigger angles are used for one-way touches.  An angle of 0 is assumed</i>
+<i>// to mean no restrictions, so use a yaw of 360 instead.</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> != '0 0 0')
+		<a href="subs.htm#SetMovedir">SetMovedir</a> ();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	<a href="qc-built.htm#setmodel">setmodel</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a>);	<i>// set size and link into world</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> = <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_modelindex">modelindex</a> = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_model">model</a> = <b>""</b>;
+};
+
+<i>/*
+=============
+SUB_CalcMove
+
+calculate self.velocity and self.nextthink to reach dest from
+self.origin traveling at speed
+===============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> ent, <a href="qc-types.htm#vector">vector</a> tdest, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <b>SUB_CalcMoveEnt</b><a name="SUB_CalcMoveEnt">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	stemp;
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = ent;
+
+	<a href="subs.htm#SUB_CalcMove">SUB_CalcMove</a> (tdest, tspeed, func);
+	<a href="qc-glob.htm#self">self</a> = stemp;
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> tdest, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <b>SUB_CalcMove</b><a name="SUB_CalcMove">=</a>
+{
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	vdestdelta;
+<b>local</b> <a href="qc-types.htm#float">float</a>		len, traveltime;
+
+	<b>if</b> (!tspeed)
+		<a href="qc-built.htm#objerror">objerror</a>(<b>"No speed is defined!"</b>);
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a> = func;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_finaldest">finaldest</a> = tdest;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_CalcMoveDone">SUB_CalcMoveDone</a>;
+
+	<b>if</b> (tdest == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+		<b>return</b>;
+	}
+		
+<i>// set destdelta to the vector needed to move</i>
+	vdestdelta = tdest - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>;
+	
+<i>// calculate length of vector</i>
+	len = <a href="qc-built.htm#vlen">vlen</a> (vdestdelta);
+	
+<i>// divide by speed to get time to reach dest</i>
+	traveltime = len / tspeed;
+
+	<b>if</b> (traveltime &lt; 0.1)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + 0.1;
+		<b>return</b>;
+	}
+	
+<i>// set nextthink to trigger a think when dest is reached</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + traveltime;
+
+<i>// scale the destdelta vector by the time spent traveling to get velocity</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = vdestdelta * (1/traveltime);	<i>// qcc won't take vec/float	</i>
+};
+
+<i>/*
+============
+After moving, set origin to exact final destination
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_CalcMoveDone</b><a name="SUB_CalcMoveDone">=</a>
+{
+	<a href="qc-built.htm#setorigin">setorigin</a>(<a href="qc-glob.htm#self">self</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_finaldest">finaldest</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_velocity">velocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a>();
+};
+
+
+<i>/*
+=============
+SUB_CalcAngleMove
+
+calculate self.avelocity and self.nextthink to reach destangle from
+self.angles rotating 
+
+The calling function should make sure self.think is valid
+===============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> ent, <a href="qc-types.htm#vector">vector</a> destangle, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <b>SUB_CalcAngleMoveEnt</b><a name="SUB_CalcAngleMoveEnt">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>		stemp;
+	stemp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = ent;
+	<a href="subs.htm#SUB_CalcAngleMove">SUB_CalcAngleMove</a> (destangle, tspeed, func);
+	<a href="qc-glob.htm#self">self</a> = stemp;
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> destangle, <a href="qc-types.htm#float">float</a> tspeed, <a href="qc-types.htm#void">void</a>() func) <b>SUB_CalcAngleMove</b><a name="SUB_CalcAngleMove">=</a>
+{
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	destdelta;
+<b>local</b> <a href="qc-types.htm#float">float</a>		len, traveltime;
+
+	<b>if</b> (!tspeed)
+		<a href="qc-built.htm#objerror">objerror</a>(<b>"No speed is defined!"</b>);
+		
+<i>// set destdelta to the vector needed to move</i>
+	destdelta = destangle - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>;
+	
+<i>// calculate length of vector</i>
+	len = <a href="qc-built.htm#vlen">vlen</a> (destdelta);
+	
+<i>// divide by speed to get time to reach dest</i>
+	traveltime = len / tspeed;
+
+<i>// set nextthink to trigger a think when dest is reached</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ltime">ltime</a> + traveltime;
+
+<i>// scale the destdelta vector by the time spent traveling to get velocity</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = destdelta * (1 / traveltime);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a> = func;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_finalangle">finalangle</a> = destangle;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#SUB_CalcAngleMoveDone">SUB_CalcAngleMoveDone</a>;
+};
+
+<i>/*
+============
+After rotating, set angle to exact final angle
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_CalcAngleMoveDone</b><a name="SUB_CalcAngleMoveDone">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_finalangle">finalangle</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_avelocity">avelocity</a> = '0 0 0';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = -1;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think1">think1</a>();
+};
+
+
+<i>//=============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>DelayThink</b><a name="DelayThink">=</a>
+{
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+	<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+};
+
+<i>/*
+==============================
+SUB_UseTargets
+
+the global "activator" should be set to the entity that initiated the firing.
+
+If self.delay is set, a DelayedUse entity will be created that will actually
+do the SUB_UseTargets after that many seconds have passed.
+
+Centerprints any self.message to the activator.
+
+Removes all entities with a targetname that match self.killtarget,
+and removes them, so some events can remove other triggers.
+
+Search for (string)targetname in all entities that
+match (string)self.target and call their .use function
+
+==============================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>SUB_UseTargets</b><a name="SUB_UseTargets">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> t, stemp, otemp, act;
+
+<i>//</i>
+<i>// check for a delay</i>
+<i>//</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_delay">delay</a>)
+	{
+	<i>// create a temp object to fire at a later time</i>
+		t = <a href="qc-built.htm#spawn">spawn</a>();
+		t.<a href="qc-enty.htm#dot_classname">classname</a> = <b>"DelayedUse"</b>;
+		t.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_delay">delay</a>;
+		t.<a href="qc-enty.htm#dot_think">think</a> = <a href="subs.htm#DelayThink">DelayThink</a>;
+		t.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+		t.<a href="qc-enty.htm#dot_message">message</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>;
+		t.<a href="qc-enty.htm#dot_killtarget">killtarget</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_killtarget">killtarget</a>;
+		t.<a href="qc-enty.htm#dot_target">target</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>;
+		<b>return</b>;
+	}
+	
+	
+<i>//</i>
+<i>// print the message</i>
+<i>//</i>
+	<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player" && self.message != ""</b>)
+	{
+		<a href="qc-built.htm#centerprint">centerprint</a> (<a href="defs.htm#activator">activator</a>, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_message">message</a>);
+		<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_noise">noise</a>)
+			<a href="qc-built.htm#sound">sound</a> (<a href="defs.htm#activator">activator</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"misc/talk.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+
+<i>//</i>
+<i>// kill the killtagets</i>
+<i>//</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_killtarget">killtarget</a>)
+	{
+		t = <a href="qc-glob.htm#world">world</a>;
+		<b>do</b>
+		{
+			t = <a href="qc-built.htm#find">find</a> (t, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_killtarget">killtarget</a>);
+			<b>if</b> (!t)
+				<b>return</b>;
+			<a href="qc-built.htm#remove">remove</a> (t);
+		} <b>while</b> ( 1 );
+	}
+	
+<i>//</i>
+<i>// fire targets</i>
+<i>//</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+	{
+		act = <a href="defs.htm#activator">activator</a>;
+		t = <a href="qc-glob.htm#world">world</a>;
+		<b>do</b>
+		{
+			t = <a href="qc-built.htm#find">find</a> (t, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+			<b>if</b> (!t)
+			{
+				<b>return</b>;
+			}
+			stemp = <a href="qc-glob.htm#self">self</a>;
+			otemp = <a href="qc-glob.htm#other">other</a>;
+			<a href="qc-glob.htm#self">self</a> = t;
+			<a href="qc-glob.htm#other">other</a> = stemp;
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> != <a href="subs.htm#SUB_Null">SUB_Null</a>)
+			{
+				<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a>)
+					<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> ();
+			}
+			<a href="qc-glob.htm#self">self</a> = stemp;
+			<a href="qc-glob.htm#other">other</a> = otemp;
+			<a href="defs.htm#activator">activator</a> = act;
+		} <b>while</b> ( 1 );
+	}
+	
+
+};
+
+
+<i>/*
+
+in nightmare mode, all attack_finished times become 0
+some monsters refire twice automatically
+
+*/</i>
+
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> normal) <b>SUB_AttackFinished</b><a name="SUB_AttackFinished">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = 0;		<i>// refire count for nightmare</i>
+	<b>if</b> (<a href="defs.htm#skill">skill</a> != 3)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_finished">attack_finished</a> = <a href="qc-glob.htm#time">time</a> + normal;
+};
+
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> targ) <a href="ai.htm#visible">visible</a>;
+
+<a href="qc-types.htm#void">void</a> (<a href="qc-types.htm#void">void</a>() thinkst) <b>SUB_CheckRefire</b><a name="SUB_CheckRefire">=</a>
+{
+	<b>if</b> (<a href="defs.htm#skill">skill</a> != 3)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> == 1)
+		<b>return</b>;
+	<b>if</b> (!<a href="ai.htm#visible">visible</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>))
+		<b>return</b>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_cnt">cnt</a> = 1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = thinkst;
+};
+
+</pre></body></html>

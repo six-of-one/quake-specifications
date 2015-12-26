@@ -1,0 +1,244 @@
+<html><head><title>monsters.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<i>/* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */</i>
+
+
+<i>// name =[framenum,	nexttime, nextthink] {code}</i>
+<i>// expands to:</i>
+<i>// name ()</i>
+<i>// {</i>
+<i>//		self.frame=framenum;</i>
+<i>//		self.nextthink = time + nexttime;</i>
+<i>//		self.think = nextthink</i>
+<i>//		<code></i>
+<i>// };</i>
+
+
+<i>/*
+================
+monster_use
+
+Using a monster makes it angry at the current activator
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_use</b><a name="monster_use">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+		<b>return</b>;
+	<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a>)
+		<b>return</b>;
+	<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_NOTARGET">FL_NOTARGET</a>)
+		<b>return</b>;
+	<b>if</b> (<a href="defs.htm#activator">activator</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		<b>return</b>;
+	
+<i>// delay reaction so if the monster is teleported, its sound is still</i>
+<i>// heard</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="defs.htm#activator">activator</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="ai.htm#FoundTarget">FoundTarget</a>;
+};
+
+<i>/*
+================
+monster_death_use
+
+When a mosnter dies, it fires all of its targets with the current
+enemy as activator.
+================
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>monster_death_use</b><a name="monster_death_use">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> 	ent, otemp, stemp;
+
+<i>// fall to ground</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_FLY">FL_FLY</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_FLY">FL_FLY</a>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_SWIM">FL_SWIM</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> - <a href="defs.htm#FL_SWIM">FL_SWIM</a>;
+
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+		<b>return</b>;
+
+	<a href="defs.htm#activator">activator</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<a href="subs.htm#SUB_UseTargets">SUB_UseTargets</a> ();
+};
+
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>walkmonster_start_go</b><a name="walkmonster_start_go">=</a>
+{
+<b>local</b> <a href="qc-types.htm#string">string</a>	stemp;
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	etemp;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin_z">origin_z</a> + 1;	<i>// raise off floor a bit</i>
+	<a href="qc-built.htm#droptofloor">droptofloor</a>();
+	
+	<b>if</b> (!<a href="qc-built.htm#walkmove">walkmove</a>(0,0))
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"walkmonster in wall at: "</b>);
+		<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> * '0 1 0';
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a> = 20;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 25';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="monsters.htm#monster_use">monster_use</a>;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a> = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+		<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>)
+		{
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"Monster can't find target at "</b>);
+			<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		}
+<i>// this used to be an objerror</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"path_corner"</b>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> ();
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 99999999;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 99999999;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+	}
+
+<i>// spread think times so they don't all happen at same time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.5;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>walkmonster_start</b><a name="walkmonster_start">=</a>
+{
+<i>// delay drop to floor to make sure all doors have been spawned</i>
+<i>// spread think times so they don't all happen at same time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="monsters.htm#walkmonster_start_go">walkmonster_start_go</a>;
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+};
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>flymonster_start_go</b><a name="flymonster_start_go">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> * '0 1 0';
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a> = 10;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 25';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="monsters.htm#monster_use">monster_use</a>;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_FLY">FL_FLY</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>;
+
+	<b>if</b> (!<a href="qc-built.htm#walkmove">walkmove</a>(0,0))
+	{
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"flymonster in wall at: "</b>);
+		<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+		<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a> = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+		<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>)
+		{
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"Monster can't find target at "</b>);
+			<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		}
+<i>// this used to be an objerror</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"path_corner"</b>)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> ();
+		<b>else</b>
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 99999999;
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 99999999;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+	}
+};
+
+<a href="qc-types.htm#void">void</a>() <b>flymonster_start</b><a name="flymonster_start">=</a>
+{
+<i>// spread think times so they don't all happen at same time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="monsters.htm#flymonster_start_go">flymonster_start_go</a>;
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+};
+
+
+<a href="qc-types.htm#void">void</a>() <b>swimmonster_start_go</b><a name="swimmonster_start_go">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#deathmatch">deathmatch</a>)
+	{
+		<a href="qc-built.htm#remove">remove</a>(<a href="qc-glob.htm#self">self</a>);
+		<b>return</b>;
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_AIM">DAMAGE_AIM</a>;
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a> * '0 1 0';
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a>)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_yaw_speed">yaw_speed</a> = 10;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a> = '0 0 10';
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_use">use</a> = <a href="monsters.htm#monster_use">monster_use</a>;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_SWIM">FL_SWIM</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> | <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a> = <a href="qc-built.htm#find">find</a>(<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_target">target</a>);
+		<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>)
+		{
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"Monster can't find target at "</b>);
+			<a href="qc-built.htm#dprint">dprint</a> (vtos(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>));
+			<a href="qc-built.htm#dprint">dprint</a> (<b>"\n"</b>);
+		}
+<i>// this used to be an objerror</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> ();
+	}
+	<b>else</b>
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = 99999999;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+	}
+
+<i>// spread think times so they don't all happen at same time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.5;
+};
+
+<a href="qc-types.htm#void">void</a>() <b>swimmonster_start</b><a name="swimmonster_start">=</a>
+{
+<i>// spread think times so they don't all happen at same time</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> + <a href="qc-built.htm#random">random</a>()*0.5;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="monsters.htm#swimmonster_start_go">swimmonster_start_go</a>;
+	<a href="qc-glob.htm#total_monsters">total_monsters</a> = <a href="qc-glob.htm#total_monsters">total_monsters</a> + 1;
+};
+
+
+
+</pre></body></html>

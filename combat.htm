@@ -1,0 +1,295 @@
+<html><head><title>combat.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+
+<a href="qc-types.htm#void">void</a>() <a href="weapons.htm#T_MissileTouch">T_MissileTouch</a>;
+<a href="qc-types.htm#void">void</a>() <a href="client.htm#info_player_start">info_player_start</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> attacker) <a href="client.htm#ClientObituary">ClientObituary</a>;
+
+<a href="qc-types.htm#void">void</a>() <a href="monsters.htm#monster_death_use">monster_death_use</a>;
+
+<i>//============================================================================</i>
+
+<i>/*
+============
+CanDamage
+
+Returns true if the inflictor can directly damage the target.  Used for
+explosions and melee attacks.
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> inflictor) <b>CanDamage</b><a name="CanDamage">=</a>
+{
+<i>// bmodels need special checking because their origin is 0,0,0</i>
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_movetype">movetype</a> == <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a>)
+	{
+		<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, 0.5 * (targ.<a href="qc-enty.htm#dot_absmin">absmin</a> + targ.<a href="qc-enty.htm#dot_absmax">absmax</a>), <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+		<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+			return TRUE;
+		<b>if</b> (<a href="qc-built.htm#trace_ent">trace_ent</a> == targ)
+			return TRUE;
+		return FALSE;
+	}
+	
+	<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a>, <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+	<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a> + '15 15 0', <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+	<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a> + '-15 -15 0', <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+	<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a> + '-15 15 0', <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+	<a href="qc-built.htm#traceline">traceline</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, targ.<a href="qc-enty.htm#dot_origin">origin</a> + '15 -15 0', <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+
+	return FALSE;
+};
+
+
+<i>/*
+============
+Killed
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> attacker) <b>Killed</b><a name="Killed">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a> oself;
+
+	oself = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = targ;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> &lt; -99)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_health">health</a> = -99;		<i>// don't let sbar look bad if a player</i>
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> == <a href="qc-defs.htm#MOVETYPE_PUSH">MOVETYPE_PUSH</a> || <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetype">movetype</a> == <a href="qc-defs.htm#MOVETYPE_NONE">MOVETYPE_NONE</a>)
+	{	<i>// doors, triggers, etc</i>
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> ();
+		<a href="qc-glob.htm#self">self</a> = oself;
+		<b>return</b>;
+	}
+
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = attacker;
+
+<i>// bump the monster counter</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>)
+	{
+		<a href="qc-glob.htm#killed_monsters">killed_monsters</a> = <a href="qc-glob.htm#killed_monsters">killed_monsters</a> + 1;
+		<a href="qc-net.htm#WriteByte">WriteByte</a> (<a href="qc-net.htm#MSG_ALL">MSG_ALL</a>, <a href="qc-net.htm#SVC_KILLEDMONSTER">SVC_KILLEDMONSTER</a>);
+	}
+
+	<a href="client.htm#ClientObituary">ClientObituary</a>(<a href="qc-glob.htm#self">self</a>, attacker);
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_takedamage">takedamage</a> = <a href="qc-defs.htm#DAMAGE_NO">DAMAGE_NO</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="subs.htm#SUB_Null">SUB_Null</a>;
+
+	<a href="monsters.htm#monster_death_use">monster_death_use</a>();
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_die">th_die</a> ();
+	
+	<a href="qc-glob.htm#self">self</a> = oself;
+};
+
+
+<i>/*
+============
+T_Damage
+
+The damage is coming from inflictor, but get mad at attacker
+This should be the only function that ever reduces health.
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> targ, <a href="qc-types.htm#entity">entity</a> inflictor, <a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>T_Damage</b><a name="T_Damage">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	dir;
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	oldself;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	save;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	take;
+
+	<b>if</b> (!targ.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+		<b>return</b>;
+
+<i>// used by buttons and triggers to set activator for target firing</i>
+	<a href="defs.htm#damage_attacker">damage_attacker</a> = attacker;
+
+<i>// check for quad damage powerup on the attacker</i>
+	<b>if</b> (attacker.<a href="qc-enty.htm#dot_super_damage_finished">super_damage_finished</a> &gt; <a href="qc-glob.htm#time">time</a>)
+		damage = damage * 4;
+
+<i>// save damage based on the target's armor level</i>
+
+	save = <a href="qc-built.htm#ceil">ceil</a>(targ.<a href="qc-enty.htm#dot_armortype">armortype</a>*damage);
+	<b>if</b> (save &gt;= targ.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a>)
+	{
+		save = targ.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a>;
+		targ.<a href="qc-enty.htm#dot_armortype">armortype</a> = 0;	<i>// lost all armor</i>
+		targ.<a href="qc-enty.htm#dot_items">items</a> = targ.<a href="qc-enty.htm#dot_items">items</a> - (targ.<a href="qc-enty.htm#dot_items">items</a> &amp; (<a href="qc-defs.htm#IT_ARMOR1">IT_ARMOR1</a> | <a href="qc-defs.htm#IT_ARMOR2">IT_ARMOR2</a> | <a href="qc-defs.htm#IT_ARMOR3">IT_ARMOR3</a>));
+	}
+	
+	targ.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a> = targ.<a href="qc-enty.htm#dot_armorvalue">armorvalue</a> - save;
+	take = <a href="qc-built.htm#ceil">ceil</a>(damage-save);
+
+<i>// add to the damage total for clients, which will be sent as a single</i>
+<i>// message at the end of the frame</i>
+<i>// FIXME: remove after combining shotgun blasts?</i>
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_CLIENT">FL_CLIENT</a>)
+	{
+		targ.<a href="qc-enty.htm#dot_dmg_take">dmg_take</a> = targ.<a href="qc-enty.htm#dot_dmg_take">dmg_take</a> + take;
+		targ.<a href="qc-enty.htm#dot_dmg_save">dmg_save</a> = targ.<a href="qc-enty.htm#dot_dmg_save">dmg_save</a> + save;
+		targ.<a href="qc-enty.htm#dot_dmg_inflictor">dmg_inflictor</a> = inflictor;
+	}
+
+<i>// figure momentum add</i>
+	<b>if</b> ( (inflictor != <a href="qc-glob.htm#world">world</a>) &amp;&amp; (targ.<a href="qc-enty.htm#dot_movetype">movetype</a> == <a href="qc-defs.htm#MOVETYPE_WALK">MOVETYPE_WALK</a>) )
+	{
+		dir = targ.<a href="qc-enty.htm#dot_origin">origin</a> - (inflictor.<a href="qc-enty.htm#dot_absmin">absmin</a> + inflictor.<a href="qc-enty.htm#dot_absmax">absmax</a>) * 0.5;
+		dir = <a href="qc-built.htm#normalize">normalize</a>(dir);
+		targ.<a href="qc-enty.htm#dot_velocity">velocity</a> = targ.<a href="qc-enty.htm#dot_velocity">velocity</a> + dir*damage*8;
+	}
+
+<i>// check for godmode or invincibility</i>
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_GODMODE">FL_GODMODE</a>)
+		<b>return</b>;
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_invincible_finished">invincible_finished</a> &gt;= <a href="qc-glob.htm#time">time</a>)
+	{
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_sound">invincible_sound</a> &lt; <a href="qc-glob.htm#time">time</a>)
+		{
+			<a href="qc-built.htm#sound">sound</a> (targ, <a href="qc-defs.htm#CHAN_ITEM">CHAN_ITEM</a>, <b>"items/protect3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_invincible_sound">invincible_sound</a> = <a href="qc-glob.htm#time">time</a> + 2;
+		}
+		<b>return</b>;
+	}
+
+<i>// team play damage avoidance</i>
+	<b>if</b> ( (<a href="qc-glob.htm#teamplay">teamplay</a> == 1) &amp;&amp; (targ.<a href="qc-enty.htm#dot_team">team</a> &gt; 0)&amp;&amp;(targ.<a href="qc-enty.htm#dot_team">team</a> == attacker.<a href="qc-enty.htm#dot_team">team</a>) )
+		<b>return</b>;
+		
+<i>// do the damage</i>
+	targ.<a href="qc-enty.htm#dot_health">health</a> = targ.<a href="qc-enty.htm#dot_health">health</a> - take;
+			
+	<b>if</b> (targ.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+	{
+		<a href="combat.htm#Killed">Killed</a> (targ, attacker);
+		<b>return</b>;
+	}
+
+<i>// react to the damage</i>
+	oldself = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = targ;
+
+	<b>if</b> ( (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_MONSTER">FL_MONSTER</a>) &amp;&amp; attacker != <a href="qc-glob.htm#world">world</a>)
+	{
+	<i>// get mad unless of the same class (except for soldiers)</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a> != attacker &amp;&amp; attacker != <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		{
+			<b>if</b> ( (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> != attacker.<a href="qc-enty.htm#dot_classname">classname</a>) 
+			|| (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_army"</b> ) )
+			{
+				<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+					<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldenemy">oldenemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = attacker;
+				<a href="ai.htm#FoundTarget">FoundTarget</a> ();
+			}
+		}
+	}
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_pain">th_pain</a> (attacker, take);
+	<i>// nightmare mode monsters don't go into pain frames often</i>
+		<b>if</b> (<a href="defs.htm#skill">skill</a> == 3)
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pain_finished">pain_finished</a> = <a href="qc-glob.htm#time">time</a> + 5;		
+	}
+
+	<a href="qc-glob.htm#self">self</a> = oldself;
+};
+
+<i>/*
+============
+T_RadiusDamage
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> inflictor, <a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage, <a href="qc-types.htm#entity">entity</a> ignore) <b>T_RadiusDamage</b><a name="T_RadiusDamage">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a> 	points;
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	head;
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	org;
+
+	head = <a href="qc-built.htm#findradius">findradius</a>(inflictor.<a href="qc-enty.htm#dot_origin">origin</a>, damage+40);
+	
+	<b>while</b> (head)
+	{
+		<b>if</b> (head != ignore)
+		{
+			<b>if</b> (head.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+			{
+				org = head.<a href="qc-enty.htm#dot_origin">origin</a> + (head.<a href="qc-enty.htm#dot_mins">mins</a> + head.<a href="qc-enty.htm#dot_maxs">maxs</a>)*0.5;
+				points = 0.5*<a href="qc-built.htm#vlen">vlen</a> (inflictor.<a href="qc-enty.htm#dot_origin">origin</a> - org);
+				<b>if</b> (points &lt; 0)
+					points = 0;
+				points = damage - points;
+				<b>if</b> (head == attacker)
+					points = points * 0.5;
+				<b>if</b> (points &gt; 0)
+				{
+					<b>if</b> (<a href="combat.htm#CanDamage">CanDamage</a> (head, inflictor))
+					{	<i>// shambler takes half damage from all explosions</i>
+						<b>if</b> (head.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)						
+							<a href="combat.htm#T_Damage">T_Damage</a> (head, inflictor, attacker, points*0.5);
+						<b>else</b>
+							<a href="combat.htm#T_Damage">T_Damage</a> (head, inflictor, attacker, points);
+					}
+				}
+			}
+		}
+		head = head.<a href="qc-enty.htm#dot_chain">chain</a>;
+	}
+};
+
+<i>/*
+============
+T_BeamDamage
+============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> attacker, <a href="qc-types.htm#float">float</a> damage) <b>T_BeamDamage</b><a name="T_BeamDamage">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a> 	points;
+	<b>local</b>	<a href="qc-types.htm#entity">entity</a>	head;
+	
+	head = <a href="qc-built.htm#findradius">findradius</a>(attacker.<a href="qc-enty.htm#dot_origin">origin</a>, damage+40);
+	
+	<b>while</b> (head)
+	{
+		<b>if</b> (head.<a href="qc-enty.htm#dot_takedamage">takedamage</a>)
+		{
+			points = 0.5*<a href="qc-built.htm#vlen">vlen</a> (attacker.<a href="qc-enty.htm#dot_origin">origin</a> - head.<a href="qc-enty.htm#dot_origin">origin</a>);
+			<b>if</b> (points &lt; 0)
+				points = 0;
+			points = damage - points;
+			<b>if</b> (head == attacker)
+				points = points * 0.5;
+			<b>if</b> (points &gt; 0)
+			{
+				<b>if</b> (<a href="combat.htm#CanDamage">CanDamage</a> (head, attacker))
+				{
+					<b>if</b> (head.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)						
+						<a href="combat.htm#T_Damage">T_Damage</a> (head, attacker, attacker, points*0.5);
+					<b>else</b>
+						<a href="combat.htm#T_Damage">T_Damage</a> (head, attacker, attacker, points);
+				}
+			}
+		}
+		head = head.<a href="qc-enty.htm#dot_chain">chain</a>;
+	}
+};
+
+
+</pre></body></html>

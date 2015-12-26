@@ -1,0 +1,774 @@
+<html><head><title>ai.qc</title></head><body bgcolor="#C0F0D0">
+<base target=content>
+<pre>
+<a href="qc-types.htm#void">void</a>() <a href="ai.htm#movetarget_f">movetarget_f</a>;
+<a href="qc-types.htm#void">void</a>() <a href="ai.htm#t_movetarget">t_movetarget</a>;
+<a href="qc-types.htm#void">void</a>() <a href="knight.htm#knight_walk1">knight_walk1</a>;
+<a href="qc-types.htm#void">void</a>() <a href="knight.htm#knight_bow6">knight_bow6</a>;
+<a href="qc-types.htm#void">void</a>() <a href="knight.htm#knight_bow1">knight_bow1</a>;
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#entity">entity</a> etemp, <a href="qc-types.htm#entity">entity</a> stemp, <a href="qc-types.htm#entity">entity</a> stemp, <a href="qc-types.htm#float">float</a> dmg) <a href="combat.htm#T_Damage">T_Damage</a>;
+<i>/*
+
+.enemy
+Will be world if not currently angry at anyone.
+
+.movetarget
+The next path spot to walk toward.  If .enemy, ignore .movetarget.
+When an enemy is killed, the monster will try to return to it's path.
+
+.huntt_ime
+Set to time + something when the player is in sight, but movement straight for
+him is blocked.  This causes the monster to use wall following code for
+movement direction instead of sighting on the player.
+
+.ideal_yaw
+A yaw angle of the intended direction, which will be turned towards at up
+to 45 deg / state.  If the enemy is in view and hunt_time is not active,
+this will be the exact line towards the enemy.
+
+.pausetime
+A monster will leave it's stand state and head towards it's .movetarget when
+time > .pausetime.
+
+walkmove(angle, speed) primitive is all or nothing
+*/</i>
+
+
+
+<i>//</i>
+<i>// globals</i>
+<i>//</i>
+<a href="qc-types.htm#float">float</a> <b><a name="current_yaw">current_yaw</a></b>;
+
+<i>//</i>
+<i>// when a monster becomes angry at a player, that monster will be used</i>
+<i>// as the sight target the next frame so that monsters near that one</i>
+<i>// will wake up even if they wouldn't have noticed the player</i>
+<i>//</i>
+<a href="qc-types.htm#entity">entity</a> <b><a name="sight_entity">sight_entity</a></b>;
+<a href="qc-types.htm#float">float</a> <b><a name="sight_entity_time">sight_entity_time</a></b>;
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#float">float</a> v) <b>anglemod</b><a name="anglemod">=</a>
+{
+	<b>while</b> (v &gt;= 360)
+		v = v - 360;
+	<b>while</b> (v &lt; 0)
+		v = v + 360;
+	return v;
+};
+
+<i>/*
+==============================================================================
+
+MOVETARGET CODE
+
+The angle of the movetarget effects standing and bowing direction, but has no effect on movement, which allways heads to the next target.
+
+targetname
+must be present.  The name of this movetarget.
+
+target
+the next spot to move to.  If not present, stop here for good.
+
+pausetime
+The number of seconds to spend standing or bowing for path_stand or path_bow
+
+==============================================================================
+*/</i>
+
+
+
+<a href="qc-types.htm#void">void</a>() <b>movetarget_f</b><a name="movetarget_f">=</a>
+{
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_targetname">targetname</a>)
+		<a href="qc-built.htm#objerror">objerror</a> (<b>"monster_movetarget: no targetname"</b>);
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_solid">solid</a> = <a href="qc-defs.htm#SOLID_TRIGGER">SOLID_TRIGGER</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_touch">touch</a> = <a href="ai.htm#t_movetarget">t_movetarget</a>;
+	<a href="qc-built.htm#setsize">setsize</a> (<a href="qc-glob.htm#self">self</a>, '-8 -8 -8', '8 8 8');
+	
+};
+
+<i>/*QUAKED path_corner (0.5 0.3 0) (-8 -8 -8) (8 8 8)
+Monsters will continue walking towards the next target corner.
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>path_corner</b><a name="path_corner">=</a>
+{
+	<a href="ai.htm#movetarget_f">movetarget_f</a> ();
+};
+
+
+<i>/*
+=============
+t_movetarget
+
+Something has bumped into a movetarget.  If it is a monster
+moving towards it, change the next destination and continue.
+==============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>t_movetarget</b><a name="t_movetarget">=</a>
+{
+<b>local</b> <a href="qc-types.htm#entity">entity</a>	temp;
+
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a> != <a href="qc-glob.htm#self">self</a>)
+		<b>return</b>;
+	
+	<b>if</b> (<a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		<b>return</b>;		<i>// fighting, not following a path</i>
+
+	temp = <a href="qc-glob.htm#self">self</a>;
+	<a href="qc-glob.htm#self">self</a> = <a href="qc-glob.htm#other">other</a>;
+	<a href="qc-glob.htm#other">other</a> = temp;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_ogre"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogdrag.wav"</b>, 1, <a href="qc-defs.htm#ATTN_IDLE">ATTN_IDLE</a>);<i>// play chainsaw drag sound</i>
+
+<i>//dprint ("t_movetarget\n");</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a> = <a href="qc-built.htm#find">find</a> (<a href="qc-glob.htm#world">world</a>, targetname, <a href="qc-glob.htm#other">other</a>.<a href="qc-enty.htm#dot_target">target</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<b>if</b> (!<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a> = <a href="qc-glob.htm#time">time</a> + 999999;
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+		<b>return</b>;
+	}
+};
+
+
+
+<i>//============================================================================</i>
+
+<i>/*
+=============
+range
+
+returns the range catagorization of an entity reletive to self
+0	melee range, will become hostile even if back is turned
+1	visibility and infront, or visibility and show hostile
+2	infront and show hostile
+3	only triggered by damage
+=============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ) <b>range</b><a name="range">=</a>
+{
+<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;
+<b>local</b> <a href="qc-types.htm#float">float</a>		r;	
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	
+	r = <a href="qc-built.htm#vlen">vlen</a> (spot1 - spot2);
+	<b>if</b> (r &lt; 120)
+		return RANGE_MELEE;
+	<b>if</b> (r &lt; 500)
+		return RANGE_NEAR;
+	<b>if</b> (r &lt; 1000)
+		return RANGE_MID;
+	return RANGE_FAR;
+};
+
+<i>/*
+=============
+visible
+
+returns 1 if the entity is visible to self, even if not infront ()
+=============
+*/</i>
+
+<a href="qc-types.htm#float">float</a> (<a href="qc-types.htm#entity">entity</a> targ) <b>visible</b><a name="visible">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	spot1, spot2;
+	
+	spot1 = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> + <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	spot2 = targ.<a href="qc-enty.htm#dot_origin">origin</a> + targ.<a href="qc-enty.htm#dot_view_ofs">view_ofs</a>;
+	<a href="qc-built.htm#traceline">traceline</a> (spot1, spot2, <a href="defs.htm#TRUE">TRUE</a>, <a href="qc-glob.htm#self">self</a>);	<i>// see through other monsters</i>
+	
+	<b>if</b> (<a href="qc-built.htm#trace_inopen">trace_inopen</a> &amp;&amp; <a href="qc-built.htm#trace_inwater">trace_inwater</a>)
+		return FALSE;			<i>// sight line crossed contents</i>
+
+	<b>if</b> (<a href="qc-built.htm#trace_fraction">trace_fraction</a> == 1)
+		return TRUE;
+	return FALSE;
+};
+
+
+<i>/*
+=============
+infront
+
+returns 1 if the entity is in front (in sight) of self
+=============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>(<a href="qc-types.htm#entity">entity</a> targ) <b>infront</b><a name="infront">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	vec;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		dot;
+	
+	<a href="qc-built.htm#makevectors">makevectors</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_angles">angles</a>);
+	vec = <a href="qc-built.htm#normalize">normalize</a> (targ.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	dot = vec * <a href="qc-built.htm#v_forward">v_forward</a>;
+	
+	<b>if</b> ( dot &gt; 0.3)
+	{
+		return TRUE;
+	}
+	return FALSE;
+};
+
+
+<i>//============================================================================</i>
+
+<i>/*
+===========
+ChangeYaw
+
+Turns towards self.ideal_yaw at self.yaw_speed
+Sets the global variable current_yaw
+Called every 0.1 sec by monsters
+============
+*/</i>
+
+<i>/*
+
+void() ChangeYaw =
+{
+	local float		ideal, move;
+
+//current_yaw = self.ideal_yaw;
+// mod down the current angle
+	current_yaw = anglemod( self.angles_y );
+	ideal = self.ideal_yaw;
+	
+	if (current_yaw == ideal)
+		return;
+	
+	move = ideal - current_yaw;
+	if (ideal > current_yaw)
+	{
+		if (move > 180)
+			move = move - 360;
+	}
+	else
+	{
+		if (move < -180)
+			move = move + 360;
+	}
+		
+	if (move > 0)
+	{
+		if (move > self.yaw_speed)
+			move = self.yaw_speed;
+	}
+	else
+	{
+		if (move < 0-self.yaw_speed )
+			move = 0-self.yaw_speed;
+	}
+
+	current_yaw = anglemod (current_yaw + move);
+
+	self.angles_y = current_yaw;
+};
+
+*/</i>
+
+
+
+<i>//============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>() <b>HuntTarget</b><a name="HuntTarget">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_goalentity">goalentity</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_think">think</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_run">th_run</a>;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_nextthink">nextthink</a> = <a href="qc-glob.htm#time">time</a> + 0.1;
+	<a href="subs.htm#SUB_AttackFinished">SUB_AttackFinished</a> (1);	<i>// wait a while before first attack</i>
+};
+
+<a href="qc-types.htm#void">void</a>() <b>SightSound</b><a name="SightSound">=</a>
+{
+<b>local</b> <a href="qc-types.htm#float">float</a>	rsnd;
+
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_ogre"</b>)	
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"ogre/ogwake.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_knight"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"knight/ksight.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shambler/ssight.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_demon1"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"demon/sight2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_wizard"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"wizard/wsight.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_zombie"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"zombie/z_idle.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_dog"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"dog/dsight.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_hell_knight"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"hknight/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_tarbaby"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"blob/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_vomit"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"vomitus/v_sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_enforcer"</b>)
+	{
+		rsnd = <a href="qc-built.htm#rint">rint</a>(<a href="qc-built.htm#random">random</a>() * 3);			
+		<b>if</b> (rsnd == 1)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b> <b>if</b> (rsnd == 2)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/sight2.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b> <b>if</b> (rsnd == 0)
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/sight3.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+		<b>else</b>
+			<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"enforcer/sight4.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	}
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_army"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"soldier/sight1.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+	<b>else</b> <b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shalrath"</b>)
+		<a href="qc-built.htm#sound">sound</a> (<a href="qc-glob.htm#self">self</a>, <a href="qc-defs.htm#CHAN_VOICE">CHAN_VOICE</a>, <b>"shalrath/sight.wav"</b>, 1, <a href="qc-defs.htm#ATTN_NORM">ATTN_NORM</a>);
+};
+
+<a href="qc-types.htm#void">void</a>() <b>FoundTarget</b><a name="FoundTarget">=</a>
+{
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"player"</b>)
+	{	<i>// let other monsters see this monster for a while</i>
+		<a href="ai.htm#sight_entity">sight_entity</a> = <a href="qc-glob.htm#self">self</a>;
+		<a href="ai.htm#sight_entity_time">sight_entity_time</a> = <a href="qc-glob.htm#time">time</a>;
+	}
+	
+	<a href="qc-glob.htm#self">self</a>.show_hostile = <a href="qc-glob.htm#time">time</a> + 1;		<i>// wake up other monsters</i>
+
+	<a href="ai.htm#SightSound">SightSound</a> ();
+	<a href="ai.htm#HuntTarget">HuntTarget</a> ();
+};
+
+<i>/*
+===========
+FindTarget
+
+Self is currently not attacking anything, so try to find a target
+
+Returns TRUE if an enemy was sighted
+
+When a player fires a missile, the point of impact becomes a fakeplayer so
+that monsters that see the impact will respond as if they had seen the
+player.
+
+To avoid spending too much time, only a single client (or fakeclient) is
+checked each frame.  This means multi player games will have slightly
+slower noticing monsters.
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>FindTarget</b><a name="FindTarget">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#entity">entity</a>	client;
+	<b>local</b> <a href="qc-types.htm#float">float</a>		r;
+
+<i>// if the first spawnflag bit is set, the monster will only wake up on</i>
+<i>// really seeing the player, not another monster getting angry</i>
+
+<i>// spawnflags & 3 is a big hack, because zombie crucified used the first</i>
+<i>// spawn flag prior to the ambush flag, and I forgot about it, so the second</i>
+<i>// spawn flag works as well</i>
+	<b>if</b> (<a href="ai.htm#sight_entity_time">sight_entity_time</a> &gt;= <a href="qc-glob.htm#time">time</a> - 0.1 &amp;&amp; !(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_spawnflags">spawnflags</a> &amp; 3) )
+	{
+		client = <a href="ai.htm#sight_entity">sight_entity</a>;
+		<b>if</b> (client.<a href="qc-enty.htm#dot_enemy">enemy</a> == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+			<b>return</b>;
+	}
+	<b>else</b>
+	{
+		client = <a href="qc-built.htm#checkclient">checkclient</a> ();
+		<b>if</b> (!client)
+			return FALSE;	<i>// current check entity isn't in PVS</i>
+	}
+
+	<b>if</b> (client == <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>)
+		return FALSE;
+
+	<b>if</b> (client.<a href="qc-enty.htm#dot_flags">flags</a> &amp; <a href="defs.htm#FL_NOTARGET">FL_NOTARGET</a>)
+		return FALSE;
+	<b>if</b> (client.<a href="qc-enty.htm#dot_items">items</a> &amp; <a href="qc-defs.htm#IT_INVISIBILITY">IT_INVISIBILITY</a>)
+		return FALSE;
+
+	r = <a href="ai.htm#range">range</a> (client);
+	<b>if</b> (r == <a href="defs.htm#RANGE_FAR">RANGE_FAR</a>)
+		return FALSE;
+		
+	<b>if</b> (!<a href="ai.htm#visible">visible</a> (client))
+		return FALSE;
+
+	<b>if</b> (r == <a href="defs.htm#RANGE_NEAR">RANGE_NEAR</a>)
+	{
+		<b>if</b> (client.show_hostile &lt; <a href="qc-glob.htm#time">time</a> &amp;&amp; !<a href="ai.htm#infront">infront</a> (client))
+			return FALSE;
+	}
+	<b>else</b> <b>if</b> (r == <a href="defs.htm#RANGE_MID">RANGE_MID</a>)
+	{
+		<b>if</b> ( <i>/* client.show_hostile < time || */</i>
+ !<a href="ai.htm#infront">infront</a> (client))
+			return FALSE;
+	}
+	
+<i>//</i>
+<i>// got one</i>
+<i>//</i>
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = client;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>;
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_classname">classname</a> != <b>"player"</b>)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#world">world</a>;
+			return FALSE;
+		}
+	}
+	
+	<a href="ai.htm#FoundTarget">FoundTarget</a> ();
+
+	return TRUE;
+};
+
+
+<i>//=============================================================================</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_forward</b><a name="ai_forward">=</a>
+{
+	<a href="qc-built.htm#walkmove">walkmove</a> (<a href="qc-glob.htm#self">self</a>.angles_y, dist);
+};
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_back</b><a name="ai_back">=</a>
+{
+	<a href="qc-built.htm#walkmove">walkmove</a> ( (<a href="qc-glob.htm#self">self</a>.angles_y+180), dist);
+};
+
+
+<i>/*
+=============
+ai_pain
+
+stagger back a bit
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_pain</b><a name="ai_pain">=</a>
+{
+	<a href="ai.htm#ai_back">ai_back</a> (dist);
+/*
+	<b>local</b> <a href="qc-types.htm#float">float</a>	away;
+	
+	away = <a href="qc-built.htm#anglemod">anglemod</a> (<a href="qc-built.htm#vectoyaw">vectoyaw</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a>) 
+	+ 180*(<a href="qc-built.htm#random">random</a>()- 0.5) );
+	
+	<a href="qc-built.htm#walkmove">walkmove</a> (away, dist);
+*/
+};
+
+<i>/*
+=============
+ai_painforward
+
+stagger back a bit
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_painforward</b><a name="ai_painforward">=</a>
+{
+	<a href="qc-built.htm#walkmove">walkmove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a>, dist);
+};
+
+<i>/*
+=============
+ai_walk
+
+The monster is walking it's beat
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_walk</b><a name="ai_walk">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>		mtemp;
+	
+	<a href="defs.htm#movedist">movedist</a> = dist;
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_dragon"</b>)
+	{
+		<a href="qc-built.htm#movetogoal">movetogoal</a> (dist);
+		<b>return</b>;
+	}
+	<i>// check for noticing a player</i>
+	<b>if</b> (<a href="ai.htm#FindTarget">FindTarget</a> ())
+		<b>return</b>;
+
+	<a href="qc-built.htm#movetogoal">movetogoal</a> (dist);
+};
+
+
+<i>/*
+=============
+ai_stand
+
+The monster is staying in one place for a while, with slight angle turns
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_stand</b><a name="ai_stand">=</a>
+{
+	<b>if</b> (<a href="ai.htm#FindTarget">FindTarget</a> ())
+		<b>return</b>;
+	
+	<b>if</b> (<a href="qc-glob.htm#time">time</a> &gt; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_pausetime">pausetime</a>)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> ();
+		<b>return</b>;
+	}
+	
+<i>// change angle slightly</i>
+
+};
+
+<i>/*
+=============
+ai_turn
+
+don't move, but turn towards ideal_yaw
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_turn</b><a name="ai_turn">=</a>
+{
+	<b>if</b> (<a href="ai.htm#FindTarget">FindTarget</a> ())
+		<b>return</b>;
+	
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+};
+
+<i>//=============================================================================</i>
+
+<i>/*
+=============
+ChooseTurn
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#vector">vector</a> dest3) <b>ChooseTurn</b><a name="ChooseTurn">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#vector">vector</a>	dir, newdir;
+	
+	dir = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a> - dest3;
+
+	newdir_x = trace_plane_normal_y;
+	newdir_y = 0 - trace_plane_normal_x;
+	newdir_z = 0;
+	
+	<b>if</b> (dir * newdir &gt; 0)
+	{
+		dir_x = 0 - trace_plane_normal_y;
+		dir_y = trace_plane_normal_x;
+	}
+	<b>else</b>
+	{
+		dir_x = trace_plane_normal_y;
+		dir_y = 0 - trace_plane_normal_x;
+	}
+
+	dir_z = 0;
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(dir);	
+};
+
+<i>/*
+============
+FacingIdeal
+
+============
+*/</i>
+
+<a href="qc-types.htm#float">float</a>() <b>FacingIdeal</b><a name="FacingIdeal">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	delta;
+	
+	delta = <a href="qc-built.htm#anglemod">anglemod</a>(<a href="qc-glob.htm#self">self</a>.angles_y - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a>);
+	<b>if</b> (delta &gt; 45 &amp;&amp; delta &lt; 315)
+		return FALSE;
+	return TRUE;
+};
+
+
+<i>//=============================================================================</i>
+
+<a href="qc-types.htm#float">float</a>() <a href="wizard.htm#WizardCheckAttack">WizardCheckAttack</a>;
+<a href="qc-types.htm#float">float</a>() <a href="dog.htm#DogCheckAttack">DogCheckAttack</a>;
+
+<a href="qc-types.htm#float">float</a>() <b>CheckAnyAttack</b><a name="CheckAnyAttack">=</a>
+{
+	<b>if</b> (!enemy_vis)
+		<b>return</b>;
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_army"</b>)
+		<b>return</b> <a href="fight.htm#SoldierCheckAttack">SoldierCheckAttack</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_ogre"</b>)
+		<b>return</b> <a href="fight.htm#OgreCheckAttack">OgreCheckAttack</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_shambler"</b>)
+		<b>return</b> <a href="fight.htm#ShamCheckAttack">ShamCheckAttack</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_demon1"</b>)
+		<b>return</b> <a href="demon.htm#DemonCheckAttack">DemonCheckAttack</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_dog"</b>)
+		<b>return</b> <a href="dog.htm#DogCheckAttack">DogCheckAttack</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_classname">classname</a> == <b>"monster_wizard"</b>)
+		<b>return</b> <a href="wizard.htm#WizardCheckAttack">WizardCheckAttack</a> ();
+	<b>return</b> <a href="fight.htm#CheckAttack">CheckAttack</a> ();
+};
+
+
+<i>/*
+=============
+ai_run_melee
+
+Turn and close until within an angle to launch a melee attack
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_run_melee</b><a name="ai_run_melee">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="fight.htm#enemy_yaw">enemy_yaw</a>;
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+
+	<b>if</b> (<a href="ai.htm#FacingIdeal">FacingIdeal</a>())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_melee">th_melee</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+	}
+};
+
+
+<i>/*
+=============
+ai_run_missile
+
+Turn in place until within an angle to launch a missile attack
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_run_missile</b><a name="ai_run_missile">=</a>
+{
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="fight.htm#enemy_yaw">enemy_yaw</a>;
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+	<b>if</b> (<a href="ai.htm#FacingIdeal">FacingIdeal</a>())
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_missile">th_missile</a> ();
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> = <a href="defs.htm#AS_STRAIGHT">AS_STRAIGHT</a>;
+	}
+};
+
+
+<i>/*
+=============
+ai_run_slide
+
+Strafe sideways, but stay at aproximately the same range
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>() <b>ai_run_slide</b><a name="ai_run_slide">=</a>
+{
+	<b>local</b> <a href="qc-types.htm#float">float</a>	ofs;
+	
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> = <a href="fight.htm#enemy_yaw">enemy_yaw</a>;
+	<a href="qc-built.htm#ChangeYaw">ChangeYaw</a> ();
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lefty">lefty</a>)
+		ofs = 90;
+	<b>else</b>
+		ofs = -90;
+	
+	<b>if</b> (<a href="qc-built.htm#walkmove">walkmove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> + ofs, <a href="defs.htm#movedist">movedist</a>))
+		<b>return</b>;
+		
+	<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lefty">lefty</a> = 1 - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_lefty">lefty</a>;
+	
+	<a href="qc-built.htm#walkmove">walkmove</a> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_ideal_yaw">ideal_yaw</a> - ofs, <a href="defs.htm#movedist">movedist</a>);
+};
+
+
+<i>/*
+=============
+ai_run
+
+The monster has an enemy it is trying to kill
+=============
+*/</i>
+
+<a href="qc-types.htm#void">void</a>(<a href="qc-types.htm#float">float</a> dist) <b>ai_run</b><a name="ai_run">=</a>
+{
+	<b>local</b>	<a href="qc-types.htm#vector">vector</a>	delta;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	axis;
+	<b>local</b>	<a href="qc-types.htm#float">float</a>	direct, ang_rint, ang_floor, ang_ceil;
+	
+	<a href="defs.htm#movedist">movedist</a> = dist;
+<i>// see if the enemy is dead</i>
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_health">health</a> &lt;= 0)
+	{
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#world">world</a>;
+	<i>// FIXME: look all around for other targets</i>
+		<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldenemy">oldenemy</a>.<a href="qc-enty.htm#dot_health">health</a> &gt; 0)
+		{
+			<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a> = <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_oldenemy">oldenemy</a>;
+			<a href="ai.htm#HuntTarget">HuntTarget</a> ();
+		}
+		<b>else</b>
+		{
+			<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_movetarget">movetarget</a>)
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_walk">th_walk</a> ();
+			<b>else</b>
+				<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_th_stand">th_stand</a> ();
+			<b>return</b>;
+		}
+	}
+
+	<a href="qc-glob.htm#self">self</a>.show_hostile = <a href="qc-glob.htm#time">time</a> + 1;		<i>// wake up other monsters</i>
+
+<i>// check knowledge of enemy</i>
+	enemy_vis = <a href="ai.htm#visible">visible</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>);
+	<b>if</b> (enemy_vis)
+		<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_search_time">search_time</a> = <a href="qc-glob.htm#time">time</a> + 5;
+
+<i>// look for other coop players</i>
+	<b>if</b> (<a href="qc-glob.htm#coop">coop</a> &amp;&amp; <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_search_time">search_time</a> &lt; <a href="qc-glob.htm#time">time</a>)
+	{
+		<b>if</b> (<a href="ai.htm#FindTarget">FindTarget</a> ())
+			<b>return</b>;
+	}
+
+	enemy_infront = <a href="ai.htm#infront">infront</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>);
+	enemy_range = <a href="ai.htm#range">range</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>);
+	<a href="fight.htm#enemy_yaw">enemy_yaw</a> = <a href="qc-built.htm#vectoyaw">vectoyaw</a>(<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_enemy">enemy</a>.<a href="qc-enty.htm#dot_origin">origin</a> - <a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_origin">origin</a>);
+	
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> == <a href="defs.htm#AS_MISSILE">AS_MISSILE</a>)
+	{
+<i>//dprint ("ai_run_missile\n");</i>
+		<a href="ai.htm#ai_run_missile">ai_run_missile</a> ();
+		<b>return</b>;
+	}
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> == <a href="defs.htm#AS_MELEE">AS_MELEE</a>)
+	{
+<i>//dprint ("ai_run_melee\n");</i>
+		<a href="ai.htm#ai_run_melee">ai_run_melee</a> ();
+		<b>return</b>;
+	}
+
+	<b>if</b> (<a href="ai.htm#CheckAnyAttack">CheckAnyAttack</a> ())
+		<b>return</b>;					<i>// beginning an attack</i>
+		
+	<b>if</b> (<a href="qc-glob.htm#self">self</a>.<a href="qc-enty.htm#dot_attack_state">attack_state</a> == <a href="defs.htm#AS_SLIDING">AS_SLIDING</a>)
+	{
+		<a href="ai.htm#ai_run_slide">ai_run_slide</a> ();
+		<b>return</b>;
+	}
+		
+<i>// head straight in</i>
+	<a href="qc-built.htm#movetogoal">movetogoal</a> (dist);		<i>// done in C code...</i>
+};
+
+
+</pre></body></html>
