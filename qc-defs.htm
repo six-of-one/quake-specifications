@@ -6,7 +6,7 @@
 
 <H1><FONT COLOR="#007F00"><A NAME="QC-DEFS">5. Built-in Constants</A></FONT></H1>
 
-<p>This file tries to give some additional details about the definitions 
+<p>This file gives some additional details about the definitions 
 in defs.qc.</p>
 
 
@@ -15,19 +15,19 @@ in defs.qc.</p>
 <p><i>Information copied from the DEM specifications</i></p>
 <p><pre>
 // point entity is a small point like entity.
- 0    TE_SPIKE           unknown
- 1    TE_SUPERSPIKE      superspike hits (spike traps)
- 2    TE_GUNSHOT         hit on the wall (Axe, Shotgun)
+ 0    TE_SPIKE           regular spike hits (nailgun)
+ 1    TE_SUPERSPIKE      superspike hits (spike traps, super-nailgun)
+ 2    TE_GUNSHOT         hit on the wall (axe, shotgun)
  3    TE_EXPLOSION       grenade/missile explosion
  4    TE_TAREXPLOSION    explosion of a tarbaby
  7    TE_WIZSPIKE        wizard's hit
  8    TE_KNIGHTSPIKE     hell knight's shot hit
-10    TE_LAVASPLASH      Chthon awakes and falls dead
+10    TE_LAVASPLASH      Cthon awakes and falls dead
 11    TE_TELEPORT        teleport end
 // large entity is a 2 dimensional entity.
- 5    TE_LIGHTNING1      flash of the Shambler
- 6    TE_LIGHTNING2      flash of the Thunderbolt
- 9    TE_LIGHTNING3      flash in e1m7 to kill Chthon
+ 5    TE_LIGHTNING1      bolt of the Shambler
+ 6    TE_LIGHTNING2      bolt of the Thunderbolt
+ 9    TE_LIGHTNING3      bolt in e1m7 to kill Cthon
 </pre>
 
 
@@ -48,14 +48,19 @@ Those values are meant to be used with the function
 <h4>5.3 <A NAME="d_attenuate">Sound Attenuation</A></h4>
 
 <p><pre>
-<b><a name="ATTN_NONE">ATTN_NONE</a></b> = 0;    // full volume everywhere in the leve
-<b><a name="ATTN_NORM">ATTN_NORM</a></b> = 1;    // normal
-<b><a name="ATTN_IDLE">ATTN_IDLE</a></b> = 2;    // ?
-<b><a name="ATTN_STATIC">ATTN_STATIC</a></b> = 3;  // ?
+<b><a name="ATTN_NONE">ATTN_NONE</a></b> = 0;    // full volume everywhere in the level, player death sounds in DM
+<b><a name="ATTN_NORM">ATTN_NORM</a></b> = 1;    // normal sound
+<b><a name="ATTN_IDLE">ATTN_IDLE</a></b> = 2;    // monster "idle" sounds
+<b><a name="ATTN_STATIC">ATTN_STATIC</a></b> = 3;  // used mostly by <a href="qc-built.htm#ambientsound" target="content">ambientsound</a> static sound entities
 </pre>
 Those values are meant to be used with the functions
 <a href="qc-built.htm#sound" target="content">sound</a> and 
-<a href="qc-built.htm#ambientsound" target="content">ambientsound</a>.
+<a href="qc-built.htm#ambientsound" target="content">ambientsound</a>.<br>
+Attenuation is a scale factor, as per engine code:
+<pre>                target_chan->dist_mult = attenuation / snd_soundradius.value;</pre>
+or static sounds:
+<pre>                target_chan->dist_mult = attenuation / (64.0f * snd_soundradius.value);</pre>
+
 </p>
 
 <h4>5.4 <A NAME="d_contents">Contents of areas</A></h4>
@@ -156,7 +161,7 @@ the nailgun.
 <h4>5.9 <A NAME="d_damage">Take damage</A></h4>
 <p><pre>
 <b><a name="DAMAGE_NO">DAMAGE_NO</a></b> = 0;                 // Can't be damaged
-<b><a name="DAMAGE_YES">DAMAGE_YES</a></b> = 1;                // Grenades don't explode when touching entity
+<b><a name="DAMAGE_YES">DAMAGE_YES</a></b> = 1;                // Grenades don't explode when touching entity - doors, buttons, triggers
 <b><a name="DAMAGE_AIM">DAMAGE_AIM</a></b> = 2;                // Grenades explode when touching entity
 </pre>
 Most damageable entities have DAMAGE_AIM, so that when they chew on a grenade,
