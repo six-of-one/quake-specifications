@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr" class="client-nojs">
+<head>
+<title>Precompiler definitions - FTE v1.0</title>
+<meta charset="UTF-8" />
+<meta name="generator" content="MediaWiki 1.19.2" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="search" type="application/opensearchdescription+xml" href="/wiki/opensearch_desc.php" title="FTE (en-gb)" />
+<link rel="EditURI" type="application/rsd+xml" href="http://fteqw.com/wiki/api.php?action=rsd" />
+<link rel="alternate" type="application/atom+xml" title="FTE Atom feed" href="/wiki/index.php?title=Special:RecentChanges&amp;feed=atom" />
+<link rel="stylesheet" href="http://fteqw.com/wiki/load.php?debug=false&amp;lang=en-gb&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*" />
+<meta name="ResourceLoaderDynamicStyles" content="" />
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}
+
+</style>
+
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/wiki/skins/vector/csshover.min.htc")}</style><![endif]--></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Precompiler_definitions skin-vector action-view" bgcolor="#ffffff">
+		<!-- content -->
+		<div id="content" class="mw-body">
+			<a id="top"></a>
+<h2>Documents:</h2>
+
+An archive version of the original documents can be found <a href="http://fte.triptohell.info/wiki/index.php/Main_Page" target="_blank" title="FTE Main Page">here</a>.<br>
+I had a hard time finding this recently, so I've posted it in this set incase a repeat happens.<br>
+<br>
+FTE qcc has a typical set of C pre-compiler directives that allow for more complex code and projects.<br>
+The details provided here are a basic guide to usage.<br>
+Full credit and kudos to the FTE team for the entire creation.
+<br>
+<hr><br>
+<div id="mw-js-message" style="display:none;"></div>
+						<!-- firstHeading -->
+			<h1 id="firstHeading" class="firstHeading">
+				<span dir="auto">Precompiler definitions</span>
+			</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id="bodyContent">
+								<!-- tagline -->
+				<div id="siteSub">From FTE</div>
+				<!-- /tagline -->
+								<!-- subtitle -->
+				<div id="contentSub"></div>
+				<!-- /subtitle -->
+				<!-- /jumpto -->
+								<!-- bodycontent -->
+				<div id="mw-content-text" lang="en-GB" dir="ltr" class="mw-content-ltr"><table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Definitions"><span class="tocnumber">1</span> <span class="toctext">Definitions</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#.23define"><span class="tocnumber">1.1</span> <span class="toctext">#define</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#.23undef"><span class="tocnumber">1.2</span> <span class="toctext">#undef</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-4"><a href="#Control_Logic"><span class="tocnumber">2</span> <span class="toctext">Control Logic</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#.23ifdef"><span class="tocnumber">2.1</span> <span class="toctext">#ifdef</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#.23ifndef"><span class="tocnumber">2.2</span> <span class="toctext">#ifndef</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#.23if"><span class="tocnumber">2.3</span> <span class="toctext">#if</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#.23else"><span class="tocnumber">2.4</span> <span class="toctext">#else</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#.23endif"><span class="tocnumber">2.5</span> <span class="toctext">#endif</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Compiler_Messages"><span class="tocnumber">3</span> <span class="toctext">Compiler Messages</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="#.23message"><span class="tocnumber">3.1</span> <span class="toctext">#message</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#.23warning"><span class="tocnumber">3.2</span> <span class="toctext">#warning</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#.23error"><span class="tocnumber">3.3</span> <span class="toctext">#error</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-14"><a href="#Compilation"><span class="tocnumber">4</span> <span class="toctext">Compilation</span></a>
+<ul>
+<li class="toclevel-2 tocsection-15"><a href="#.23include"><span class="tocnumber">4.1</span> <span class="toctext">#include</span></a></li>
+<li class="toclevel-2 tocsection-16"><a href="#.23includelist"><span class="tocnumber">4.2</span> <span class="toctext">#includelist</span></a></li>
+<li class="toclevel-2 tocsection-17"><a href="#.23endlist"><span class="tocnumber">4.3</span> <span class="toctext">#endlist</span></a></li>
+<li class="toclevel-2 tocsection-18"><a href="#.23eof"><span class="tocnumber">4.4</span> <span class="toctext">#eof</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-19"><a href="#Progs_Control"><span class="tocnumber">5</span> <span class="toctext">Progs Control</span></a>
+<ul>
+<li class="toclevel-2 tocsection-20"><a href="#.23output"><span class="tocnumber">5.1</span> <span class="toctext">#output</span></a></li>
+<li class="toclevel-2 tocsection-21"><a href="#.23forcecrc"><span class="tocnumber">5.2</span> <span class="toctext">#forcecrc</span></a></li>
+<li class="toclevel-2 tocsection-22"><a href="#.23copyright"><span class="tocnumber">5.3</span> <span class="toctext">#copyright</span></a></li>
+<li class="toclevel-2 tocsection-23"><a href="#.23datafile"><span class="tocnumber">5.4</span> <span class="toctext">#datafile</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-24"><a href="#Pack_.28PAK.29_files"><span class="tocnumber">6</span> <span class="toctext">Pack (PAK) files</span></a>
+<ul>
+<li class="toclevel-2 tocsection-25"><a href="#.23packid"><span class="tocnumber">6.1</span> <span class="toctext">#packid</span></a></li>
+<li class="toclevel-2 tocsection-26"><a href="#.23pack"><span class="tocnumber">6.2</span> <span class="toctext">#pack</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-27"><a href="#Pragma_.28.23pragma.29"><span class="tocnumber">7</span> <span class="toctext">Pragma (#pragma)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-28"><a href="#.23pragma_DONT_COMPILE_THIS_FILE"><span class="tocnumber">7.1</span> <span class="toctext">#pragma DONT_COMPILE_THIS_FILE</span></a></li>
+<li class="toclevel-2 tocsection-29"><a href="#.23pragma_COPYRIGHT"><span class="tocnumber">7.2</span> <span class="toctext">#pragma COPYRIGHT</span></a></li>
+<li class="toclevel-2 tocsection-30"><a href="#.23pragma_TARGET"><span class="tocnumber">7.3</span> <span class="toctext">#pragma TARGET</span></a></li>
+<li class="toclevel-2 tocsection-31"><a href="#.23pragma_PROGS_SRC"><span class="tocnumber">7.4</span> <span class="toctext">#pragma PROGS_SRC</span></a></li>
+<li class="toclevel-2 tocsection-32"><a href="#.23pragma_PROGS_DAT"><span class="tocnumber">7.5</span> <span class="toctext">#pragma PROGS_DAT</span></a></li>
+<li class="toclevel-2 tocsection-33"><a href="#.23pragma_keyword_and_.23pragma_flag"><span class="tocnumber">7.6</span> <span class="toctext">#pragma keyword and #pragma flag</span></a></li>
+<li class="toclevel-2 tocsection-34"><a href="#.23pragma_warning"><span class="tocnumber">7.7</span> <span class="toctext">#pragma warning</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Definitions"> Definitions </span></h2>
+<h3> <span class="mw-headline" id=".23define">#define</span></h3>
+<p><b>Syntax</b>: #define &lt;defname&gt;[(&lt;macroparams&gt;)] [&lt;defvalue&gt;]<br />
+</p><p>Defines a precompiler define or macro.<br />
+</p>
+<ul><li> &lt;defname&gt; contains the define name
+</li><li> &lt;macroparams&gt; contains a list of parameters, seperated by commas, to use with a macro (optional)
+</li><li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {param spec} must NOT include numerals 0 - 9
+</li><li> &lt;defvalue&gt; contains the define value (optional)
+</li></ul>
+<p>After statement parsing, &lt;defname&gt; is considered defined. Then, FTEQCC encounters &lt;defname&gt; or #&lt;defname&gt; during parsing, it will be replaced with &lt;defvalue&gt;, or &lt;defname&gt; will be erased if &lt;defvalue&gt; is not defined. If &lt;macroparams&gt; are defined, FTEQCC will use &lt;defvalue&gt; in the following fashion:
+</p>
+<ul><li> If a parameter in &lt;macroparams&gt; as an isolated token is found, it is replaced into the result.
+</li><li> If a parameter in &lt;macroparams&gt; is found with a preceding #, it is surrounded in quotes, then placed into the result.
+</li><li> If a parameter in &lt;macroparams&gt; is found with 2 preceding #, it is concatenated into the result.
+</li></ul>
+<p>Examples:
+</p>
+<pre>// Simple defines for use in precompiler control logic later on
+#define MONSTERS
+#define NEWWEAPONS
+</pre>
+<pre>// Use of defines as constants
+#define NEWWEAPONNAME "chainsaw with lasersight"
+string s;
+s = NEWWEAPONNAME; // Same as s = "chainsaw with lasersight";
+s = #NEWWEAPONNAME; // Also same as s = "chainsaw with lasersight";
+</pre>
+<pre>// Simple use of macros
+#define ISEQUAL(a,b) (a == b)
+float float1, float2;
+if (float1 == float2)
+   dosomething();
+if (ISEQUAL(float1, float2)) // Does the same thing as the previous if
+   dosomething(); 
+</pre>
+<pre>// Use of stringify with macros
+#define OBJECT(a) #a
+string s;
+s = OBJECT(mouse); // Same as s = "mouse";
+</pre>
+<pre>// Use of concatenate with macros
+#define SPECIALCLASS(a) float special_##a
+SPECIALCLASS(thing); // same as float special_thing;
+</pre>
+<p><font color="red">Warning</font>: Macros are not the same as functions. For example:
+</p>
+<pre>float x;
+
+#define SQRT(x) (x*x)
+float squareroot (float x) { return x * x; }
+float subtract2fromx (void) { x = x - 2; return x; }
+
+void testfunction (void)
+{
+   x = 7; 
+   y = squareroot(subtract2fromx()); // Results in (7-2) * (7-2) = 25
+
+   x = 7;
+   z = SQRT(subtract2fromx()); // Results in (7-2) * ((7-2)-2) = 15
+}
+</pre>
+<h3> <span class="mw-headline" id=".23undef">#undef</span></h3>
+<p><b>Syntax</b>: #undef &lt;defname&gt;<br />
+</p><p>After statement parsing, &lt;defname&gt; is considered undefined. FTEQCC will no longer parse &lt;defname&gt; or #&lt;defname&gt; when it is encountered.
+</p>
+<h2> <span class="mw-headline" id="Control_Logic"> Control Logic </span></h2>
+<p>Preprocessor control logic statements allow flow of control over program compilation. Note that these statements can be nested.
+</p>
+<h3> <span class="mw-headline" id=".23ifdef">#ifdef</span></h3>
+<p><b>Syntax</b>: #ifdef &lt;defname&gt;<br />
+<b>See also</b>: #else, #endif
+</p><p>Includes all lines contained within the terminated #ifdef block for compilation if &lt;defname&gt; is a defined preprocessor define.
+</p><p>Examples:
+</p>
+<pre>#define SOMETHING
+float x;
+#ifdef SOMETHING
+// Since SOMETHING is defined, this block gets compiled
+x = 1;
+#endif
+// x = 1 at this point.
+#ifdef SOMETHINGELSE
+// This block does not get compiled since I did not define SOMETHINGELSE
+x = 2;
+#endif
+// x does not change. x = 1 at this point.
+</pre>
+<pre>// ifdef nesting example
+#define SOMETHING
+#define SOMETHINGELSE
+#define SOMETHINGOTHER
+float x;
+#ifdef SOMETHING
+x = 2;
+   #ifdef SOMETHINGELSE
+   x = 3;
+      #ifdef SOMETHINGOTHER
+      x = 4;
+      // this endif terminates ifdef SOMETHINGOTHER
+      #endif
+   // this endif terminates ifdef SOMETHINGELSE
+   #endif
+// this endif terminates ifdef SOMETHING
+#endif
+// x = 4 at this point
+</pre>
+<h3> <span class="mw-headline" id=".23ifndef">#ifndef</span></h3>
+<p><b>Syntax</b>: #ifndef &lt;defname&gt;<br />
+<b>See also</b>: #else, #endif
+</p><p>Includes all lines contained within the terminated #ifdef block for compilation if &lt;defname&gt; is not a defined preprocessor define.
+</p><p>Example:
+</p>
+<pre>#define SOMETHINGELSE
+float x;
+#ifndef SOMETHING
+// Since SOMETHING is not defined, this block gets compiled
+x = 3;
+#endif
+// x = 3 at this point.
+#ifndef SOMETHINGELSE
+// This block does not get compiled since SOMETHINGELSE is defined
+x = 4;
+#endif
+// x does not change. x = 3 at this point.
+</pre>
+<h3> <span class="mw-headline" id=".23if">#if</span></h3>
+<p><b>Syntax</b>: #if &lt;value&gt;<br />
+<b>See also</b>: #else, #endif
+</p><p>Includes all lines contained within the terminated #if block for compilation if &lt;value&gt; is non-zero, otherwise falls through to block termination.
+</p><p>Example:
+</p>
+<pre>float x;
+#if 1
+// This block is compiled
+x = 2;
+#endif
+// x = 2 at this point.
+#if 0
+// This block is not compiled
+x = 3;
+#endif
+// x doesn't change. x = 2 at this point.
+
+</pre>
+<h3> <span class="mw-headline" id=".23else">#else</span></h3>
+<p><b>Syntax</b>: #else<br />
+<b>See also</b>: #endif<br />
+</p><p>Terminates an #if, #ifdef, or #ifndef block. Includes all lines contained within the terminated #else block for compilation if the previous #ifdef, #ifndef, or #if condition fails.
+</p><p>Example:
+</p>
+<pre>float x;
+// This condition always fails
+#if 0 
+// so this code block never gets compiled
+x = 1;
+#else
+// but the code contained in this block will
+x = 2;
+#endif
+// x = 2 at this point.
+</pre>
+<h3> <span class="mw-headline" id=".23endif">#endif</span></h3>
+<p><b>Syntax</b>: #endif<br />
+</p><p>Terminates an #if, #ifdef, #ifndef, or #else block.<br />
+</p>
+<h2> <span class="mw-headline" id="Compiler_Messages"> Compiler Messages </span></h2>
+<h3> <span class="mw-headline" id=".23message">#message</span></h3>
+<p><b>Syntax</b>: #message &lt;message&gt;<br />
+</p><p>Prints a message of &lt;message&gt; in FTEQCC's output.<br />
+</p>
+<h3> <span class="mw-headline" id=".23warning">#warning</span></h3>
+<p><b>Syntax</b>: #warning &lt;message&gt;<br />
+</p><p>Causes FTEQCC to send a warning in compilation containing the message &lt;message&gt;.<br />
+</p>
+<h3> <span class="mw-headline" id=".23error">#error</span></h3>
+<p><b>Syntax</b>: #error &lt;message&gt;<br />
+</p><p>Causes FTEQCC to error in compilation with the message &lt;message&gt;.<br />
+</p>
+<h2> <span class="mw-headline" id="Compilation"> Compilation </span></h2>
+<h3> <span class="mw-headline" id=".23include">#include</span></h3>
+<p><b>Syntax</b>: #include &lt;file&gt;<br />
+</p><p>Includes &lt;file&gt; for compilation with FTEQCC.
+</p>
+<h3> <span class="mw-headline" id=".23includelist">#includelist</span></h3>
+<p><b>Syntax</b>: #includelist<br />
+<b>See also</b>: #endlist
+</p><p>Includes all lines within the terminated #includelist block as files for compilation within FTEQCC.
+</p><p>Example:
+</p>
+<pre>#includelist
+first.qc
+second.qc
+third.qc
+#endlist
+// FTEQCC will compile first.qc, second.qc, third.qc
+</pre>
+<h3> <span class="mw-headline" id=".23endlist">#endlist</span></h3>
+<p><b>Syntax</b>: #endlist<br />
+</p><p>Terminates an #includelist block.
+</p>
+<h3> <span class="mw-headline" id=".23eof">#eof</span></h3>
+<p><b>Syntax</b>: #eof<br />
+</p><p>Terminates FTEQCC parsing. No compilation or preprocessor parsing will be done after an #eof in the file.<br />
+</p>
+<h2> <span class="mw-headline" id="Progs_Control"> Progs Control </span></h2>
+<h3> <span class="mw-headline" id=".23output">#output</span></h3>
+<p>Depreciated, use #pragma PROGS_DAT instead.
+</p>
+<h3> <span class="mw-headline" id=".23forcecrc">#forcecrc</span></h3>
+<p><b>Syntax</b>: #forcecrc &lt;crc&gt;<br />
+</p><p>Forces the progs to compile with a specific CRC value instead of the precalculated one depending on target type.<br />
+</p>
+<h3> <span class="mw-headline" id=".23copyright">#copyright</span></h3>
+<p>Depreciated, use #pragma COPYRIGHT instead.
+</p>
+<h3> <span class="mw-headline" id=".23datafile">#datafile</span></h3>
+<p><b>Syntax</b>: #datafile &lt;file&gt;<br />
+</p><p>Embeds &lt;file&gt; within the progs. Only available for FTE target type progs. FTEQW does not expand these embedded files within its' filesystem yet.
+</p>
+<h2> <span class="mw-headline" id="Pack_.28PAK.29_files"> Pack (PAK) files </span></h2>
+<p>Although made obsolete by decent PAK editors and engines supporting other archive formats, FTEQCC still includes support for generating PAK files just as the original QCC did. FTEQCC also has support for precompiler statements for creating PAK files to avoid wasting statements within the QuakeC code itself. Note that the pack statements have no effect unless FTEQCC is passed the parameters required to generate PAK files.
+</p>
+<h3> <span class="mw-headline" id=".23packid">#packid</span></h3>
+<p><b>Syntax</b>: #packid &lt;id&gt;<br />
+</p><p>Selects &lt;id&gt; as the current pack id.
+</p>
+<h3> <span class="mw-headline" id=".23pack">#pack</span></h3>
+<p><b>Syntax</b>: #pack &lt;file&gt;<br />
+<b>See also</b>: #packid
+</p><p>Groups &lt;file&gt; with the previous #packid. 
+</p><p>Example:
+</p>
+<pre>#packid 0
+#pack "progs/rocket.mdl"
+// Will generate pak0.pak containing progs/rocket.mdl
+</pre>
+<h2> <span class="mw-headline" id="Pragma_.28.23pragma.29"> Pragma (#pragma) </span></h2>
+<p>#pragma is an extensive precompiler statement which controls many aspects of the compiler. Note that all unknown #pragma statements encountered by FTEQCC are ignored (with a warning.)<br />
+</p>
+<h3> <span class="mw-headline" id=".23pragma_DONT_COMPILE_THIS_FILE">#pragma DONT_COMPILE_THIS_FILE</span></h3>
+<p>This pragma is parsed but ignored by FTEQCC so PREQCC-using code can compile cleanly.<br />
+</p>
+<h3> <span class="mw-headline" id=".23pragma_COPYRIGHT">#pragma COPYRIGHT</span></h3>
+<p><b>Syntax</b>: #pragma COPYRIGHT &lt;message&gt;<br />
+</p><p>Changes the string to be embedded at the end of a compiled progs. &lt;message&gt; is the message to embed.<br />
+</p>
+<h3> <span class="mw-headline" id=".23pragma_TARGET">#pragma TARGET</span></h3>
+<p><b>Syntax</b>: #pragma TARGET &lt;target&gt;<br />
+</p><p>Switches compiled progs to a specific target type.<br />
+</p><p>&lt;target&gt; can be the following:<br />
+</p>
+<ul><li> ID, STANDARD: standard Quake progs
+</li><li> KK7: kkqwsv progs
+</li><li> H2, HEXEN2: Hexen 2 progs
+</li><li> FTE: FTE progs
+</li><li> DEBUG, FTEDEBUG: FTE progs with debug information
+</li></ul>
+<p>It is not recommended to switch target types during compilation.<br />
+</p>
+<h3> <span class="mw-headline" id=".23pragma_PROGS_SRC">#pragma PROGS_SRC</span></h3>
+<p>This pragma is parsed but ignored by FTEQCC so PREQCC-using code can compile cleanly.<br />
+</p>
+<h3> <span class="mw-headline" id=".23pragma_PROGS_DAT">#pragma PROGS_DAT</span></h3>
+<p><b>Syntax</b>: #pragma PROGS_DAT &lt;progsfile&gt; <br />
+</p><p>Changes the destination file you wish to compile to. &lt;progsfile&gt; contains the new file name.<br />
+</p><p>Example:
+</p>
+<pre>#ifdef MONSTERS
+   #pragma PROGS_DAT monsters.dat
+   #message FTEQCC will now compile to monsters.dat
+#else
+   #pragma PROGS_DAT nomonsters.dat
+   #message FTEQCC will now compile to nomonsters.dat
+#endif
+</pre>
+<h3> <span class="mw-headline" id=".23pragma_keyword_and_.23pragma_flag">#pragma keyword and #pragma flag</span></h3>
+<p><b>Syntax</b>:<br />
+</p>
+<ul><li> #pragma keyword &lt;onoroff&gt; &lt;keywordid&gt;
+</li><li> #pragma flag &lt;onoroff&gt; &lt;keywordid&gt;
+</li></ul>
+<p>Enables or disables a keyword or compiler flag matching &lt;keywordid&gt;. #pragma keyword and #pragma flag are functionally equal. <br />
+</p><p>&lt;onoroff&gt; can be the following: <br />
+</p>
+<ul><li> enable, on: enable the chosen keyword or compiler flag
+</li><li> disable, off: disable the chosen keyword or compiler flag
+</li></ul>
+<p>See <a href="Keywords.html" title="FTEQCC Keywords">FTEQCC Keywords</a> for all of the possibilities of &lt;keywordid&gt;.
+</p>
+<h3> <span class="mw-headline" id=".23pragma_warning">#pragma warning</span></h3>
+<p><b>Syntax</b>: #pragma warning &lt;onoroff&gt; &lt;warningid&gt;<br />
+</p><p>Enables or disables a compiler warning matching &lt;warningid&gt;. <br />
+</p><p>&lt;onoroff&gt; can be the following: <br />
+</p>
+<ul><li> enable, on: enable the chosen warning
+</li><li> disable, off: disable the chosen warning
+</li><li> toggle: toggle the warning state
+</li></ul>
+<p><a href="Warnings_and_Errors.html" title="FTEQCC Warnings and Errors">FTEQCC Warnings and Errors</a> for all of the possibilities of &lt;warningid&gt;.
+</p>
+
+
+</div>				<!-- /bodycontent -->
