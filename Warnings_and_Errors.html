@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- saved from url=(0068) -->
+<html lang="en-GB" dir="ltr" class="client-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>FTEQCC Warnings and Errors - FTE</title>
+<style>
+.mw-collapsible-toggle{float:right;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}  .mw-content-ltr .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr .mw-collapsible-toggle{float:right} .mw-content-rtl .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl .mw-collapsible-toggle{float:left}.mw-customtoggle,.mw-collapsible-toggle{cursor:pointer} caption .mw-collapsible-toggle,.mw-content-ltr caption .mw-collapsible-toggle,.mw-content-rtl caption .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr caption .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl caption .mw-collapsible-toggle{float:none} li .mw-collapsible-toggle,.mw-content-ltr li .mw-collapsible-toggle,.mw-content-rtl li .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr li .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left; overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.highlight{font-weight:bold}
+@media screen {
+	.tochidden,.toctoggle{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.toctoggle{font-size:94%}}
+@media print {
+	#toc.tochidden,.toctoggle{display:none}}
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB9ElEQVR4AZWRA3AYURQArxrVHtW2bdu2bdu2zdi2bdu2bWxs7zeehZaw4f70kbs+zI3e/nWK+RWx3aOFlrL56Sy5SxrruG69hlv6OyK+mz+8KDSXdXembj0ispT7tjs4ZTIbpYBvxGSGKzZTeFrb7W/meN002swFs0U8ttpHTkF2BvCqWQrW35929bTsKm5Zb+SEwWwcY8wAngB9m7Z+d+rIPZ/npdy12M5p47n8dXsCYAf0qPy06eGMdktuDu9Qf+JmKl3SWM91qzVcN9tAbEYkwMaq0tyb1m/To5kP170el/BK8/qa6sJr70ydf+T/Uu5ab+Oo/lS0AkUBpIFWlZ9WPhxpse/PHO7YbOOczjL0vZV2lNxPPtG73dYXM+xvm2znrOl83tidoqCwMBgYXsPFB0on5S6pr+eK5TKuW67lgvaKvF8mL1dtfTL32FHxRdyx3cQpg7m4x9sCXKkTIzA4LDH44zWdzaUf71hv5rTG4uyzcusybxSX7aThbMQ8XgCYAp3rzTTQOiIh9PNlzY3FSuZxrzjme1Y7uGS6kjsWO4jPjM4FVjRZsvD4kO9XtTZzQn82NyzWc0B7AmZh6gA/hOYSGhfw9YbOVnarj+S7800AL2BIsxUAbWNToj7bhBuQmZcOsFdoKUC74rGheCwXmqAIQTc9jQcrADIAAAAASUVORK5CYII=);background-image:url(/wiki/resources/src/mediawiki.action/images/green-checkmark.png?d94f1)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{color:black;text-decoration:none}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}.suggestions a.mw-searchSuggest-link .special-query{ overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}</style>
+<meta name="ResourceLoaderDynamicStyles" content="">
+<meta name="generator" content="MediaWiki 1.27.0">
+</head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-FTEQCC_Warnings_and_Errors rootpage-FTEQCC_Warnings_and_Errors skin-vector action-view">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+
+						<div class="mw-indicators">
+</div>
+			<h1 id="firstHeading" class="firstHeading" lang="en-GB">FTEQCC Warnings and Errors</h1>
+									<div id="bodyContent" class="mw-body-content">
+									<div id="siteSub">From FTE</div>
+								<div id="contentSub"></div>
+				<div id="mw-content-text" lang="en-GB" dir="ltr" class="mw-content-ltr"><div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Warnings"><span class="tocnumber">1</span> <span class="toctext">Warnings</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Parameters"><span class="tocnumber">1.1</span> <span class="toctext">Parameters</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#References"><span class="tocnumber">1.2</span> <span class="toctext">References</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Miscellaneous"><span class="tocnumber">1.3</span> <span class="toctext">Miscellaneous</span></a>
+<ul>
+<li class="toclevel-3 tocsection-5"><a href="#Debug_warnings"><span class="tocnumber">1.3.1</span> <span class="toctext">Debug warnings</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Errors"><span class="tocnumber">2</span> <span class="toctext">Errors</span></a></li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="Warnings">Warnings</span></h1>
+<h2><span class="mw-headline" id="Parameters">Parameters</span></h2>
+<p><b>Internal reference</b>: WARN_TOOFEWPARAMS<br>
+<b>ID</b>: Q105<br>
+<b>Message</b>: too few parameters on call to &lt;token&gt; <i>or</i> &lt;token&gt;: Too few parameters<br>
+</p>
+<h2><span class="mw-headline" id="References">References</span></h2>
+<p><b>Internal reference</b>: WARN_NOTREFERENCED<br>
+<b>ID</b>: Q302<br>
+<b>Message</b>: &lt;token&gt; no references<br>
+</p><p>Indicates that &lt;token&gt; is not referenced from any code within the variable's scope. Although unreferenced variables are normally optimized out of a compiled progs, unused variables can cause the progs size to increase when not using optimizations.
+</p><p><b>Internal reference</b>: WARN_NOTREFERENCEDCONST<br>
+<b>Message</b>: &lt;token&gt; no references<br>
+</p><p>Same as WARN_NOTREFERENCED except for constants.
+</p>
+<h2><span class="mw-headline" id="Miscellaneous">Miscellaneous</span></h2>
+<h3><span class="mw-headline" id="Debug_warnings">Debug warnings</span></h3>
+<h1><span class="mw-headline" id="Errors">Errors</span></h1>
+<p>Premature table until I get this stuff into a real format...<br>
+</p>
+<table>
+<tbody><tr><td>Internal reference</td><td>ID</td><td>Description</td></tr>
+<tr><td>WARN_ASSIGNMENTTOCONSTANT</td><td>Q106</td><td>BLAH</td></tr>
+<tr><td>WARN_MISSINGRETURNVALUE</td><td>Q203</td><td>BLAH</td></tr>
+<tr><td>WARN_WRONGRETURNTYPE</td><td>Q204</td><td>BLAH</td></tr>
+<tr><td>WARN_POINTLESSSTATEMENT</td><td>Q205</td><td>BLAH</td></tr>
+<tr><td>WARN_MISSINGRETURN</td><td>Q206</td><td>BLAH</td></tr>
+<tr><td>WARN_DUPLICATEDDEFINITION</td><td>Q207</td><td>BLAH</td></tr>
+<tr><td>WARN_PRECOMPILERMESSAGE</td><td>Q100</td><td>BLAH</td></tr>
+<tr><td>WARN_BADPRAGMA</td><td>Q120</td><td>BLAH</td></tr>
+<tr><td>WARN_DUPLICATELABEL</td><td>Q111</td><td>BLAH</td></tr>
+<tr><td>WARN_ASSIGNMENTINCONDITIONAL</td><td>Q201</td><td>BLAH</td></tr>
+<tr><td>WARN_DEADCODE</td><td>F300</td><td>BLAH</td></tr>
+</tbody></table>
+

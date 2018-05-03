@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057) -->
+<html lang="en-GB" dir="ltr" class="client-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>FTEQCC Keywords - FTE</title>
+<style>
+.mw-collapsible-toggle{float:right;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}  .mw-content-ltr .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr .mw-collapsible-toggle{float:right} .mw-content-rtl .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl .mw-collapsible-toggle{float:left}.mw-customtoggle,.mw-collapsible-toggle{cursor:pointer} caption .mw-collapsible-toggle,.mw-content-ltr caption .mw-collapsible-toggle,.mw-content-rtl caption .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr caption .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl caption .mw-collapsible-toggle{float:none} li .mw-collapsible-toggle,.mw-content-ltr li .mw-collapsible-toggle,.mw-content-rtl li .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr li .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left; overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.highlight{font-weight:bold}
+@media screen {
+	.tochidden,.toctoggle{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.toctoggle{font-size:94%}}
+@media print {
+	#toc.tochidden,.toctoggle{display:none}}
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB9ElEQVR4AZWRA3AYURQArxrVHtW2bdu2bdu2zdi2bdu2bWxs7zeehZaw4f70kbs+zI3e/nWK+RWx3aOFlrL56Sy5SxrruG69hlv6OyK+mz+8KDSXdXembj0ispT7tjs4ZTIbpYBvxGSGKzZTeFrb7W/meN002swFs0U8ttpHTkF2BvCqWQrW35929bTsKm5Zb+SEwWwcY8wAngB9m7Z+d+rIPZ/npdy12M5p47n8dXsCYAf0qPy06eGMdktuDu9Qf+JmKl3SWM91qzVcN9tAbEYkwMaq0tyb1m/To5kP170el/BK8/qa6sJr70ydf+T/Uu5ab+Oo/lS0AkUBpIFWlZ9WPhxpse/PHO7YbOOczjL0vZV2lNxPPtG73dYXM+xvm2znrOl83tidoqCwMBgYXsPFB0on5S6pr+eK5TKuW67lgvaKvF8mL1dtfTL32FHxRdyx3cQpg7m4x9sCXKkTIzA4LDH44zWdzaUf71hv5rTG4uyzcusybxSX7aThbMQ8XgCYAp3rzTTQOiIh9PNlzY3FSuZxrzjme1Y7uGS6kjsWO4jPjM4FVjRZsvD4kO9XtTZzQn82NyzWc0B7AmZh6gA/hOYSGhfw9YbOVnarj+S7800AL2BIsxUAbWNToj7bhBuQmZcOsFdoKUC74rGheCwXmqAIQTc9jQcrADIAAAAASUVORK5CYII=);background-image:url(/wiki/resources/src/mediawiki.action/images/green-checkmark.png?d94f1)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{color:black;text-decoration:none}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}.suggestions a.mw-searchSuggest-link .special-query{ overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}</style>
+<meta name="ResourceLoaderDynamicStyles" content="">
+<meta name="generator" content="MediaWiki 1.27.0">
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-FTEQCC_Keywords rootpage-FTEQCC_Keywords skin-vector action-view">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+
+						<div class="mw-indicators">
+</div>
+			<h1 id="firstHeading" class="firstHeading" lang="en-GB">FTEQCC Keywords</h1>
+									<div id="bodyContent" class="mw-body-content">
+									<div id="siteSub">From FTE</div>
+								<div id="contentSub"></div>
+				<div id="mw-content-text" lang="en-GB" dir="ltr" class="mw-content-ltr"><p>Note: not all keywords are enabled by default.
+They can be enabled via the commandline with '-kFOO', or via '#pragma keyword enable FOO' from QC.
+</p>
+<div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Basic_Types"><span class="tocnumber">1</span> <span class="toctext">Basic Types</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Complex_Types"><span class="tocnumber">2</span> <span class="toctext">Complex Types</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Type_Modifiers"><span class="tocnumber">3</span> <span class="toctext">Type Modifiers</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Control_Keywords"><span class="tocnumber">4</span> <span class="toctext">Control Keywords</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Other"><span class="tocnumber">5</span> <span class="toctext">Other</span></a></li>
+</ul>
+</div>
+
+<h3><span class="mw-headline" id="Basic_Types">Basic Types</span></h3>
+<ul><li>entity</li>
+<li>float</li>
+<li>int</li>
+<li>integer: synonym for int</li>
+<li>string</li>
+<li>vector</li>
+<li>__variant: Some weird type that should only be used in builtin definitions. These variables have no explicit type, and should be cast or assigned to some other type before use.</li></ul>
+<h3><span class="mw-headline" id="Complex_Types">Complex Types</span></h3>
+<ul><li>struct: like in C. Useful in arrays or with pointers.</li>
+<li>union: special case of struct where all members occupy the same bit of memory. Useful for type punning but somewhat unsafe.</li>
+<li>class: has similarities to C++, but only supports single inheritance.</li></ul>
+<h3><span class="mw-headline" id="Type_Modifiers">Type Modifiers</span></h3>
+<ul><li>const: Specifies that the variable will not be changed. Any initialiser must also be a const.</li>
+<li>nosave: Marks the variable as unsuitable for saving to saved games. Does not prevent loading.</li>
+<li>inline: Usable on functions. Causes fteqcc to attempt to inline the function.</li>
+<li>ignore: Specifies that the variable is not relevant in the current module. This is expected to be hidden inside preprocessor. When used on a function, the entire function will be ignored. Any actual references outside referenced functions will generate an error.</li>
+<li>strip: Synonym for ignore</li>
+<li>shared: Marks the global as something that should be shared between multiple .dat files in the same VM. Only makes sense with FTE_MULTIPROGS. Typically you will want to use pointers instead due to the overhead when crossing .dat boundaries (which can become significant when you have many shared variables).</li>
+<li>unused: 'unused' means that the variable is unused, you're aware that its unused, and you'd rather not know about all the warnings this results in. These variables may also be stripped (otherwise, use 'used' instead).</li>
+<li>noref: Synonym for unused.</li>
+<li>used: used means that the variable is expected by the engine in some way, even if the qc never refers to it.</li>
+<li>static: At global scope, specifies that the variable should be visible only to the current .qc file. At local scope, specifies that the local should act as a global (providing persistance), but only be visible to the current function.</li>
+<li>nonstatic: opposite of static. Useful only when '#pragma defaultstatic 1' was used.</li>
+<li>extern: Specifies that the function should be imported from another progs (FTE_MULTIPROGS).</li>
+<li>var: Specifies that the variable should NOT be considered a constant. On fields, this prevents auto-initialisation. On functions, this prevents errors about missing function bodies.</li>
+<li>optional: Used on function arguments to specify that you can omit that argument. This typically means that it should only ever be used on builtins. fteetensions.qc makes gratutious use of this keyword, but it is not particuarly useful elsewhere.</li></ul>
+<h3><span class="mw-headline" id="Control_Keywords">Control Keywords</span></h3>
+<ul><li>break: Jump out of the innermost while/until/for/loop/switch statement. Avoids the 'increment' part of for loops.</li>
+<li>continue: Jump back to the start of the innermost while/until/for/loop statement. The 'increment' part of for loops will be executed before the loop resumes.</li>
+<li>switch: Specifies that control should jump to relavant inner case statement, if possible.</li>
+<li>case x: Control will jump to here from the containing switch statement if the switch expression evaluated to the same as the case's value. Note that you will want to terminate the previous case statement with a break statement in order to avoid fall-through. Case statements act somewhat like labels, and thus require a colon rather than a semi-colon.</li>
+<li>case x..y: Specifies a range of values instead of a singlular descrete value. Otherwise acts like any other case.</li>
+<li>default: Specifies the fallback of a switch statement in the event that no case statement provided a match (instead of skipping past the switch entirely).</li>
+<li>goto: considered harmful.</li>
+<li>for (initialisation; condition; increment)&nbsp;: much like while, but provides explicit space for an initialisation an increment expressions. The increment expression interacts with continue statements in a way not trivially reproducable with while loops. Also, programmers who know C-like languages tend to expect it to exist.</li>
+<li>until: logical-not version of while</li>
+<li>loop: acts like while(1), resulting in an infinite loop that requires the use of break or return to leave.</li></ul>
+<h3><span class="mw-headline" id="Other">Other</span></h3>
+<ul><li>enum: Provides a way to specify a list of constants which are implicitly 1 greater than the previous constant, starting at 0. You are able to explicitly set a value, but you will get warnings if any two constants within an enum have the same value.</li>
+<li>enumflags: Acts like enum, but also requires that values are power-of-two (and will autoincrement to satisfy that).</li>
+<li>asm: The following function / line is direct assembler.</li>
+<li>state: should be followed by eg [$frame,func] as found in many monster think functions. This provides you a way to use it mid-function.</li>
+<li>thinktime &lt;interval&gt;: sets self.nextthink to time+interval</li>
+<li>typedef: Allows you to provide a more terse name for complex types.</li></ul>
