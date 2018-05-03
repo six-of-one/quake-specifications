@@ -29,9 +29,10 @@ The point is to keep quake development alive.
 
 Included in this repository:
 
-Quake spec 3.4.1
+Quake spec 3.4.2
 Quake C manual v1.01 (html linked version)
-QUake C code base (html linked version)
+Quake C code base (html linked version)
+FTE qcc precompiler, keywords, warning v1.0
 
 I plan to add some documents to this when I have some time to do the proper editing.
 
